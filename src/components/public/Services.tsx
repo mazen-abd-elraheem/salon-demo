@@ -204,10 +204,10 @@ function ServiceCard({
 
       <div className="flex flex-1 flex-col p-5">
         <div className="flex items-start justify-between gap-3">
-          <h3 className="font-display text-lg font-semibold leading-snug text-espresso">
+          <h3 className="font-display text-base sm:text-lg font-semibold leading-snug text-espresso">
             {displayName}
           </h3>
-          <span className="font-display text-lg font-bold text-rosegold-500 whitespace-nowrap shrink-0">
+          <span className="font-display text-base sm:text-lg font-bold text-rosegold-500 whitespace-nowrap shrink-0 tabular-nums">
             {formatPrice(service.price, lang)}
           </span>
         </div>

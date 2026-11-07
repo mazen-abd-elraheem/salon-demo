@@ -34,7 +34,7 @@ export const serviceImageMap: { keywords: string[]; url: string; alt: string }[]
   },
   {
     keywords: ['brow', 'حواجب', 'تحديد', 'صبغة'],
-    url: 'https://images.unsplash.com/photo-1596704017254-9b121068fb31?auto=format&fit=crop&w=1200&q=80',
+    url: 'https://images.unsplash.com/photo-1512496015851-a90fb38ba796?auto=format&fit=crop&w=1200&q=80',
     alt: 'رسم وتنظيف وتحديد حواجب وصبغة طبيعية',
   },
   {
