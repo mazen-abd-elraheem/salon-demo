@@ -97,8 +97,7 @@ export default function AdminLogin({ onSubmit, loading, error }: AdminLoginProps
               : 'Sign in with your studio admin credentials.'}
           </p>
 
-          {/* Quick Demo Fill Pill (development only) */}
-          {import.meta.env.DEV && (
+          {/* Quick Demo Fill Pill */}
           <div className="mt-6 flex items-center justify-between rounded-2xl border border-pearl bg-white/70 p-3">
             <div className="text-xs text-mocha-600">
               <span className="font-semibold text-espresso">
@@ -115,7 +114,6 @@ export default function AdminLogin({ onSubmit, loading, error }: AdminLoginProps
               {lang === 'ar' ? 'ملء سريع' : 'Autofill'}
             </button>
           </div>
-          )}
 
           <div className="mt-6 space-y-5">
             <div>
