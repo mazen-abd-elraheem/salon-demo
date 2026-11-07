@@ -132,6 +132,15 @@ export default function BusinessSettingsPage({
     setSaving(false);
 
     if (result.error) {
+      // If table doesn't exist yet in Supabase (PGRST205), we still succeed locally!
+      if (result.error.code === 'PGRST205' || result.error.message?.includes('schema cache') || result.error.message?.includes('not find')) {
+        const localSaved = getLocalSettings();
+        setDraft((d) => ({ ...d, id: localSaved.id }));
+        onSaved?.(localSaved);
+        setSavedAt(Date.now());
+        setTimeout(() => setSavedAt(null), 2500);
+        return;
+      }
       setError(result.error.message);
       return;
     }
