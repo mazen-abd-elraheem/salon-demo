@@ -1,0 +1,117 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  color-scheme: light;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+  font-feature-settings: 'cv11', 'ss01';
+  background-color: #faf6f1;
+  color: #1f1813;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+[dir="rtl"],
+[dir="rtl"] body,
+[dir="rtl"] button,
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  font-family: 'Alexandria', 'Tajawal', 'Cairo', system-ui, -apple-system, sans-serif;
+  letter-spacing: -0.01em;
+}
+
+/* Smooth, calm scrolling */
+html {
+  scroll-behavior: smooth;
+}
+
+/* Section helpers */
+@layer components {
+  .container-page {
+    @apply mx-auto w-full max-w-7xl px-6 md:px-10;
+  }
+
+  .eyebrow {
+    @apply inline-flex items-center gap-2 text-[11px] uppercase tracking-wider-3 text-mocha-500;
+  }
+
+  .eyebrow-dot {
+    @apply h-[5px] w-[5px] rounded-full bg-rosegold-300;
+  }
+
+  .heading-display {
+    @apply font-display text-espresso;
+    font-feature-settings: 'lnum', 'ss01';
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full bg-espresso px-7 py-3 text-sm font-medium tracking-wide text-ivory transition-all duration-300 hover:bg-mocha-700 hover:shadow-softer active:scale-[0.98];
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 rounded-full border border-mocha-400/30 bg-ivory/70 px-7 py-3 text-sm font-medium tracking-wide text-espresso transition-all duration-300 hover:border-mocha-500/60 hover:bg-ivory active:scale-[0.98];
+  }
+
+  .btn-ghost {
+    @apply inline-flex items-center gap-2 text-sm font-medium text-espresso/80 transition-colors hover:text-espresso;
+  }
+
+  .card-soft {
+    @apply rounded-3xl border border-pearl/70 bg-ivory/80 shadow-softer backdrop-blur-sm;
+  }
+
+  .field-label {
+    @apply block text-[11px] font-medium uppercase tracking-wider-2 text-mocha-500;
+  }
+
+  .field-input {
+    @apply mt-2 w-full rounded-xl border border-mocha-400/20 bg-white/80 px-4 py-3 text-sm text-espresso placeholder:text-mocha-400/60 outline-none transition focus:border-rosegold-300 focus:ring-2 focus:ring-rosegold-200/50;
+  }
+
+  .field-textarea {
+    @apply mt-2 w-full rounded-xl border border-mocha-400/20 bg-white/80 px-4 py-3 text-sm text-espresso placeholder:text-mocha-400/60 outline-none transition focus:border-rosegold-300 focus:ring-2 focus:ring-rosegold-200/50;
+  }
+
+  .divider-thin {
+    @apply h-px w-full bg-gradient-to-r from-transparent via-mocha-400/20 to-transparent;
+  }
+
+  /* Premium pill badges */
+  .badge {
+    @apply inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-[11px] font-medium uppercase tracking-wider-2;
+  }
+}
+
+/* Polished scrollbars in admin */
+.admin-scroll::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+.admin-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+.admin-scroll::-webkit-scrollbar-thumb {
+  background: rgba(155, 122, 94, 0.25);
+  border-radius: 8px;
+}
+.admin-scroll::-webkit-scrollbar-thumb:hover {
+  background: rgba(155, 122, 94, 0.45);
+}
+
+/* Selection */
+::selection {
+  background: #e6b89c;
+  color: #1f1813;
+}
