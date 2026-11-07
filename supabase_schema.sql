@@ -346,19 +346,23 @@ create policy "Admins can manage packages" on public.packages for all using (tru
 
 drop policy if exists "Public can read package_services" on public.package_services;
 create policy "Public can read package_services" on public.package_services for select using (true);
-drop policy if exists "Admins can manage package_services" on public.package_services for all using (true) with check (true);
+drop policy if exists "Admins can manage package_services" on public.package_services;
+create policy "Admins can manage package_services" on public.package_services for all using (true) with check (true);
 
 drop policy if exists "Public can read products" on public.products;
 create policy "Public can read products" on public.products for select using (true);
-drop policy if exists "Admins can manage products" on public.products for all using (true) with check (true);
+drop policy if exists "Admins can manage products" on public.products;
+create policy "Admins can manage products" on public.products for all using (true) with check (true);
 
 drop policy if exists "Public can read promo_codes" on public.promo_codes;
 create policy "Public can read promo_codes" on public.promo_codes for select using (true);
-drop policy if exists "Admins can manage promo_codes" on public.promo_codes for all using (true) with check (true);
+drop policy if exists "Admins can manage promo_codes" on public.promo_codes;
+create policy "Admins can manage promo_codes" on public.promo_codes for all using (true) with check (true);
 
 drop policy if exists "Public can read shifts" on public.shifts;
 create policy "Public can read shifts" on public.shifts for select using (true);
-drop policy if exists "Admins can manage shifts" on public.shifts for all using (true) with check (true);
+drop policy if exists "Admins can manage shifts" on public.shifts;
+create policy "Admins can manage shifts" on public.shifts for all using (true) with check (true);
 
 -- Bookings, Items, Tab Addons & Payments (Public insert, reception/admin manage all)
 drop policy if exists "Public can create bookings" on public.bookings;
