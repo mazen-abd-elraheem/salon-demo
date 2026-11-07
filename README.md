@@ -97,3 +97,4 @@ npm run build
 
 ## 📄 License
 Private & Proprietary — Developed for Maison Lumière Beauty Atelier & Spa.
+
