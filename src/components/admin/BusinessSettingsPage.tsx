@@ -111,11 +111,27 @@ export default function BusinessSettingsPage({
 
     let result;
     try {
-      if (draft.id) {
+      // Check if draft.id is a real UUID or lookup existing row in Supabase
+      const isUuid = draft.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(draft.id);
+      let targetId = isUuid ? draft.id : null;
+
+      if (!targetId) {
+        // Query existing row from DB to get its real UUID
+        const { data: existingRow } = await supabase
+          .from('business_settings')
+          .select('id')
+          .limit(1)
+          .maybeSingle();
+        if (existingRow?.id) {
+          targetId = existingRow.id;
+        }
+      }
+
+      if (targetId) {
         result = await supabase
           .from('business_settings')
           .update(payload)
-          .eq('id', draft.id)
+          .eq('id', targetId)
           .select()
           .maybeSingle();
       } else {
@@ -132,8 +148,13 @@ export default function BusinessSettingsPage({
     setSaving(false);
 
     if (result.error) {
-      // If table doesn't exist yet in Supabase (PGRST205), we still succeed locally!
-      if (result.error.code === 'PGRST205' || result.error.message?.includes('schema cache') || result.error.message?.includes('not find')) {
+      // If table doesn't exist yet in Supabase (PGRST205) or schema error, we still succeed locally!
+      if (
+        result.error.code === 'PGRST205' ||
+        result.error.message?.includes('schema cache') ||
+        result.error.message?.includes('not find') ||
+        result.error.message?.includes('invalid input syntax for type uuid')
+      ) {
         const localSaved = getLocalSettings();
         setDraft((d) => ({ ...d, id: localSaved.id }));
         onSaved?.(localSaved);
@@ -148,6 +169,7 @@ export default function BusinessSettingsPage({
     if (result.data) {
       const s = result.data as BusinessSettings;
       setDraft((d) => ({ ...d, id: s.id }));
+      saveLocalSettings({ ...defaultSettings, ...payload, id: s.id });
       onSaved?.(s);
     }
     setSavedAt(Date.now());
