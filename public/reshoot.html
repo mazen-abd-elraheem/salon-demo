@@ -1,0 +1,2712 @@
+<!DOCTYPE html>
+<html lang="en" class="is-loading">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Reshoot — AI Beauty Photography</title>
+  <meta name="description" content="Reshoot turns one skincare product photo into campaign-grade beauty shoots, styled product scenes and motion." />
+  <style>
+    /* Fonts */
+    @font-face {
+      font-family: 'Inter';
+      src: url('assets/fonts/inter-var.woff2') format('woff2');
+      font-weight: 100 900;
+      font-style: normal;
+      font-display: swap;
+    }
+    @font-face {
+      font-family: 'Instrument Serif';
+      src: url('assets/fonts/instrument-serif-italic.woff2') format('woff2');
+      font-style: italic;
+      font-weight: 400;
+      font-display: swap;
+    }
+
+    /* Global resets */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    html, body {
+      overscroll-behavior: none;
+    }
+    body {
+      background-color: var(--mainbg);
+      color: var(--fonts-100);
+      display: flex;
+      flex-direction: column;
+      font-size: 1vw;
+      font-family: 'Inter', Arial, sans-serif;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+    a {
+      color: inherit;
+      text-decoration: none;
+    }
+    :focus {
+      outline: none;
+    }
+    :focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+    img {
+      display: block;
+    }
+    main.page {
+      display: flex;
+      flex-direction: column;
+      min-height: 100svh;
+      overflow: hidden;
+      width: 100%;
+    }
+
+    /* Fluid root font-size */
+    html {
+      font-size: 1.484375rem;
+    }
+    @media screen and (max-width: 2560px) {
+      html { font-size: calc(-0.006009615384615419rem + 0.9314903846153846vw); }
+    }
+    @media screen and (max-width: 1728px) {
+      html { font-size: calc(-0.009345794392523143rem + 0.9345794392523362vw); }
+    }
+    @media screen and (max-width: 991px) {
+      html { font-size: calc(0.021640258215962493rem + 1.8779342723004695vw); }
+    }
+    @media screen and (max-width: 767px) {
+      html { font-size: calc(-0.0025905678851174934rem + 4.14490861618799vw); }
+    }
+
+    /* Type-scale variables */
+    :root {
+      --h1: 5.5rem;
+      --h2: 7.5rem;
+      --h25: 4rem;
+      --h3: 3.25rem;
+      --body2: 1rem;
+      --tag: 1.125rem;
+      --title1: 1rem;
+      --title2: 0.875rem;
+      --title3: 1.5rem;
+      --btn: 1.0625rem;
+    }
+    @media screen and (max-width: 991px) {
+      :root {
+        --h1: 4.5rem;
+        --h2: 5.5rem;
+      }
+    }
+    @media screen and (max-width: 767px) {
+      :root {
+        --h1: 2.5rem;
+        --h2: 2.25rem;
+        --h25: 2.25rem;
+        --h3: 1.5rem;
+        --body2: 0.875rem;
+        --tag: 1rem;
+      }
+    }
+
+    /* Utility classes */
+    .u-h1 { font-size: var(--h1); line-height: 0.94; font-weight: 400; letter-spacing: -0.165rem; }
+    .u-h2 { font-size: var(--h2); line-height: 1; font-weight: 400; letter-spacing: -0.225rem; }
+    .u-h2-5 { font-size: var(--h25); line-height: 1; font-weight: 400; letter-spacing: -0.12rem; }
+    @media screen and (max-width: 767px) { .u-h2-5 { letter-spacing: -0.045rem; } }
+    .u-h3 { font-size: var(--h3); line-height: 1.05; font-weight: 500; letter-spacing: -0.1rem; }
+    .u-body-2 { font-size: var(--body2); line-height: 1.25; font-weight: 400; }
+    .u-tag { font-size: var(--tag); line-height: 1.5; font-weight: 400; }
+    .u-title-2 { font-size: var(--title2); line-height: 1.5; font-weight: 500; letter-spacing: -0.01313rem; }
+    .u-title-3 { font-size: var(--title3); line-height: 1.5; font-weight: 500; letter-spacing: -0.01313rem; }
+    .u-small-text-1 { font-size: 0.75rem; line-height: 1.5; font-weight: 400; }
+    .u-small-text-2 { font-size: 0.625rem; line-height: 1; font-weight: 500; letter-spacing: -0.0125rem; text-transform: uppercase; }
+    .u-btn { font-size: var(--btn); line-height: 1.2; font-weight: 400; letter-spacing: -0.02125rem; }
+    .u-fonts-50 { color: var(--fonts-50); }
+    .u-fonts-64 { color: var(--fonts-64); }
+    .u-indent { padding-left: 1.75rem; }
+    @media screen and (max-width: 767px) { .u-indent { padding-left: 1.5rem; } }
+
+    .it {
+      font-family: 'Instrument Serif', Georgia, serif;
+      font-style: italic;
+      font-weight: 400;
+      letter-spacing: -0.01em;
+    }
+
+    /* Themes */
+    .body {
+      --mainbg: #0b090d;
+      --mainbg-gradient: #0b090d00;
+      --fonts-100: #f6e9f4;
+      --fonts-64: #f6e9f4a3;
+      --fonts-50: #f6e9f480;
+      --fonts-30: #f6e9f44d;
+      --fonts-20: #f6e9f433;
+      --secondbg: #141117;
+      --lines: #25202a;
+      --menu: #272030;
+      --pill-ink: #f6e9f4;
+      --menu-colors: #ffffff2e;
+      --prc: #ffffff1f;
+      --dots-pattern: #1b171f;
+      --dash: #18141c;
+      --btn-bg: #cbb6ea;
+      --btn-ink: #2c1433;
+      --accent: #e58fb6;
+      --flash-a: #c05ae0;
+      --flash-b: #f28db5;
+      --card: #18141c;
+      --card-2: #ffffff0f;
+    }
+    .body.light {
+      --mainbg: #f9f0f5;
+      --mainbg-gradient: #f9f0f500;
+      --fonts-100: #3a1d43;
+      --fonts-64: #3a1d43a3;
+      --fonts-50: #3a1d4380;
+      --fonts-30: #3a1d434d;
+      --fonts-20: #3a1d4333;
+      --secondbg: #f3e6f0;
+      --lines: #e8d7e4;
+      --menu: #cbb6ea;
+      --pill-ink: #3a1d43;
+      --menu-colors: #3a1d432b;
+      --prc: #3a1d431a;
+      --dots-pattern: #ecdcef;
+      --dash: #25142d;
+      --btn-bg: #cbb6ea;
+      --btn-ink: #2c1433;
+      --accent: #e58fb6;
+      --flash-a: #b14bd9;
+      --flash-b: #f28db5;
+      --card: #ffffff;
+      --card-2: #3a1d430d;
+    }
+
+    /* Cover-crop math tile */
+    .ph {
+      background-color: var(--secondbg);
+      background-repeat: no-repeat;
+    }
+
+    /* Keyframes */
+    @keyframes spinStep {
+      to { transform: rotate(360deg); }
+    }
+    @keyframes hero-row {
+      from { transform: translate(var(--tx, 0%), var(--ty, 0%)); }
+      to { transform: translate(var(--tx-end, 0%), var(--ty-end, -100%)); }
+    }
+    @keyframes columnanima {
+      0% { transform: translateY(0%); }
+      100% { transform: translateY(-100%); }
+    }
+    @keyframes marquee {
+      0% { transform: translateX(0%); }
+      100% { transform: translateX(-100%); }
+    }
+
+    /* Preloader */
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      pointer-events: none;
+      background: var(--mainbg);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+      padding: 2rem;
+    }
+    html.is-loading .preloader > * {
+      opacity: 0;
+      visibility: hidden;
+      will-change: opacity, filter;
+    }
+    .preloader__center {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+    }
+    .preloader__img-box {
+      position: relative;
+      width: 16rem;
+      height: 24rem;
+      border-radius: 1.5rem;
+      overflow: hidden;
+    }
+    .preloader__img-box .ph {
+      position: absolute;
+      inset: 0;
+    }
+    .preloader__bottom {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .preloader__spin {
+      width: 3.5rem;
+      height: 3.5rem;
+      animation: spinStep 1s steps(8) infinite;
+    }
+
+    @media screen and (max-width: 767px) {
+      .preloader__img-box {
+        width: 10.5rem;
+        height: 16rem;
+      }
+      .preloader .logo-svg, .preloader__spin {
+        width: 2.5rem;
+        height: 2.5rem;
+      }
+    }
+
+    /* Fixed Header */
+    .header {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 999;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 1.5rem 2rem;
+      transition: all 0.2s ease;
+      will-change: transform;
+    }
+    .header__left {
+      width: 10.75rem;
+    }
+    .header__logo-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 0.6rem;
+      color: var(--fonts-100);
+      transition: opacity 0.2s;
+    }
+    .header__logo-link:hover .logo-svg {
+      opacity: 0.64;
+    }
+    .header__logo-text {
+      font-size: 1.45rem;
+      font-weight: 500;
+      letter-spacing: -0.04rem;
+    }
+    .header__main {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1.5rem;
+      height: 3rem;
+      padding: 0.5rem;
+      border-radius: 99rem;
+      background: var(--menu);
+      color: var(--pill-ink);
+    }
+    .menu-btn {
+      background: none;
+      border: none;
+      display: flex;
+      align-items: center;
+      gap: 0.75rem;
+      padding: 0.5rem 0 0.5rem 0.5rem;
+      color: inherit;
+      cursor: pointer;
+      transition: opacity 0.2s;
+    }
+    .menu-btn:hover {
+      opacity: 0.64;
+    }
+    .menu-btn__icon {
+      width: 1.65rem;
+      height: 1.65rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+    }
+    .menu-btn__line {
+      width: 1.65rem;
+      height: 0.0625rem;
+      background: var(--pill-ink);
+      position: absolute;
+      transform-origin: center;
+    }
+    .menu-btn__label {
+      flex: none;
+      width: 3rem;
+      text-align: left;
+    }
+    .theme-btn {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      border: 1px solid var(--menu-colors);
+      background: transparent;
+      color: var(--pill-ink);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: border-color 0.2s;
+    }
+    .theme-btn:hover {
+      border-color: var(--fonts-64);
+    }
+    .body.light .theme-btn .moon-icon { display: none; }
+    .body.light .theme-btn .sun-icon { display: block; }
+    .body:not(.light) .theme-btn .sun-icon { display: none; }
+    .body:not(.light) .theme-btn .moon-icon { display: block; }
+
+    .header__prc {
+      height: 2rem;
+      padding: 0 0.55rem;
+      border-radius: 99rem;
+      background: var(--prc);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    #progress {
+      width: 2.5rem;
+      text-align: center;
+    }
+    .header__right {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+    }
+    .header__signin {
+      width: 2rem;
+      height: 2rem;
+      border-radius: 50%;
+      border: 1px solid var(--fonts-20);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--fonts-100);
+      transition: border-color 0.2s;
+    }
+    .header__signin:hover {
+      border-color: var(--fonts-64);
+    }
+    .header__get-started {
+      height: 3rem;
+      padding: 0.875rem 1.5rem;
+      border-radius: 99rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--btn-bg);
+      color: var(--btn-ink);
+      white-space: nowrap;
+      transition: background-color 0.2s;
+    }
+    .header__get-started:hover {
+      background: var(--accent);
+    }
+
+    @media screen and (max-width: 767px) {
+      .header {
+        padding: 1.2rem 1rem;
+        align-items: flex-start;
+      }
+      .header__left {
+        width: auto;
+      }
+      .header__logo-text {
+        display: none;
+      }
+      .header__right {
+        display: none;
+      }
+    }
+
+    /* Menu Panel */
+    .menu {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 998;
+      display: flex;
+      justify-content: center;
+      padding-top: 0.75rem;
+      pointer-events: none;
+      transition: all 0.2s;
+    }
+    .menu__wrap-main {
+      width: 18rem;
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+    }
+    .menu__wrap {
+      display: flex;
+      flex-direction: column;
+      gap: 3rem;
+      width: 15rem;
+      height: 0;
+      padding: 0;
+      transform: translateY(2rem);
+      border-radius: 2rem;
+      background: var(--dots-pattern);
+      overflow: hidden;
+      pointer-events: auto;
+    }
+    .menu__item {
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
+      opacity: 0;
+    }
+    .menu__sublist {
+      display: flex;
+      flex-direction: column;
+      gap: 0.2rem;
+    }
+    .menu__item.is-lined {
+      border-top: 1px solid var(--fonts-20);
+      padding-top: 1.5rem;
+    }
+    .menu__item.is-last {
+      padding-top: 3rem;
+    }
+    .menu__row {
+      display: flex;
+      gap: 0.75rem;
+    }
+    .menu__item.is-auth {
+      display: none;
+    }
+    .menu__link {
+      color: var(--fonts-100);
+      transition: opacity 0.2s;
+    }
+    .menu__link:hover {
+      opacity: 0.64;
+    }
+
+    @media screen and (max-width: 767px) {
+      .menu {
+        justify-content: flex-end;
+        padding-right: 0.65rem;
+      }
+      .menu__wrap-main {
+        width: 16.2rem;
+      }
+      .menu__wrap {
+        gap: 2rem;
+      }
+      .menu__item {
+        padding-bottom: 1rem;
+      }
+      .menu__item.is-auth {
+        display: flex;
+        flex-direction: row;
+        gap: 0.25rem;
+      }
+      .menu__item.is-auth .header__get-started {
+        flex: 1;
+      }
+    }
+
+    /* Section 1: Hero */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100svh;
+      min-height: 56rem;
+      padding: 2rem 2rem 4rem;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      align-items: center;
+      overflow: hidden;
+      --R: min(22vw, 35svh);
+    }
+    @media screen and (max-width: 991px) {
+      .hero {
+        --R: min(30vw, 30svh);
+        min-height: 52rem;
+      }
+    }
+    @media screen and (max-width: 767px) {
+      .hero {
+        --R: min(35vw, 28svh);
+        min-height: 42rem;
+        padding: 8rem 1rem 2rem;
+      }
+    }
+
+    .hero__wrap {
+      z-index: 2;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      position: relative;
+    }
+    .hero__cell {
+      flex: 1;
+    }
+    .hero__cell.is-end {
+      display: flex;
+      justify-content: flex-end;
+    }
+    .hero__copy {
+      position: absolute;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    /* Hero chips loop */
+    .hero__slider {
+      position: absolute;
+      top: 10rem;
+      bottom: 10rem;
+      right: 2rem;
+      z-index: 3;
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+    }
+    .hero__slider-wrap {
+      position: relative;
+      height: 17rem;
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      overflow: hidden;
+    }
+    .hero__row {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 0.5rem;
+      padding-bottom: 0.5rem;
+      animation: hero-row 24s linear infinite;
+      --tx: 0%; --ty: 0%;
+      --tx-end: 0%; --ty-end: -100%;
+    }
+    .hero__chip {
+      padding: 0.35rem 1rem 0.4rem;
+      border: 1px solid var(--fonts-20);
+      border-radius: 0.5rem;
+      background: var(--mainbg);
+      white-space: nowrap;
+      font-size: 1rem;
+      font-weight: 500;
+      line-height: 1.5;
+      color: var(--fonts-100);
+    }
+    .hero__fade-t {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 7rem;
+      background: linear-gradient(180deg, var(--mainbg), var(--mainbg-gradient));
+      pointer-events: none;
+      z-index: 2;
+    }
+    .hero__fade-b {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 7rem;
+      background: linear-gradient(180deg, var(--mainbg-gradient), var(--mainbg));
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @media screen and (max-width: 991px) {
+      .hero__slider {
+        top: auto;
+        bottom: 5.5rem;
+        left: 0;
+        right: 0;
+        height: 2.5rem;
+        justify-content: center;
+      }
+      .hero__slider-wrap {
+        width: 32rem;
+        height: 2.5rem;
+        flex-direction: row;
+      }
+      .hero__row {
+        flex-direction: row;
+        padding-bottom: 0;
+        padding-right: 0.5rem;
+        --tx: 0%; --ty: 0%;
+        --tx-end: -100%; --ty-end: 0%;
+      }
+      .hero__fade-t {
+        top: 0; bottom: 0; left: 0; right: auto;
+        width: 7rem; height: 100%;
+        background: linear-gradient(90deg, var(--mainbg), var(--mainbg-gradient));
+      }
+      .hero__fade-b {
+        top: 0; bottom: 0; left: auto; right: 0;
+        width: 7rem; height: 100%;
+        background: linear-gradient(90deg, var(--mainbg-gradient), var(--mainbg));
+      }
+    }
+    @media screen and (max-width: 767px) {
+      .hero__slider {
+        bottom: 3.5rem;
+      }
+      .hero__slider-wrap {
+        width: 100%;
+      }
+    }
+
+    /* Hero Ring */
+    .hero__carousel__wrap {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      padding-top: 2.5rem;
+    }
+    @media screen and (max-width: 767px) {
+      .hero__carousel__wrap, .hero__center {
+        bottom: 4rem;
+      }
+    }
+    .hero__carousel__in {
+      position: relative;
+      width: calc(2.9 * var(--R));
+      height: calc(2.9 * var(--R));
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero__carousel__deg {
+      position: absolute;
+      width: 0;
+      height: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero__card {
+      position: relative;
+      top: calc(-1 * var(--R));
+      width: calc(0.37 * var(--R));
+      height: calc(0.44 * var(--R));
+      border-radius: calc(0.12 * var(--R));
+      background: var(--lines);
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    .hero__photo {
+      width: calc(0.52 * var(--R));
+      height: calc(0.52 * var(--R));
+      flex: none;
+    }
+    .hero__center {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      pointer-events: none;
+      padding-top: 2.5rem;
+    }
+    .hero__title {
+      pointer-events: auto;
+      font-size: calc(var(--R) * 0.172);
+      line-height: 0.98;
+      font-weight: 400;
+      letter-spacing: -0.04em;
+      text-align: center;
+      color: var(--fonts-100);
+    }
+    @media screen and (max-width: 767px) {
+      .hero__title {
+        font-size: calc(var(--R) * 0.165);
+      }
+    }
+    .hero__title .it {
+      font-size: 1.08em;
+      letter-spacing: -0.02em;
+    }
+
+    /* Section 2: How it works */
+    .how {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      padding: 9rem 2rem 7rem;
+      border-top: 1px solid var(--lines);
+      background: var(--mainbg);
+    }
+    .how__main {
+      display: flex;
+      align-items: stretch;
+      gap: 4rem;
+    }
+    .how__left {
+      flex: none;
+      width: 33rem;
+      padding-top: 2rem;
+      display: flex;
+      flex-direction: column;
+      gap: 3.5rem;
+    }
+    .how__h2 {
+      font-size: 4.6rem;
+      line-height: 1.02;
+      font-weight: 400;
+      letter-spacing: -0.14rem;
+    }
+    .how__h2 .it {
+      font-size: 1.06em;
+    }
+    .how__right {
+      flex: 1;
+      height: 34rem;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+      -webkit-mask-image: linear-gradient(180deg, transparent 0, #000 12%, #000 88%, transparent 100%);
+    }
+    .how__col {
+      display: flex;
+      flex-direction: column;
+      animation: columnanima 24s linear infinite;
+    }
+    .how__phrase-wrap {
+      padding: 1.6rem 0 1.9rem;
+    }
+    .how__phrase {
+      font-size: 6.5rem;
+      line-height: 1;
+      font-weight: 500;
+      letter-spacing: -0.24rem;
+      white-space: nowrap;
+      opacity: 0.2;
+      transition: opacity 0.1s linear;
+    }
+    .how__phrase .it {
+      font-size: 1.06em;
+      font-weight: 400;
+      letter-spacing: -0.1rem;
+    }
+    .how__bottom {
+      display: flex;
+      align-items: flex-start;
+      margin-top: 4.5rem;
+      padding-top: 2.5rem;
+      border-top: 1px solid var(--lines);
+    }
+    .how__bottom-l {
+      width: 33rem;
+      flex: none;
+    }
+    .how__bottom-r {
+      position: relative;
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      overflow: hidden;
+    }
+    .how__marquee-row {
+      display: flex;
+      gap: 1.25rem;
+      padding-right: 1.25rem;
+      animation: marquee 24s linear infinite;
+    }
+    .how__tile {
+      width: 13rem;
+      height: 9.5rem;
+      border-radius: 1rem;
+      background: var(--secondbg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--fonts-100);
+      flex: none;
+      font-size: 1.65rem;
+      line-height: 1;
+      white-space: nowrap;
+    }
+    .how__tile.a { font-weight: 600; letter-spacing: -0.06rem; }
+    .how__tile.b { font-family: 'Instrument Serif', serif; font-style: italic; font-size: 2rem; }
+    .how__tile.c { font-weight: 400; letter-spacing: 0.32rem; text-transform: uppercase; font-size: 1.05rem; }
+    .how__tile.d { font-weight: 500; letter-spacing: -0.03rem; }
+    .how__tile.d i {
+      display: inline-block;
+      width: 0.42em;
+      height: 0.42em;
+      border-radius: 50%;
+      background: currentColor;
+      margin-right: 0.3em;
+      vertical-align: 0.12em;
+    }
+    .how__tile.e { font-weight: 300; letter-spacing: 0.05rem; }
+
+    .how__fade-l {
+      position: absolute;
+      top: 0; bottom: 0; left: 0;
+      width: 6.5rem;
+      background: linear-gradient(90deg, var(--mainbg), var(--mainbg-gradient));
+      pointer-events: none;
+      z-index: 2;
+    }
+    .how__fade-r {
+      position: absolute;
+      top: 0; bottom: 0; right: 0;
+      width: 6.5rem;
+      background: linear-gradient(-90deg, var(--mainbg), var(--mainbg-gradient));
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    @media screen and (max-width: 991px) {
+      .how__main {
+        flex-direction: column;
+      }
+      .how__left {
+        width: 100%;
+        gap: 2rem;
+        padding-bottom: 3rem;
+      }
+      .how__right {
+        flex: none;
+        height: 26rem;
+      }
+      .how__bottom {
+        flex-direction: column;
+        gap: 1.25rem;
+      }
+      .how__bottom-l {
+        width: 100%;
+      }
+    }
+    @media screen and (max-width: 767px) {
+      .how {
+        padding: 5rem 1rem;
+      }
+      .how__h2 {
+        font-size: 2.5rem;
+        letter-spacing: -0.06rem;
+      }
+      .how__right {
+        height: 15rem;
+      }
+      .how__phrase {
+        font-size: 2.6rem;
+        letter-spacing: -0.08rem;
+      }
+      .how__phrase-wrap {
+        padding: 1rem 0 1.2rem;
+      }
+      .how__bottom {
+        margin-top: 2.5rem;
+      }
+      .how__tile {
+        width: 9rem;
+        height: 6.5rem;
+        font-size: 1.15rem;
+      }
+      .how__tile.b { font-size: 1.4rem; }
+      .how__tile.c { font-size: 0.75rem; }
+      .how__marquee-row {
+        gap: 0.75rem;
+        padding-right: 0.75rem;
+      }
+    }
+
+    /* Section 3: AI Beauty Photoshoots */
+    .ai {
+      display: flex;
+      flex-direction: column;
+      width: 100%;
+      padding: 0;
+    }
+    .ai__anchor {
+      margin-top: -6.5rem;
+      padding-top: 6.5rem;
+    }
+    .ai__top {
+      position: relative;
+      width: 100%;
+      height: 70rem;
+      padding: 5rem;
+      border-radius: 3rem;
+      background: var(--secondbg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .ai__tag {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+    .ai__tag-dot {
+      width: 0.25rem;
+      height: 0.25rem;
+      border-radius: 50%;
+      background: var(--fonts-30);
+    }
+    .ai__bottom-block {
+      position: relative;
+      z-index: 2;
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+      width: 36rem;
+    }
+    .ai__bottom-block h3 {
+      width: 88%;
+    }
+    .ai__bottom-block p {
+      width: 80%;
+    }
+    .ai__spark-btn {
+      position: absolute;
+      bottom: 1rem;
+      right: 1rem;
+      z-index: 5;
+      width: 4rem;
+      height: 4rem;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #2c1433;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.2s;
+    }
+    .ai__spark-btn:hover {
+      background: var(--accent);
+      transform: scale(0.9);
+    }
+
+    /* Showcase strip (desktop) */
+    .ai__grid {
+      position: absolute;
+      top: 5rem;
+      left: 5rem;
+      right: 0;
+      height: 45rem;
+      display: flex;
+      align-items: center;
+      gap: 3.5rem;
+      pointer-events: none;
+    }
+    .ai__card-input {
+      width: 17.5rem;
+      height: 26.5rem;
+      border-radius: 2rem;
+      overflow: hidden;
+      border: 1px solid var(--mainbg);
+      flex: none;
+    }
+    .ai__card-input .ph {
+      width: 100%;
+      height: 100%;
+    }
+    .ai__arrow {
+      width: 1.5rem;
+      height: 1.5rem;
+      color: var(--fonts-30);
+      flex: none;
+    }
+    .d2 {
+      flex: 1;
+      display: flex;
+      border-radius: 2rem 0 0 2rem;
+      overflow: hidden;
+      background: var(--dash);
+      color: #f6e9f4;
+      border: 1px solid var(--mainbg);
+      border-right: none;
+      height: 100%;
+    }
+    .d2__main {
+      flex: 1;
+      min-width: 0;
+      padding: 1.6rem 0 1.6rem 1.6rem;
+      display: flex;
+      flex-direction: column;
+      gap: 1.2rem;
+    }
+    .d2__head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-right: 1.6rem;
+    }
+    .d2__head-title {
+      font-size: 1.1rem;
+      font-weight: 500;
+    }
+    .d2__head-sub {
+      font-size: 0.72rem;
+      font-weight: 400;
+      color: #f6e9f480;
+      margin-top: 0.15rem;
+    }
+    .d2__gen-btn {
+      height: 2.2rem;
+      padding: 0 1rem;
+      border-radius: 99rem;
+      background: #cbb6ea;
+      color: #2c1433;
+      font-size: 0.78rem;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      border: none;
+    }
+    .d2__grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 0.7rem;
+      padding-right: 1.6rem;
+      flex: 1;
+    }
+    .d2__cell {
+      position: relative;
+      aspect-ratio: 3/4;
+      border-radius: 1rem;
+      overflow: hidden;
+      background: #ffffff0d;
+    }
+    .d2__cell .ph {
+      position: absolute;
+      inset: 0;
+    }
+    .d2__check {
+      position: absolute;
+      top: 0.55rem;
+      right: 0.55rem;
+      width: 1.35rem;
+      height: 1.35rem;
+      border-radius: 50%;
+      background: #ffffffd9;
+      color: #2c1433;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 2;
+    }
+    .d2__cell.sel {
+      outline: 2px solid #cbb6ea;
+      outline-offset: -2px;
+    }
+    .d2__cell.sel .d2__check {
+      background: #cbb6ea;
+    }
+
+    /* Alternate collage (mobile/tablet) */
+    .ai__grid-alt {
+      display: none;
+    }
+
+    @media screen and (max-width: 991px) {
+      .ai__top {
+        height: 66rem;
+      }
+      .ai__grid {
+        display: none;
+      }
+      .ai__grid-alt {
+        display: flex;
+        position: absolute;
+        top: 9rem;
+        left: 0;
+        right: 0;
+        padding: 0 2rem;
+        gap: 1rem;
+        align-items: flex-start;
+        justify-content: center;
+      }
+      .ai__col {
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+        padding-top: 2.5rem;
+      }
+      .ai__col.md {
+        flex: 1;
+        padding-top: 0;
+      }
+      .ai__tile {
+        width: 13rem;
+        height: 13rem;
+        border-radius: 0.5rem;
+        overflow: hidden;
+        flex: none;
+      }
+      .ai__tile.t {
+        height: 18rem;
+      }
+      .ai__col.md .ai__tile:first-child {
+        width: 100%;
+        height: 24rem;
+      }
+      .ai__col.md .ai__tile:last-child {
+        width: 100%;
+        height: 13rem;
+      }
+      .ai__tile .ph {
+        width: 100%;
+        height: 100%;
+      }
+    }
+
+    @media screen and (max-width: 767px) {
+      .ai__top {
+        border-radius: 1.5rem;
+        height: 36.5rem;
+        padding: 2rem;
+      }
+      .ai__spark-btn {
+        width: 2.5rem;
+        height: 2.5rem;
+        top: 1.35rem;
+        right: 2rem;
+        bottom: auto;
+      }
+      .ai__spark-btn svg {
+        width: 1.4rem;
+        height: 1.4rem;
+      }
+      .ai__bottom-block, .ai__bottom-block h3, .ai__bottom-block p {
+        width: 100%;
+      }
+      .ai__bottom-block p br {
+        display: none;
+      }
+      .ai__grid-alt {
+        top: 5rem;
+        padding: 0 1rem;
+        gap: 0.5rem;
+      }
+      .ai__col {
+        gap: 0.5rem;
+        padding-top: 1.5rem;
+      }
+      .ai__tile {
+        width: 6rem;
+        height: 6rem;
+      }
+      .ai__tile.t {
+        height: 8.5rem;
+      }
+      .ai__col.md .ai__tile:first-child {
+        height: 13rem;
+      }
+      .ai__col.md .ai__tile:last-child {
+        display: none;
+      }
+    }
+
+    /* Section 4: Four steps */
+    .list {
+      margin-top: 8rem;
+      position: relative;
+    }
+    .list__wrap {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    }
+    .list__main__wrap {
+      position: relative;
+      overflow: hidden;
+    }
+    .list__main__slide {
+      height: 100vh;
+      width: 100%;
+      position: relative;
+    }
+    .list__content-wrap {
+      width: 100%;
+      height: 100%;
+      perspective: 250vw;
+      position: relative;
+    }
+    .list__main__content {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 7.5rem 3rem 3rem;
+      color: #3a1d43;
+      --ink: #3a1d43;
+      overflow: hidden;
+      transform-style: preserve-3d;
+      will-change: transform, opacity;
+    }
+    .list__main__content.s1 { background: linear-gradient(180deg, #f9d6c8 0%, #efcfdc 48%, #d8c5f1 100%); }
+    .list__main__content.s2 { background: linear-gradient(180deg, #f6d0d9 0%, #e7c9e8 50%, #cdb9ef 100%); }
+    .list__main__content.s3 { background: linear-gradient(180deg, #f8dccd 0%, #f1cfe0 50%, #dcc3ee 100%); }
+    .list__main__content.s4 { background: linear-gradient(180deg, #efd2ea 0%, #e2c6ef 50%, #c9b6f0 100%); }
+
+    .st__title-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+    }
+    .st__h {
+      font-size: 4.6rem;
+      line-height: 1;
+      font-weight: 400;
+      letter-spacing: -0.14rem;
+    }
+    .st__h .it {
+      font-size: 1.08em;
+      letter-spacing: -0.04rem;
+    }
+    .st__num {
+      font-size: 8.5rem;
+      line-height: 0.85;
+      font-weight: 500;
+      letter-spacing: -0.4rem;
+    }
+    .st__info-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 3rem;
+      margin-top: 2.6rem;
+    }
+    .st__tag {
+      display: flex;
+      align-items: center;
+      gap: 0.7rem;
+      font-size: 1.45rem;
+      font-weight: 500;
+      letter-spacing: -0.03rem;
+    }
+    .st__tag-dot {
+      width: 0.8rem;
+      height: 0.8rem;
+      border-radius: 50%;
+      background: #b9a4ea;
+    }
+    .st__p {
+      margin: 0.6rem 0 0 1.5rem;
+      font-size: 1.15rem;
+      line-height: 1.4;
+      color: #3a1d43b3;
+    }
+    .st__row {
+      display: flex;
+      gap: 1rem;
+      height: min(27rem, 37vh);
+      width: 100%;
+    }
+    .st__card {
+      position: relative;
+      flex: 1;
+      border-radius: 1.6rem;
+      overflow: hidden;
+      box-shadow: 0 1.5rem 3rem #3a1d431a;
+    }
+    .st__card.w {
+      flex: 1.95;
+    }
+    .st__card.pick {
+      outline: 3px solid #ffffff;
+      outline-offset: -3px;
+    }
+    .st__card .ph {
+      position: absolute;
+      inset: 0;
+    }
+    .st__cap {
+      position: absolute;
+      left: 0.8rem;
+      right: 0.8rem;
+      bottom: 0.8rem;
+      z-index: 2;
+      height: 2.8rem;
+      padding: 0 1rem;
+      border-radius: 1rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      background: #2c143352;
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      color: #ffffff;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .st__chip {
+      position: absolute;
+      top: 0.8rem;
+      left: 0.8rem;
+      z-index: 2;
+      display: flex;
+      align-items: center;
+      gap: 0.4rem;
+      padding: 0.35rem 0.7rem;
+      border-radius: 99rem;
+      background: #ffffffd9;
+      color: #3a1d43;
+      font-size: 0.72rem;
+      font-weight: 500;
+    }
+    .st__chip.spin svg {
+      animation: spinStep 1s steps(8) infinite;
+    }
+
+    @media screen and (max-width: 991px) {
+      .list__main__content {
+        padding: 6.5rem 2rem 2rem;
+      }
+      .st__h {
+        font-size: 3.6rem;
+      }
+      .st__num {
+        font-size: 6rem;
+      }
+    }
+    @media screen and (max-width: 767px) {
+      .list {
+        margin-top: 5rem;
+      }
+      .list__main__content {
+        padding: 6rem 1rem 1.25rem;
+      }
+      .st__h {
+        font-size: 2.25rem;
+        letter-spacing: -0.05rem;
+      }
+      .st__num {
+        font-size: 3.4rem;
+        letter-spacing: -0.12rem;
+      }
+      .st__info-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+        margin-top: 1.5rem;
+      }
+      .st__tag {
+        font-size: 1.05rem;
+      }
+      .st__p {
+        font-size: 0.9rem;
+        margin-top: 0.3rem;
+      }
+      .st__row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: 9rem 7rem;
+        height: auto;
+        gap: 0.5rem;
+      }
+      .st__card.w {
+        grid-column: 1 / -1;
+      }
+      .st__card:nth-child(4) {
+        display: none;
+      }
+      .st__cap {
+        height: 2.2rem;
+        font-size: 0.75rem;
+      }
+    }
+
+    /* Hover-stagger roll */
+    [hover-stagger] {
+      position: relative;
+      display: inline-block;
+      overflow: hidden;
+      mask-image: linear-gradient(#000 0 0);
+      -webkit-mask-image: linear-gradient(#000 0 0);
+      mask-size: 100% 70%;
+      -webkit-mask-size: 100% 70%;
+      mask-position: center;
+      -webkit-mask-position: center;
+      mask-repeat: no-repeat;
+      -webkit-mask-repeat: no-repeat;
+    }
+
+    /* Reduced Motion */
+    @media (prefers-reduced-motion: reduce) {
+      .preloader {
+        display: none !important;
+      }
+      .hero__row, .how__col, .how__marquee-row, .preloader__spin, .st__chip.spin svg {
+        animation: none !important;
+      }
+    }
+  </style>
+
+  <script>
+    document.documentElement.classList.add('is-loading');
+    if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+      document.documentElement.classList.remove('is-loading');
+    }
+  </script>
+
+  <!-- CDNs as specified in brief -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/split-type@0.3.4/umd/index.min.js"></script>
+</head>
+<body class="body light">
+
+  <!-- SVG Sprite -->
+  <svg style="position: absolute; width: 0; height: 0; overflow: hidden;" aria-hidden="true">
+    <defs>
+      <!-- logo -->
+      <g id="logo">
+        <rect x="20" y="2" width="16" height="16" rx="4" transform="rotate(45 28 10)" fill="currentColor" opacity="1"/>
+        <rect x="34" y="16" width="16" height="16" rx="4" transform="rotate(45 42 24)" fill="currentColor" opacity="0.55"/>
+        <rect x="6" y="16" width="16" height="16" rx="4" transform="rotate(45 14 24)" fill="currentColor" opacity="0.8"/>
+        <rect x="20" y="30" width="16" height="16" rx="4" transform="rotate(45 28 38)" fill="currentColor" opacity="0.35"/>
+      </g>
+      <!-- spin -->
+      <g id="spin">
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="1" transform="rotate(0 28 28)"/>
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="0.3" transform="rotate(45 28 28)"/>
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="0.6" transform="rotate(90 28 28)"/>
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="0.2" transform="rotate(135 28 28)"/>
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="0.4" transform="rotate(180 28 28)"/>
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="0.5" transform="rotate(225 28 28)"/>
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="0.8" transform="rotate(270 28 28)"/>
+        <rect x="25" y="4" width="6" height="14" rx="3" fill="currentColor" opacity="0.1" transform="rotate(315 28 28)"/>
+      </g>
+      <!-- spark -->
+      <g id="spark">
+        <path d="M16 4C16 10.6 10.6 16 4 16C10.6 16 16 21.4 16 28C16 21.4 21.4 16 28 16C21.4 16 16 10.6 16 4Z" fill="currentColor"/>
+        <circle cx="25" cy="25" r="2.2" fill="currentColor"/>
+        <circle cx="7" cy="7" r="1.6" fill="currentColor"/>
+      </g>
+    </defs>
+  </svg>
+
+  <!-- 6.1 Preloader -->
+  <section class="preloader" aria-hidden="true">
+    <div class="u-h1 preloader__counter" id="preloader-counter">0</div>
+    <div class="preloader__center">
+      <div class="preloader__img-box">
+        <div class="ph" data-img="pre:3"></div>
+        <div class="ph" data-img="pre:0"></div>
+        <div class="ph" data-img="pre:2"></div>
+        <div class="ph" data-img="pre:1"></div>
+      </div>
+    </div>
+    <div class="preloader__bottom">
+      <svg class="logo-svg" style="width: 3.5rem; height: 3.5rem;" viewBox="0 0 56 56"><use href="#logo"/></svg>
+      <div class="preloader__spin">
+        <svg style="width: 100%; height: 100%;" viewBox="0 0 56 56"><use href="#spin"/></svg>
+      </div>
+    </div>
+  </section>
+
+  <!-- 6.2 Header -->
+  <header class="header">
+    <div class="header__left">
+      <a href="#hero" class="header__logo-link" aria-label="Reshoot home">
+        <svg class="logo-svg" style="width: 2.6rem; height: 2.6rem;" viewBox="0 0 56 56"><use href="#logo"/></svg>
+        <span class="header__logo-text">Reshoot</span>
+      </a>
+    </div>
+
+    <div class="header__main">
+      <button class="menu-btn" aria-label="Open menu">
+        <div class="menu-btn__icon">
+          <div class="menu-btn__line line-top"></div>
+          <div class="menu-btn__line line-bottom"></div>
+        </div>
+        <div class="menu-btn__label u-btn">Menu</div>
+      </button>
+
+      <button class="theme-btn" data-theme-toggle aria-label="Toggle colour theme">
+        <svg class="sun-icon" style="width: 1rem; height: 1rem;" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linecap="round">
+          <circle cx="10" cy="10" r="3.6" />
+          <line x1="10" y1="1" x2="10" y2="3.5" />
+          <line x1="10" y1="16.5" x2="10" y2="19" />
+          <line x1="1" y1="10" x2="3.5" y2="10" />
+          <line x1="16.5" y1="10" x2="19" y2="10" />
+          <line x1="3.6" y1="3.6" x2="5.4" y2="5.4" />
+          <line x1="14.6" y1="14.6" x2="16.4" y2="16.4" />
+          <line x1="3.6" y1="16.4" x2="5.4" y2="14.6" />
+          <line x1="14.6" y1="5.4" x2="16.4" y2="3.6" />
+        </svg>
+        <svg class="moon-icon" style="width: 1rem; height: 1rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="1.3">
+          <path d="M13.5 10.5C12.5 11.5 10.8 12.2 9 12.2C5.5 12.2 2.8 9.5 2.8 6C2.8 4.2 3.5 2.5 4.5 1.5C2.5 2.2 1 4.2 1 6.5C1 10.1 3.9 13 7.5 13C9.8 13 11.8 11.5 12.5 9.5L13.5 10.5Z" />
+        </svg>
+      </button>
+
+      <div class="header__prc">
+        <div id="progress" class="u-btn">100%</div>
+      </div>
+    </div>
+
+    <div class="header__right">
+      <a href="#" class="header__signin is-header-btn" aria-label="Sign in">
+        <svg style="width: 1rem; height: 1rem;" viewBox="0 0 16 16" fill="currentColor">
+          <circle cx="8" cy="4.5" r="2.5" />
+          <path d="M2.5 13.5C2.5 10.5 5 9.5 8 9.5C11 9.5 13.5 10.5 13.5 13.5" />
+        </svg>
+      </a>
+      <a href="#list" class="header__get-started is-header-btn" hover-stagger-wrap>
+        <div hover-stagger>Get started</div>
+      </a>
+    </div>
+  </header>
+
+  <!-- 6.3 Menu Panel -->
+  <section class="menu">
+    <div class="menu__wrap-main">
+      <nav class="menu__wrap" aria-label="Site menu">
+        <div class="menu__item">
+          <div class="u-small-text-1 u-fonts-50">Menu</div>
+          <div class="menu__sublist">
+            <a href="#how" class="menu__link u-title-3" hover-stagger>How it works</a>
+            <a href="#pdp" class="menu__link u-title-3" hover-stagger>Photoshoots</a>
+            <a href="#list" class="menu__link u-title-3" hover-stagger>Four steps</a>
+          </div>
+        </div>
+
+        <div class="menu__item is-lined">
+          <div class="u-small-text-1 u-fonts-50">Other</div>
+          <div class="menu__sublist">
+            <a href="#" class="menu__link u-title-2" hover-stagger>Privacy Policy</a>
+            <a href="#" class="menu__link u-title-2" hover-stagger>Terms of Service</a>
+            <a href="#" class="menu__link u-title-2" hover-stagger>Cookie Policy</a>
+          </div>
+        </div>
+
+        <div class="menu__item is-last">
+          <div class="u-small-text-1 u-fonts-50">Social media</div>
+          <div class="menu__row">
+            <a href="#" class="menu__link u-title-2" hover-stagger>Instagram</a>
+            <a href="#" class="menu__link u-title-2" hover-stagger>Pinterest</a>
+            <a href="#" class="menu__link u-title-2" hover-stagger>Youtube</a>
+          </div>
+        </div>
+
+        <div class="menu__item is-auth">
+          <a href="#list" class="header__get-started" hover-stagger-wrap>
+            <div hover-stagger>Get started</div>
+          </a>
+        </div>
+      </nav>
+    </div>
+  </section>
+
+  <!-- Main Content Wrap -->
+  <main class="page">
+
+    <!-- 6.4 Section 1: Hero -->
+    <section id="hero" class="hero">
+      <!-- Carousel Ring -->
+      <div class="hero__carousel__wrap" aria-hidden="true">
+        <div class="hero__carousel__in">
+          <div class="hero__carousel__deg" data-deg="0"><div class="hero__card"><div class="hero__photo ph" data-img="ringa:1"></div></div></div>
+          <div class="hero__carousel__deg" data-deg="45"><div class="hero__card"><div class="hero__photo ph" data-img="ringa:0"></div></div></div>
+          <div class="hero__carousel__deg" data-deg="90"><div class="hero__card"><div class="hero__photo ph" data-img="ringb:1"></div></div></div>
+          <div class="hero__carousel__deg" data-deg="135"><div class="hero__card"><div class="hero__photo ph" data-img="ringa:2"></div></div></div>
+          <div class="hero__carousel__deg" data-deg="180"><div class="hero__card"><div class="hero__photo ph" data-img="ringa:3"></div></div></div>
+          <div class="hero__carousel__deg" data-deg="225"><div class="hero__card"><div class="hero__photo ph" data-img="ringb:0"></div></div></div>
+          <div class="hero__carousel__deg" data-deg="270"><div class="hero__card"><div class="hero__photo ph" data-img="ringb:3"></div></div></div>
+          <div class="hero__carousel__deg" data-deg="315"><div class="hero__card"><div class="hero__photo ph" data-img="ringb:2"></div></div></div>
+        </div>
+      </div>
+
+      <!-- Headline inside ring -->
+      <div class="hero__center">
+        <h1 class="hero__title" data-hero-text>
+          Your shelves,<br>
+          <span class="it">radiantly</span> re-shot.
+        </h1>
+      </div>
+
+      <!-- Chip list -->
+      <div class="hero__slider" aria-hidden="true">
+        <div class="hero__slider-wrap">
+          <div class="hero__fade-t"></div>
+          <div class="hero__fade-b"></div>
+          <div class="hero__row">
+            <div class="hero__chip">Jars</div>
+            <div class="hero__chip">UGC</div>
+            <div class="hero__chip">Vanity flatlays</div>
+            <div class="hero__chip">Ads</div>
+            <div class="hero__chip">Reviews</div>
+            <div class="hero__chip">Skin closeup</div>
+          </div>
+          <div class="hero__row" aria-hidden="true">
+            <div class="hero__chip">Jars</div>
+            <div class="hero__chip">UGC</div>
+            <div class="hero__chip">Vanity flatlays</div>
+            <div class="hero__chip">Ads</div>
+            <div class="hero__chip">Reviews</div>
+            <div class="hero__chip">Skin closeup</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Bottom Bar -->
+      <div class="hero__wrap">
+        <div class="hero__cell"></div>
+        <div class="hero__copy u-small-text-2" data-hero-text>
+          ©<span data-current-year>2026</span>
+        </div>
+        <div class="hero__cell is-end">
+          <a href="#how" class="u-small-text-2" data-hero-text>scroll down</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6.5 Section 2: How it works -->
+    <section id="how" class="how">
+      <div class="how__main">
+        <div class="how__left">
+          <div class="u-tag">How it works</div>
+          <h2 class="how__h2" data-flash>
+            From your <span class="it">idea</span><br>
+            to on-brand<br>
+            images.
+          </h2>
+        </div>
+        <div class="how__right">
+          <div class="how__col">
+            <div class="how__phrase-wrap"><div class="how__phrase">Shoots images</div></div>
+            <div class="how__phrase-wrap"><div class="how__phrase">Makes motion</div></div>
+            <div class="how__phrase-wrap"><div class="how__phrase">Keeps the <span class="it">glow</span></div></div>
+          </div>
+          <div class="how__col" aria-hidden="true">
+            <div class="how__phrase-wrap"><div class="how__phrase">Shoots images</div></div>
+            <div class="how__phrase-wrap"><div class="how__phrase">Makes motion</div></div>
+            <div class="how__phrase-wrap"><div class="how__phrase">Keeps the <span class="it">glow</span></div></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="how__bottom">
+        <div class="how__bottom-l">
+          <div class="u-tag">Trusted by</div>
+        </div>
+        <div class="how__bottom-r">
+          <div class="how__fade-r"></div>
+          <div class="how__fade-l"></div>
+          <div class="how__marquee-row">
+            <div class="how__tile a">glowly</div>
+            <div class="how__tile b">Kivra</div>
+            <div class="how__tile c">Noora</div>
+            <div class="how__tile d"><i></i>velēn</div>
+            <div class="how__tile e">oriel.</div>
+            <div class="how__tile b">Maisy &amp; Co</div>
+            <div class="how__tile a">softa</div>
+            <div class="how__tile c">Lirae</div>
+            <div class="how__tile d"><i></i>dewlab</div>
+            <div class="how__tile e">petalé</div>
+          </div>
+          <div class="how__marquee-row" aria-hidden="true">
+            <div class="how__tile a">glowly</div>
+            <div class="how__tile b">Kivra</div>
+            <div class="how__tile c">Noora</div>
+            <div class="how__tile d"><i></i>velēn</div>
+            <div class="how__tile e">oriel.</div>
+            <div class="how__tile b">Maisy &amp; Co</div>
+            <div class="how__tile a">softa</div>
+            <div class="how__tile c">Lirae</div>
+            <div class="how__tile d"><i></i>dewlab</div>
+            <div class="how__tile e">petalé</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6.6 Section 3: AI Beauty Photoshoots -->
+    <section class="ai">
+      <div id="pdp" class="ai__anchor">
+        <div class="ai__top">
+          <a href="#list" class="ai__spark-btn" aria-label="Start a beauty photoshoot">
+            <svg style="width: 2rem; height: 2rem;" viewBox="0 0 32 32"><use href="#spark"/></svg>
+          </a>
+
+          <div class="ai__tag">
+            <div class="ai__tag-dot"></div>
+            <div class="u-title-2">AI Beauty Photoshoots</div>
+          </div>
+
+          <!-- Showcase Strip (Desktop) -->
+          <div class="ai__grid">
+            <div class="ai__card-input">
+              <div class="ph" data-img="base:0"></div>
+            </div>
+
+            <svg class="ai__arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="4" y1="12" x2="19" y2="12" />
+              <polyline points="13 6 19 12 13 18" />
+            </svg>
+
+            <div class="d2">
+              <div class="d2__main">
+                <div class="d2__head">
+                  <div>
+                    <div class="d2__head-title">Generated photos</div>
+                    <div class="d2__head-sub">Lunelle Serum · 10 of 24</div>
+                  </div>
+                  <button class="d2__gen-btn">
+                    <span>✦</span> Generate more
+                  </button>
+                </div>
+
+                <div class="d2__grid">
+                  <div class="d2__cell sel">
+                    <div class="ph" data-img="styled:0"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell">
+                    <div class="ph" data-img="studio:0"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell">
+                    <div class="ph" data-img="styled:1"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell sel">
+                    <div class="ph" data-img="life:1"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell">
+                    <div class="ph" data-img="styled2:3"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell">
+                    <div class="ph" data-img="ringa:1"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell sel">
+                    <div class="ph" data-img="styled2:0"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell">
+                    <div class="ph" data-img="life:3"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell">
+                    <div class="ph" data-img="styled:4"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                  <div class="d2__cell">
+                    <div class="ph" data-img="studio:1"></div>
+                    <div class="d2__check"><svg style="width: 0.75rem; height: 0.75rem;" viewBox="0 0 16 16" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 8.5 6.5 12 13 4"/></svg></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Alternate Collage (Tablet & Mobile) -->
+          <div class="ai__grid-alt">
+            <div class="ai__col">
+              <div class="ai__tile t"><div class="ph" data-img="studio:1"></div></div>
+              <div class="ai__tile"><div class="ph" data-img="styled:0"></div></div>
+            </div>
+            <div class="ai__col md">
+              <div class="ai__tile"><div class="ph" data-img="ringa:1"></div></div>
+              <div class="ai__tile"><div class="ph" data-img="life:1"></div></div>
+            </div>
+            <div class="ai__col">
+              <div class="ai__tile t"><div class="ph" data-img="studio:2"></div></div>
+              <div class="ai__tile"><div class="ph" data-img="styled2:3"></div></div>
+            </div>
+          </div>
+
+          <!-- Title Block -->
+          <div class="ai__bottom-block">
+            <h3 class="u-h3" data-flash>
+              Campaign-grade,<br>with no photo crew.
+            </h3>
+            <p class="u-body-2 u-fonts-64">
+              Upload one serum and get every angle, glow, light and mood<br>ready for PDPs and launches, no studio and no retouching.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 6.7 Section 4: Four steps -->
+    <section class="list">
+      <div id="list" class="list__wrap">
+        <div class="list__main__wrap">
+
+          <!-- Slide 1 -->
+          <div class="list__main__slide">
+            <div class="list__content-wrap">
+              <div class="list__main__content s1">
+                <div class="st__top">
+                  <div class="st__title-row">
+                    <h3 class="st__h" data-flash-stb>
+                      Add products<br>and <span class="it">looks.</span>
+                    </h3>
+                    <div class="st__num" data-flash-stb>01</div>
+                  </div>
+                  <div class="st__info-grid">
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>20+ model presets</div>
+                      <p class="st__p">Stack your products, faces<br>and skin tones side by side.</p>
+                    </div>
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>Multiple pose choices</div>
+                      <p class="st__p">Front, profile and close-up<br>poses from a single upload.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="st__row">
+                  <div class="st__card w">
+                    <div class="ph" data-img="prod:0"></div>
+                    <div class="st__cap"><span>Lunelle skincare set</span><span>&rarr;</span></div>
+                  </div>
+                  <div class="st__card pick">
+                    <div class="ph" data-img="faces:1"></div>
+                    <div class="st__chip">Selected</div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="faces:0"></div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="faces:2"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 2 -->
+          <div class="list__main__slide">
+            <div class="list__content-wrap">
+              <div class="list__main__content s2">
+                <div class="st__top">
+                  <div class="st__title-row">
+                    <h3 class="st__h" data-flash-stb>
+                      AI generates<br><span class="it">options.</span>
+                    </h3>
+                    <div class="st__num" data-flash-stb>02</div>
+                  </div>
+                  <div class="st__info-grid">
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>Mood &amp; lighting variations</div>
+                      <p class="st__p">Dream up new scenes,<br>moods and setups.</p>
+                    </div>
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>Multiple visual directions</div>
+                      <p class="st__p">Explore different looks,<br>textures and styles.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="st__row">
+                  <div class="st__card w">
+                    <div class="ph" data-img="styled:0"></div>
+                    <div class="st__chip spin">
+                      <svg style="width: 0.8rem; height: 0.8rem;" viewBox="0 0 56 56"><use href="#spin"/></svg>
+                      <span>Generating&hellip;</span>
+                    </div>
+                    <div class="st__cap"><span>Lunelle Serum Collection</span><span>&rarr;</span></div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="styled:1"></div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="ringa:1"></div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="styled2:1"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 3 -->
+          <div class="list__main__slide">
+            <div class="list__content-wrap">
+              <div class="list__main__content s3">
+                <div class="st__top">
+                  <div class="st__title-row">
+                    <h3 class="st__h" data-flash-stb>
+                      Choose your<br><span class="it">favorite.</span>
+                    </h3>
+                    <div class="st__num" data-flash-stb>03</div>
+                  </div>
+                  <div class="st__info-grid">
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>Side-by-side comparison</div>
+                      <p class="st__p">Keep the versions you love<br>from every new batch.</p>
+                    </div>
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>Easy selection &amp; review</div>
+                      <p class="st__p">Tap to keep, swipe to drop,<br>share picks with your team.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="st__row">
+                  <div class="st__card w">
+                    <div class="ph" data-img="styled2:0"></div>
+                    <div class="st__cap"><span>Travertine &middot; picked</span><span>&rarr;</span></div>
+                  </div>
+                  <div class="st__card pick">
+                    <div class="ph" data-img="life:0" data-fy="0.3"></div>
+                    <div class="st__chip">Kept</div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="styled2:2"></div>
+                  </div>
+                  <div class="st__card pick">
+                    <div class="ph" data-img="styled:4"></div>
+                    <div class="st__chip">Kept</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Slide 4 -->
+          <div class="list__main__slide">
+            <div class="list__content-wrap">
+              <div class="list__main__content s4">
+                <div class="st__top">
+                  <div class="st__title-row">
+                    <h3 class="st__h" data-flash-stb>
+                      Ready-made<br>assets <span class="it">export.</span>
+                    </h3>
+                    <div class="st__num" data-flash-stb>04</div>
+                  </div>
+                  <div class="st__info-grid">
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>Optimized for PDP &amp; ads</div>
+                      <p class="st__p">Export every look right to<br>your store, ads, and reels.</p>
+                    </div>
+                    <div>
+                      <div class="st__tag"><span class="st__tag-dot"></span>One-click export</div>
+                      <p class="st__p">Every size and crop,<br>sent in a single click.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="st__row">
+                  <div class="st__card w">
+                    <div class="ph" data-img="life:2" data-fy="0.35"></div>
+                    <div class="st__cap"><span>Summer glow campaign &middot; 24 assets</span><span>&darr;</span></div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="studio:1" data-fy="0.2"></div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="base:1"></div>
+                  </div>
+                  <div class="st__card">
+                    <div class="ph" data-img="pre:1" data-fy="0.3"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+
+  </main>
+
+  <!-- Behaviour Script -->
+  <script>
+    (function() {
+      gsap.registerPlugin(ScrollTrigger);
+
+      const BASE = 'https://d8j0ntlcm91z4.cloudfront.net/user_38xzZboKViGWJOttwIXH07lWA1P/';
+      const IN = 8;
+      const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+      const S = {
+        pre: {
+          file: 'hf_20261111_212221_aa358f68-9766-4be1-a25b-4c2a7d766643.png',
+          W: 1360, H: 2048, w: 1200, cols: 2, rows: 2,
+          xs: [{start: 0, end: 673}, {start: 687, end: 1360}],
+          ys: [{start: 0, end: 1015}, {start: 1029, end: 2048}]
+        },
+        ringa: {
+          file: 'hf_20261111_212220_9be89454-e5c2-400f-a0c3-ed24fc218fbe.png',
+          W: 2048, H: 2048, w: 1400, cols: 2, rows: 2,
+          xs: [{start: 0, end: 1014}, {start: 1034, end: 2048}],
+          ys: [{start: 0, end: 1016}, {start: 1032, end: 2048}]
+        },
+        ringb: {
+          file: 'hf_20261111_212220_40759068-fc82-4598-8924-5f2e465e2e2e.png',
+          W: 2048, H: 2048, w: 1400, cols: 2, rows: 2,
+          xs: [{start: 0, end: 1016}, {start: 1032, end: 2048}],
+          ys: [{start: 0, end: 1014}, {start: 1030, end: 2048}]
+        },
+        studio: {
+          file: 'hf_20261111_212220_cd01507d-7e12-4101-b742-bc86e8f02f6a.png',
+          W: 1360, H: 2048, w: 1360, cols: 2, rows: 2,
+          xs: [{start: 0, end: 676}, {start: 685, end: 1360}],
+          ys: [{start: 0, end: 1019}, {start: 1029, end: 2048}]
+        },
+        life: {
+          file: 'hf_20261111_212221_aaa82e12-4ddb-46bd-9bd9-8e5189f0d06b.png',
+          W: 1360, H: 2048, w: 1360, cols: 2, rows: 2,
+          xs: [{start: 0, end: 672}, {start: 688, end: 1360}],
+          ys: [{start: 0, end: 1016}, {start: 1032, end: 2048}]
+        },
+        base: {
+          file: 'hf_20261111_212221_5918bfdd-271e-420d-87ac-6646f8992931.png',
+          W: 2048, H: 1360, w: 2048, cols: 3, rows: 2,
+          xs: [{start: 0, end: 674}, {start: 687, end: 1361}, {start: 1374, end: 2048}],
+          ys: [{start: 0, end: 673}, {start: 684, end: 1360}]
+        },
+        styled: {
+          file: 'hf_20261111_212221_99aed2e6-df64-4910-9867-29f8a8ae31c2.png',
+          W: 2048, H: 1360, w: 2048, cols: 3, rows: 2,
+          xs: [{start: 0, end: 677}, {start: 685, end: 1365}, {start: 1373, end: 2048}],
+          ys: [{start: 0, end: 676}, {start: 684, end: 1360}]
+        },
+        styled2: {
+          file: 'hf_20261111_212328_615deead-364f-4afb-82e6-ee7589e09dfb.png',
+          W: 2048, H: 2048, w: 2048, cols: 2, rows: 2,
+          xs: [{start: 0, end: 1017}, {start: 1031, end: 2048}],
+          ys: [{start: 0, end: 1017}, {start: 1031, end: 2048}]
+        },
+        prod: {
+          file: 'hf_20261111_212131_dac765cc-9d5d-4b23-b99c-9c838e37b5dc.png',
+          W: 2048, H: 1360, w: 1600, cols: 1, rows: 1,
+          xs: [{start: 0, end: 2048}],
+          ys: [{start: 0, end: 1360}]
+        },
+        faces: {
+          file: 'hf_20261111_212222_0554bb8d-aacd-4479-9b61-d1c200034665.png',
+          W: 2048, H: 1360, w: 1600, cols: 3, rows: 2,
+          xs: [{start: 0, end: 675}, {start: 687, end: 1361}, {start: 1373, end: 2048}],
+          ys: [{start: 0, end: 674}, {start: 686, end: 1360}]
+        }
+      };
+
+      function proxyUrl(sheet) {
+        return 'https://images.higgs.ai/?default=1&output=webp&url=' +
+          encodeURIComponent(BASE + sheet.file) +
+          '&w=' + sheet.w + '&q=85';
+      }
+
+      // 2.4 Cover-crop math
+      function fit(el) {
+        const key = el.dataset.img;
+        if (!key) return;
+        const [k, nStr] = key.split(':');
+        const sheet = S[k];
+        if (!sheet) return;
+        const n = parseInt(nStr, 10) || 0;
+        const col = n % sheet.cols;
+        const row = Math.floor(n / sheet.cols);
+
+        const x0 = sheet.xs[col].start + IN;
+        const x1 = sheet.xs[col].end - IN;
+        const y0 = sheet.ys[row].start + IN;
+        const y1 = sheet.ys[row].end - IN;
+        const cw = x1 - x0;
+        const ch = y1 - y0;
+
+        const ew = el.offsetWidth;
+        const eh = el.offsetHeight;
+        if (!ew || !eh) return;
+
+        const scale = Math.max(ew / cw, eh / ch);
+        const fx = el.dataset.fx ? parseFloat(el.dataset.fx) : 0.5;
+        const fy = el.dataset.fy ? parseFloat(el.dataset.fy) : 0.5;
+
+        const bw = sheet.W * scale;
+        const bh = sheet.H * scale;
+        const bx = -(x0 * scale + (cw * scale - ew) * fx);
+        const by = -(y0 * scale + (ch * scale - eh) * fy);
+
+        el.style.backgroundSize = `${bw}px ${bh}px`;
+        el.style.backgroundPosition = `${bx}px ${by}px`;
+      }
+
+      const ro = new ResizeObserver((entries) => {
+        for (const entry of entries) {
+          fit(entry.target);
+        }
+      });
+
+      document.querySelectorAll('[data-img]').forEach((el) => {
+        const [k] = el.dataset.img.split(':');
+        const sheet = S[k];
+        if (sheet) {
+          el.style.backgroundImage = `url("${proxyUrl(sheet)}")`;
+          fit(el);
+          ro.observe(el);
+        }
+      });
+
+      // 8.11 Word-split helper
+      function splitIntoWords(el, wrapClass) {
+        const walker = document.createTreeWalker(el, NodeFilter.SHOW_TEXT, null, false);
+        const textNodes = [];
+        let node;
+        while (node = walker.nextNode()) {
+          if (node.nodeValue.trim()) textNodes.push(node);
+        }
+
+        const spans = [];
+        textNodes.forEach((tn) => {
+          const parent = tn.parentNode;
+          const isF50 = parent.closest('.u-fonts-50');
+          const finalOp = isF50 ? 0.5 : 1;
+          const words = tn.nodeValue.split(/(\s+)/);
+          const frag = document.createDocumentFragment();
+
+          words.forEach((w) => {
+            if (/^\s+$/.test(w)) {
+              frag.appendChild(document.createTextNode(w));
+            } else if (w) {
+              const span = document.createElement('span');
+              span.className = wrapClass;
+              span.textContent = w;
+              span.dataset.finalOpacity = finalOp;
+              frag.appendChild(span);
+              spans.push(span);
+            }
+          });
+          parent.replaceChild(frag, tn);
+        });
+        return spans;
+      }
+
+      // 8.1 Preloader
+      let preloaderDone = false;
+      function runPreloader() {
+        if (preloaderDone) return;
+        preloaderDone = true;
+
+        if (reducedMotion) {
+          document.documentElement.classList.remove('is-loading');
+          const pre = document.querySelector('.preloader');
+          if (pre) pre.style.display = 'none';
+          document.dispatchEvent(new CustomEvent('preloader:done'));
+          return;
+        }
+
+        let isReturning = false;
+        try {
+          isReturning = localStorage.getItem('reshoot_preloader_v1') === '1';
+          localStorage.setItem('reshoot_preloader_v1', '1');
+        } catch(e) {}
+
+        const sp = isReturning ? 0.2 : 1;
+        window.scrollTo(0, 0);
+        document.documentElement.style.overflow = 'hidden';
+        document.body.style.overflow = 'hidden';
+
+        const preloader = document.querySelector('.preloader');
+        const counterEl = document.getElementById('preloader-counter');
+        const imgStack = document.querySelectorAll('.preloader__img-box .ph');
+
+        let imgIdx = 0;
+        const imgInterval = setInterval(() => {
+          imgStack.forEach((img, i) => {
+            img.style.zIndex = i === imgIdx ? '9' : '1';
+          });
+          imgIdx = (imgIdx + 1) % 4;
+        }, 500 * sp);
+
+        const children = preloader.querySelectorAll('.preloader__counter, .preloader__center, .preloader__bottom');
+        gsap.set(children, { visibility: 'visible' });
+
+        const tl = gsap.timeline();
+        tl.fromTo(children, {
+          opacity: 0,
+          filter: 'blur(20px)'
+        }, {
+          opacity: 1,
+          filter: 'blur(0px)',
+          duration: 1 * sp,
+          stagger: 0.05 * sp,
+          ease: 'power2.out'
+        });
+
+        if (isReturning) {
+          counterEl.textContent = 'Synced';
+          gsap.fromTo(counterEl, {
+            opacity: 0, y: 8, filter: 'blur(6px)'
+          }, {
+            opacity: 1, y: 0, filter: 'blur(0px)',
+            duration: 0.2, delay: 0.1, ease: 'power2.out'
+          });
+        } else {
+          const steps = [0, 17, 35, 58, 76, 89, 100];
+          const countObj = { val: 0 };
+          const cTl = gsap.timeline({ delay: 0.5 });
+          for (let i = 1; i < steps.length; i++) {
+            cTl.to(countObj, {
+              val: steps[i],
+              duration: 2.5 / 6,
+              ease: 'power2.out',
+              onUpdate: () => {
+                counterEl.textContent = Math.round(countObj.val);
+              }
+            });
+          }
+        }
+
+        tl.to(children, {
+          opacity: 0,
+          filter: 'blur(20px)',
+          duration: 1 * sp,
+          stagger: 0.05 * sp,
+          ease: 'power2.in',
+          delay: 2.5 * sp
+        });
+
+        tl.to(preloader, {
+          opacity: 0,
+          duration: 0.6 * sp,
+          ease: 'power2.in',
+          onComplete: () => {
+            document.documentElement.classList.remove('is-loading');
+            preloader.style.visibility = 'hidden';
+            clearInterval(imgInterval);
+            document.dispatchEvent(new CustomEvent('preloader:done'));
+            gsap.delayedCall(1 * sp, () => {
+              document.documentElement.style.overflow = '';
+              document.body.style.overflow = '';
+            });
+          }
+        });
+      }
+
+      if (document.readyState === 'complete') {
+        runPreloader();
+      } else {
+        window.addEventListener('load', runPreloader);
+      }
+      setTimeout(runPreloader, 8000);
+
+      // Hero starting states
+      if (!reducedMotion) {
+        gsap.set('[data-hero-text]', { opacity: 0 });
+        gsap.set('.header__logo-link, .header__main, .menu__wrap-main, .is-header-btn', {
+          opacity: 0, y: 24, scale: 0.9
+        });
+        gsap.set('.hero__card', { opacity: 0, scale: 0.5 });
+        gsap.set('.hero__chip', { opacity: 0, x: 40, scale: 0.9 });
+      }
+
+      // Hero Intro on "preloader:done"
+      document.addEventListener('preloader:done', () => {
+        if (reducedMotion) return;
+
+        const flashA = getComputedStyle(document.body).getPropertyValue('--flash-a').trim() || '#b14bd9';
+        const flashB = getComputedStyle(document.body).getPropertyValue('--flash-b').trim() || '#f28db5';
+        const finalInk = getComputedStyle(document.body).getPropertyValue('--fonts-100').trim() || '#3a1d43';
+
+        const introTl = gsap.timeline();
+
+        // 1. Text words flash
+        document.querySelectorAll('[data-hero-text]').forEach((el) => {
+          const spans = splitIntoWords(el, 'hero-flash-word');
+          gsap.set(spans, { opacity: 0, color: flashA });
+          gsap.set(el, { opacity: 1 });
+
+          spans.forEach((span, idx) => {
+            const finalOp = parseFloat(span.dataset.finalOpacity) || 1;
+            introTl.to(span, {
+              keyframes: [
+                { opacity: 1, color: flashA, duration: 0.05 },
+                { color: flashB, duration: 0.05 },
+                { opacity: finalOp, color: finalInk, duration: 0.05 }
+              ],
+              ease: 'power2.out'
+            }, idx * 0.2);
+          });
+        });
+
+        // 2. Header logo
+        introTl.to('.header__logo-link', {
+          opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power2.out'
+        }, 0.10);
+
+        // 3. Header pill + menu holder
+        introTl.to('.header__main, .menu__wrap-main', {
+          opacity: 1, y: 0, scale: 1, duration: 0.6, ease: 'power2.out'
+        }, 0.20);
+
+        // 4. Ring cards
+        introTl.to('.hero__card', {
+          opacity: 1, scale: 1, duration: 0.5, stagger: 0.12, ease: 'power2.out'
+        }, 0.30);
+
+        // 5. Header buttons & chips
+        introTl.to('.is-header-btn', {
+          opacity: 1, y: 0, scale: 1, duration: 0.5, ease: 'power2.out'
+        }, 0.35);
+
+        introTl.to('.hero__chip', {
+          opacity: 1, x: 0, scale: 1, duration: 0.5, stagger: 0.12, ease: 'power2.out'
+        }, 0.35);
+      });
+
+      // 8.4 Ring Rotation
+      const degElements = document.querySelectorAll('.hero__carousel__deg');
+      degElements.forEach((degEl) => {
+        const d = parseFloat(degEl.dataset.deg) || 0;
+        gsap.set(degEl, { rotate: d });
+        const photo = degEl.querySelector('.hero__photo');
+        if (photo) gsap.set(photo, { rotate: -d });
+      });
+
+      if (!reducedMotion) {
+        gsap.to('.hero__carousel__in', {
+          rotate: 360, duration: 32, ease: 'none', repeat: -1
+        });
+        degElements.forEach((degEl) => {
+          const photo = degEl.querySelector('.hero__photo');
+          if (photo) {
+            gsap.to(photo, {
+              rotate: '-=360', duration: 32, ease: 'none', repeat: -1
+            });
+          }
+        });
+      }
+
+      // 8.6 Menu Open / Close
+      const menuBtn = document.querySelector('.menu-btn');
+      const menuWrap = document.querySelector('.menu__wrap');
+      const menuLabel = document.querySelector('.menu-btn__label');
+      const lineTop = document.querySelector('.line-top');
+      const lineBottom = document.querySelector('.line-bottom');
+      const menuItems = document.querySelectorAll('.menu__item');
+
+      let isMenuOpen = false;
+      const isMobile = window.innerWidth <= 767;
+
+      // Collapsed state
+      gsap.set(menuWrap, {
+        width: isMobile ? '15.5rem' : '15rem',
+        height: '2.7rem',
+        y: isMobile ? '0.5rem' : '1.25rem',
+        padding: 0,
+        overflow: 'hidden'
+      });
+      gsap.set(lineTop, { y: '-0.2rem' });
+      gsap.set(lineBottom, { y: '0.2rem' });
+
+      function scrambleText(target, newText) {
+        let frame = 0;
+        const T = 20;
+        const oldText = target.textContent;
+        const L = Math.max(oldText.length, newText.length);
+        const interval = setInterval(() => {
+          frame++;
+          let out = '';
+          for (let i = 0; i < L; i++) {
+            if (i < newText.length && (frame / T) > (i / L)) {
+              out += newText[i];
+            } else {
+              out += '•';
+            }
+          }
+          target.textContent = out;
+          if (frame >= T) {
+            clearInterval(interval);
+            target.textContent = newText;
+          }
+        }, 20);
+      }
+
+      function getOpenDimensions() {
+        const w = window.innerWidth;
+        if (w <= 767) return { width: '16.2rem', height: '39rem', padding: '5rem 1rem 1rem 1rem' };
+        if (w <= 991) return { width: '16.2rem', height: '39rem', padding: '5rem 1rem 1rem 1rem' };
+        return { width: '18rem', height: '39rem', padding: '6.25rem 1.25rem 2.5rem 1.25rem' };
+      }
+
+      function openMenu() {
+        isMenuOpen = true;
+        menuBtn.classList.add('is-open');
+        menuBtn.setAttribute('aria-label', 'Close menu');
+        scrambleText(menuLabel, 'Close');
+
+        gsap.to(lineTop, { y: '0.025rem', rotate: 45, duration: 0.25, ease: 'power2.out' });
+        gsap.to(lineBottom, { y: '-0.025rem', rotate: -45, duration: 0.25, ease: 'power2.out' });
+
+        const dims = getOpenDimensions();
+        const tl = gsap.timeline();
+        tl.to(menuWrap, {
+          y: '0rem',
+          width: dims.width,
+          height: dims.height,
+          padding: dims.padding,
+          duration: 0.4,
+          ease: 'power2.out'
+        });
+        tl.to(menuItems, {
+          opacity: 1, duration: 0.3, stagger: 0.05, ease: 'power2.out'
+        }, '-=0.2');
+      }
+
+      function closeMenu() {
+        isMenuOpen = false;
+        menuBtn.classList.remove('is-open');
+        menuBtn.setAttribute('aria-label', 'Open menu');
+        scrambleText(menuLabel, 'Menu');
+
+        gsap.to(lineTop, { y: '-0.2rem', rotate: 0, duration: 0.25, ease: 'power2.out' });
+        gsap.to(lineBottom, { y: '0.2rem', rotate: 0, duration: 0.25, ease: 'power2.out' });
+
+        gsap.to(Array.from(menuItems).reverse(), {
+          opacity: 0, duration: 0.2, stagger: 0.05, ease: 'power2.in'
+        });
+
+        const isMob = window.innerWidth <= 767;
+        gsap.to(menuWrap, {
+          width: isMob ? '15.5rem' : '15rem',
+          height: '2.7rem',
+          y: isMob ? '0.5rem' : '1.25rem',
+          padding: 0,
+          duration: 0.3,
+          ease: 'power2.in'
+        });
+      }
+
+      menuBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (isMenuOpen) closeMenu();
+        else openMenu();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!isMenuOpen) return;
+        if (!menuWrap.contains(e.target) && !menuBtn.contains(e.target)) {
+          closeMenu();
+        }
+      });
+
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && isMenuOpen) closeMenu();
+      });
+
+      menuItems.forEach((item) => {
+        item.addEventListener('click', () => {
+          if (isMenuOpen) closeMenu();
+        });
+      });
+
+      window.addEventListener('resize', () => {
+        if (isMenuOpen) {
+          const dims = getOpenDimensions();
+          gsap.to(menuWrap, { width: dims.width, height: dims.height, padding: dims.padding, duration: 0.2 });
+        } else {
+          const isMob = window.innerWidth <= 767;
+          gsap.set(menuWrap, {
+            width: isMob ? '15.5rem' : '15rem',
+            y: isMob ? '0.5rem' : '1.25rem'
+          });
+        }
+      });
+
+      // 8.7 Hover-stagger roll
+      if (!reducedMotion) {
+        document.querySelectorAll('[hover-stagger]').forEach((el) => {
+          const wrap = el.closest('[hover-stagger-wrap]') || el;
+          const text = el.textContent.trim();
+          el.innerHTML = '';
+
+          const s1 = document.createElement('span');
+          s1.textContent = text;
+          s1.style.display = 'inline-block';
+
+          const s2 = document.createElement('span');
+          s2.textContent = text;
+          s2.style.display = 'inline-block';
+          s2.style.position = 'absolute';
+          s2.style.left = '0';
+          s2.style.top = '100%';
+
+          el.appendChild(s1);
+          el.appendChild(s2);
+
+          const split1 = new SplitType(s1, { types: 'chars' });
+          const split2 = new SplitType(s2, { types: 'chars' });
+
+          const rollTl = gsap.timeline({ paused: true, defaults: { duration: 0.2, stagger: 0.02, ease: 'power1.inOut' } });
+          rollTl.to(split1.chars, { yPercent: -100, opacity: 1 }, 0);
+          rollTl.to(split2.chars, { yPercent: -100, opacity: 1 }, 0);
+
+          wrap.addEventListener('mouseenter', () => rollTl.restart());
+          wrap.addEventListener('mouseleave', () => rollTl.reverse());
+        });
+      }
+
+      // 8.8 Scroll percentage
+      const progressEl = document.getElementById('progress');
+      function updateProgress() {
+        const m = document.documentElement.scrollHeight - window.innerHeight;
+        const val = m <= 0 ? 0 : Math.min(100, Math.max(0, (window.scrollY / m) * 100));
+        progressEl.textContent = Math.round(val) + '%';
+        requestAnimationFrame(updateProgress);
+      }
+      requestAnimationFrame(updateProgress);
+
+      // 8.9 Theme toggle
+      const themeBtn = document.querySelector('[data-theme-toggle]');
+      let isLight = true;
+      try {
+        const saved = localStorage.getItem('reshoot-light');
+        if (saved !== null) isLight = saved === 'true';
+      } catch(e) {}
+
+      function applyTheme(on, isInit) {
+        isLight = on;
+        document.body.classList.toggle('light', on);
+        try { localStorage.setItem('reshoot-light', on ? 'true' : 'false'); } catch(e) {}
+        themeBtn.setAttribute('aria-pressed', (!on).toString());
+        if (!isInit) {
+          window.dispatchEvent(new CustomEvent('theme:changed', { detail: on }));
+        }
+      }
+      applyTheme(isLight, true);
+
+      themeBtn.addEventListener('click', () => {
+        applyTheme(!isLight, false);
+      });
+
+      // Current Year
+      const yearSpan = document.querySelector('[data-current-year]');
+      if (yearSpan) yearSpan.textContent = new Date().getFullYear();
+
+      // 8.10 Scroll word flashes
+      function setupScrollFlashes() {
+        const flashA = getComputedStyle(document.body).getPropertyValue('--flash-a').trim() || '#b14bd9';
+        const flashB = getComputedStyle(document.body).getPropertyValue('--flash-b').trim() || '#f28db5';
+        const finalInkDefault = getComputedStyle(document.body).getPropertyValue('--fonts-100').trim() || '#3a1d43';
+
+        document.querySelectorAll('[data-flash], [data-flash-stb]').forEach((el) => {
+          const isStb = el.hasAttribute('data-flash-stb');
+          const finalColor = isStb ? '#3a1d43' : finalInkDefault;
+          const spans = splitIntoWords(el, 'flash-word');
+
+          if (!reducedMotion) {
+            gsap.set(spans, { opacity: 0, color: flashA });
+
+            ScrollTrigger.create({
+              trigger: el,
+              start: 'top 90%',
+              once: true,
+              onEnter: () => {
+                spans.forEach((span, i) => {
+                  gsap.to(span, {
+                    keyframes: [
+                      { opacity: 1, color: flashA, duration: 0.2, ease: 'power2.out' },
+                      { color: flashB, duration: 0.05 },
+                      { color: finalColor, duration: 0.1 }
+                    ],
+                    delay: i * 0.1
+                  });
+                });
+              }
+            });
+          }
+        });
+      }
+      setupScrollFlashes();
+
+      // 8.12 How it works brightness loop
+      const howPhrases = document.querySelectorAll('.how__phrase');
+      const howWindow = document.querySelector('.how__right');
+
+      function updateBrightness() {
+        if (howWindow && howPhrases.length > 0) {
+          const winRect = howWindow.getBoundingClientRect();
+          const H = winRect.height;
+          howPhrases.forEach((p) => {
+            const r = p.getBoundingClientRect();
+            const top = r.top - winRect.top;
+            const bottom = top + r.height;
+            let op = 0.2;
+            if (bottom > 0 && top < H) {
+              const n = Math.max(0, Math.min(1, 1 - (bottom / H)));
+              const pVal = Math.max(0, Math.min(1, n / 0.85));
+              op = 0.2 + 0.8 * pVal;
+            }
+            p.style.opacity = op;
+          });
+        }
+        requestAnimationFrame(updateBrightness);
+      }
+      requestAnimationFrame(updateBrightness);
+
+      // 8.14 Four steps: Pinned 3D stack
+      if (!reducedMotion) {
+        const slides = document.querySelectorAll('.list__main__slide');
+        slides.forEach((slide, index) => {
+          if (index === slides.length - 1) return; // Last slide is never pinned
+
+          const wrap = slide.querySelector('.list__content-wrap');
+          const card = slide.querySelector('.list__main__content');
+          const randomZ = (Math.random() - 0.5) * 10;
+
+          gsap.to(card, {
+            rotationZ: randomZ,
+            scale: 0.7,
+            rotationX: 40,
+            ease: 'power1.in',
+            scrollTrigger: {
+              trigger: slide,
+              pin: wrap,
+              start: 'top 0%',
+              end: () => '+=' + window.innerHeight,
+              scrub: true
+            }
+          });
+
+          gsap.to(card, {
+            autoAlpha: 0,
+            ease: 'power1.in',
+            scrollTrigger: {
+              trigger: card,
+              start: 'top -80%',
+              end: () => '+=' + (0.5 * window.innerHeight),
+              scrub: true
+            }
+          });
+        });
+      }
+
+    })();
+  </script>
+</body>
+</html>
+
