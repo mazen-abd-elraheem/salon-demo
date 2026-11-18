@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import Navbar from '../components/public/Navbar';
 import Hero from '../components/public/Hero';
 import Services from '../components/public/Services';
+import ServiceShowcase from '../components/public/ServiceShowcase';
 import About from '../components/public/About';
 import Booking from '../components/public/Booking';
 import Footer from '../components/public/Footer';
@@ -98,6 +99,10 @@ export default function HomePage() {
         <Services
           services={services}
           loading={loadingServices}
+          onSelect={handleSelectService}
+        />
+        <ServiceShowcase
+          services={services}
           onSelect={handleSelectService}
         />
         <About />

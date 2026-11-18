@@ -115,3 +115,38 @@ html {
   background: #e6b89c;
   color: #1f1813;
 }
+
+/* Reshoot Editorial Serif Accent */
+.it {
+  font-family: 'Instrument Serif', 'Cormorant Garamond', 'Georgia', serif;
+  font-style: italic;
+  font-weight: 400;
+  letter-spacing: -0.02em;
+}
+
+/* Stepped rotation keyframe for ticking spinners */
+@keyframes spinStep {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+.animate-spin-step {
+  animation: spinStep 1s steps(8) infinite;
+}
+
+/* Soft pulse glow */
+@keyframes softPulse {
+  0%, 100% {
+    opacity: 0.9;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.97);
+  }
+}
+
+.animate-soft-pulse {
+  animation: softPulse 3s ease-in-out infinite;
+}

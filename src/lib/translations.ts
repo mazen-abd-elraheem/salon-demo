@@ -5,6 +5,7 @@ export const translations = {
     // Navbar
     brandSubtitle: 'Beauty Center & Spa',
     navServices: 'Services & Packages',
+    navShowcase: 'Service Showcase',
     navAtelier: 'Atelier',
     navBooking: 'Online Booking',
     navReception: 'Reception POS',
@@ -52,6 +53,31 @@ export const translations = {
     addToBooking: 'Add to Booking',
     removeFromBooking: 'Remove',
     inBooking: 'Selected in Cart',
+
+    // Service Showcase
+    showcaseEyebrow: 'Live Service Showcase · Signature Atelier',
+    showcaseTitle1: 'From your desired look to',
+    showcaseTitle2: 'radiant reality.',
+    showcaseSubtitle:
+      'Experience our luxury treatments through an interactive visual showcase. Explore private suites, live durations, and reserve your ritual in one seamless click.',
+    showcaseTag: 'Interactive Rituals',
+    showcaseGeneratedTitle: 'Active Rituals & Private Cabins',
+    showcaseSelectedBadge: 'Selected Ritual',
+    showcaseBookNow: 'Book This Ritual Now',
+    showcaseDuration: 'Duration',
+    showcasePrice: 'Investment',
+    showcasePrivateCabin: 'Private Sanitized Suite',
+    showcaseAll: 'All Categories',
+    showcaseCuratedPackages: 'Royal Bundles',
+    showcaseFilterHint: 'Select any card on the dashboard to preview details and book directly.',
+    showcaseStep1Tag: 'Tailored Ritual Selection',
+    showcaseStep1Text: 'Choose from authentic Moroccan hammam, facials, therapeutic massage or bridal styling.',
+    showcaseStep2Tag: 'Certified Master Specialists',
+    showcaseStep2Text: 'Trained cosmetologists and massage therapists dedicated exclusively to your session.',
+    showcaseStep3Tag: 'Private Sanitary Cabins',
+    showcaseStep3Text: '100% sterilized medical-grade tools and single-client private suite guarantees.',
+    showcaseStep4Tag: 'Instant 50% Deposit & QR',
+    showcaseStep4Text: 'Secure your appointment in 30 seconds with InstaPay or Vodafone Cash confirmation.',
 
     // About
     aboutEyebrow: 'The Atelier',
@@ -177,6 +203,7 @@ export const translations = {
     // Navbar
     brandSubtitle: 'بيوتي سنتر وسبا متكامل',
     navServices: 'منيو الخدمات والباقات',
+    navShowcase: 'معرض الجلسات التفاعلي',
     navAtelier: 'عن المكان',
     navBooking: 'احجزي أونلاين',
     navReception: 'كاشير والاستقبال',
@@ -224,6 +251,31 @@ export const translations = {
     addToBooking: 'إضافة للحجز',
     removeFromBooking: 'حذف',
     inBooking: 'تمت الإضافة للحجز',
+
+    // Service Showcase
+    showcaseEyebrow: 'معرض الجلسات التفاعلي الحي · Atelier Showcase',
+    showcaseTitle1: 'رؤية سينمائية استثنائية لـ',
+    showcaseTitle2: 'أدق تفاصيل جمالكِ.',
+    showcaseSubtitle:
+      'استكشفي طقوسنا الفاخرة بأحدث أساليب العرض التفاعلية. اضغطي على أي جلسة لمعاينة الأجنحة الخاصة، الوقت المستغرق، والحجز الفوري بضغطة واحدة.',
+    showcaseTag: 'معرض تفاعلي حصري · Live Showcase',
+    showcaseGeneratedTitle: 'جلسات الصالون والأجنحة المتاحة',
+    showcaseSelectedBadge: 'الجلسة المحددة حالياً',
+    showcaseBookNow: 'احجزي هذه الجلسة الآن',
+    showcaseDuration: 'مدة الجلسة',
+    showcasePrice: 'قيمة الجلسة',
+    showcasePrivateCabin: 'في جناح خاص معقم بالكامل',
+    showcaseAll: 'كافة الجلسات',
+    showcaseCuratedPackages: 'الباقات والعروض الملكية',
+    showcaseFilterHint: 'اضغطي على أي جلسة في اللوحة لمعاينتها وحجز موعدك فوراً.',
+    showcaseStep1Tag: 'اختيار الجلسة والأخصائية',
+    showcaseStep1Text: 'طقوس حمام مغربي ملكي، مساج استرخائي بالزيوت، هيدرا فيشل أو ميك آب سواريه.',
+    showcaseStep2Tag: 'أخصائيات معتمدات ومحترفات',
+    showcaseStep2Text: 'فريق عمل خبير ومدرب على أحدث تكنيكات المساج والعناية بالبشرة والشعر.',
+    showcaseStep3Tag: 'أجنحة وكبائن خاصة ومعقمة',
+    showcaseStep3Text: 'أدوات فردية معقمة طبياً بنسبة 100% وجناح مستقل يضمن خصوصيتك التامة.',
+    showcaseStep4Tag: 'تأكيد فوري وسداد ذكي',
+    showcaseStep4Text: 'تأكيد حجزك بعربون 50% عبر إنستاباي أو فودافون كاش مع فاتورة QR عند الوصول.',
 
     // About
     aboutEyebrow: 'عن الصالون',

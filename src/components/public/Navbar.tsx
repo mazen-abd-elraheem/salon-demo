@@ -34,6 +34,7 @@ export default function Navbar({ settings, onBook }: NavbarProps) {
 
   const links = [
     { label: t('navServices'), href: '#services' },
+    { label: t('navShowcase'), href: '#showcase' },
     { label: t('navAtelier'), href: '#about' },
     { label: t('navBooking'), href: '#booking' },
     { label: t('navContact'), href: '#footer' },
