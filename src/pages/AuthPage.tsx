@@ -98,8 +98,8 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
       window.dispatchEvent(new CustomEvent('guzel:auth-updated'));
       setSuccess(
         lang === 'ar'
-          ? 'تم تسجيل الدخول بنجاح كعميلة في غزل سبا!'
-          : 'Signed in successfully to your Guzel Spa client account!',
+          ? 'تم تسجيل الدخول بنجاح كعميلة في جوزال ميديكال سبا!'
+          : 'Signed in successfully to your Guzel Medical Spa client account!',
       );
     } else {
       setError(res.error || (lang === 'ar' ? 'فشل تسجيل الدخول' : 'Sign in failed'));
@@ -134,8 +134,8 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
       window.dispatchEvent(new CustomEvent('guzel:auth-updated'));
       setSuccess(
         lang === 'ar'
-          ? 'تم إنشاء حسابكِ بنجاح! أهلاً بكِ في غزل سبا للجمال والاسترخاء.'
-          : 'Account created! Welcome to Guzel Spa for beauty and relaxation.',
+          ? 'تم إنشاء حسابكِ بنجاح! أهلاً بكِ في جوزال ميديكال سبا للجمال والاسترخاء.'
+          : 'Account created! Welcome to Guzel Medical Spa for beauty and relaxation.',
       );
     } else {
       setError(res.error || (lang === 'ar' ? 'فشل إنشاء الحساب' : 'Registration failed'));
@@ -182,7 +182,7 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
                 <div>
                   <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 text-emerald-800 px-2.5 py-0.5 text-[10px] font-semibold">
                     <ShieldCheck className="h-3 w-3" />
-                    {lang === 'ar' ? 'حساب عميلة غزل سبا' : 'Verified Client Account'}
+                    {lang === 'ar' ? 'حساب عميلة جوزال ميديكال سبا' : 'Verified Client Account'}
                   </span>
                   <h1 className="text-xl font-bold mt-1">{customer.name}</h1>
                   <p className="text-xs opacity-70" dir="ltr">
@@ -223,7 +223,7 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
                     to="/services"
                     className="mt-3 inline-block text-xs font-semibold text-[#b14bd9] underline"
                   >
-                    {lang === 'ar' ? 'استكشفي قائمة جلسات ومنتجات غزل ←' : 'Explore Guzel Services & Products →'}
+                    {lang === 'ar' ? 'استكشفي قائمة جلسات ومنتجات جوزال ←' : 'Explore Guzel Services & Products →'}
                   </Link>
                 </div>
               ) : (
@@ -267,8 +267,8 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
               <h1 className="font-bold text-2xl">
                 {mode === 'login'
                   ? lang === 'ar'
-                    ? 'تسجيل الدخول إلى غزل سبا'
-                    : 'Sign In to Guzel Spa'
+                    ? 'تسجيل الدخول إلى جوزال ميديكال سبا'
+                    : 'Sign In to Guzel Medical Spa'
                   : lang === 'ar'
                   ? 'إنشاء حساب عميلة جديد'
                   : 'Create Your Guzel Account'}
@@ -279,8 +279,8 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
                     ? 'سجلي دخولكِ لمتابعة مواعيدكِ وجلسات السبا الخاصة بكِ'
                     : 'Access your beauty rituals, bookings and preferences'
                   : lang === 'ar'
-                  ? 'انضمي لعميلات غزل سبا واستمتعي بحجز فوري وعروض حصرية'
-                  : 'Join Guzel Spa for seamless booking and exclusive skincare'}
+                  ? 'انضمي لعميلات جوزال ميديكال سبا واستمتعي بحجز فوري وعروض حصرية'
+                  : 'Join Guzel Medical Spa for seamless booking and exclusive skincare'}
               </p>
             </div>
 
@@ -403,11 +403,11 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
                           <Link to="/legal/terms" className="underline font-semibold text-[#b14bd9]">
                             شروط الخدمة
                           </Link>{' '}
-                          الخاصة بغزل سبا لحفظ وإدارة بيانات حجوزاتي.
+                          الخاصة بجوزال ميديكال سبا لحفظ وإدارة بيانات حجوزاتي.
                         </>
                       ) : (
                         <>
-                          I agree to Guzel Spa&apos;s{' '}
+                          I agree to Guzel Medical Spa&apos;s{' '}
                           <Link to="/legal/privacy" className="underline font-semibold text-[#b14bd9]">
                             Privacy &amp; Data Usage Policy
                           </Link>{' '}
@@ -518,7 +518,7 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
                       {lang === 'ar' ? (
                         <>
                           <strong>موافقة صريحة على استخدام البيانات:</strong> أوافق على قيام{' '}
-                          <strong>غزل سبا (Guzel Spa)</strong> بحفظ ومعالجة بياناتي الشخصية لإدارة حجوزاتي والتواصل معي، وفقاً لـ{' '}
+                          <strong>جوزال ميديكال سبا (Guzel Medical Spa)</strong> بحفظ ومعالجة بياناتي الشخصية لإدارة حجوزاتي والتواصل معي، وفقاً لـ{' '}
                           <Link to="/legal/privacy" className="underline font-semibold text-[#b14bd9]">
                             سياسة الخصوصية واستخدام البيانات
                           </Link>{' '}
@@ -531,7 +531,7 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
                       ) : (
                         <>
                           <strong>Explicit Data Usage Consent:</strong> I consent to{' '}
-                          <strong>Guzel Spa</strong> storing and processing my personal information to manage my bookings and notifications under the{' '}
+                          <strong>Guzel Medical Spa</strong> storing and processing my personal information to manage my bookings and notifications under the{' '}
                           <Link to="/legal/privacy" className="underline font-semibold text-[#b14bd9]">
                             Privacy &amp; Data Usage Policy
                           </Link>{' '}
@@ -564,8 +564,8 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
       >
         © {new Date().getFullYear()}{' '}
         {lang === 'ar'
-          ? settings.business_name || 'غزل سبا للجمال والاسترخاء'
-          : settings.business_name_en || 'Guzel Spa'}
+          ? settings.business_name || 'جوزال ميديكال سبا'
+          : settings.business_name_en || 'Guzel Medical Spa'}
         . {lang === 'ar' ? 'جميع الحقوق محفوظة.' : 'All rights reserved.'}
       </footer>
     </div>

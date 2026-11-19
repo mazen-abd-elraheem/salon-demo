@@ -51,7 +51,7 @@ export default function DataConsentBanner() {
           </div>
           {lang === 'ar' ? (
             <p className="opacity-80">
-              يستخدم موقع <strong>غزل سبا (Guzel Spa)</strong> ملفات الارتباط والبيانات الشخصية لتحسين تجربتكِ، حفظ تفضيلات الثيم واللغة، وإدارة مواعيد الحجز الخاصة بكِ بأمان وفقاً لـ{' '}
+              يستخدم موقع <strong>جوزال ميديكال سبا (Guzel Medical Spa)</strong> ملفات الارتباط والبيانات الشخصية لتحسين تجربتكِ، حفظ تفضيلات الثيم واللغة، وإدارة مواعيد الحجز الخاصة بكِ بأمان وفقاً لـ{' '}
               <Link to="/legal/privacy" className="underline font-semibold text-[#b14bd9]">
                 سياسة الخصوصية
               </Link>{' '}
@@ -63,7 +63,7 @@ export default function DataConsentBanner() {
             </p>
           ) : (
             <p className="opacity-80">
-              <strong>Guzel Spa</strong> uses cookies and personal data solely to personalize your experience, save your theme &amp; language preferences, and manage your reservations securely under our{' '}
+              <strong>Guzel Medical Spa</strong> uses cookies and personal data solely to personalize your experience, save your theme &amp; language preferences, and manage your reservations securely under our{' '}
               <Link to="/legal/privacy" className="underline font-semibold text-[#b14bd9]">
                 Privacy Policy
               </Link>{' '}

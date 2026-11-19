@@ -107,23 +107,29 @@ export default function BusinessSettingsPage({
       booking_notice_hours: Math.max(0, Math.round(draft.booking_notice_hours)),
     };
 
-    saveLocalSettings({ ...defaultSettings, ...payload, id: draft.id || 'bs-default' });
+    const validId =
+      draft.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(draft.id)
+        ? draft.id
+        : defaultSettings.id;
+    saveLocalSettings({ ...defaultSettings, ...payload, id: validId });
 
-    let result;
+    let result: { data?: any; error?: any } = {};
     try {
-      // Check if draft.id is a real UUID or lookup existing row in Supabase
       const isUuid = draft.id && /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(draft.id);
       let targetId = isUuid ? draft.id : null;
 
       if (!targetId) {
-        // Query existing row from DB to get its real UUID
-        const { data: existingRow } = await supabase
-          .from('business_settings')
-          .select('id')
-          .limit(1)
-          .maybeSingle();
-        if (existingRow?.id) {
-          targetId = existingRow.id;
+        try {
+          const { data: existingRow } = await supabase
+            .from('business_settings')
+            .select('id')
+            .limit(1)
+            .maybeSingle();
+          if (existingRow?.id) {
+            targetId = existingRow.id;
+          }
+        } catch {
+          // Ignore lookup failure if table not created yet
         }
       }
 
@@ -142,13 +148,13 @@ export default function BusinessSettingsPage({
           .maybeSingle();
       }
     } catch {
-      result = { data: { id: draft.id || 'bs-default', ...payload }, error: null };
+      result = { data: { id: validId, ...payload }, error: null };
     }
 
     setSaving(false);
 
     if (result.error) {
-      // If table doesn't exist yet in Supabase (PGRST205) or schema error, we still succeed locally!
+      // If table doesn't exist yet in Supabase (PGRST205) or schema cache error or uuid mismatch, we succeed locally!
       if (
         result.error.code === 'PGRST205' ||
         result.error.message?.includes('schema cache') ||
@@ -162,7 +168,12 @@ export default function BusinessSettingsPage({
         setTimeout(() => setSavedAt(null), 2500);
         return;
       }
-      setError(result.error.message);
+      // If Supabase gave any other error, fallback to local settings so the user is never blocked
+      const localSaved = getLocalSettings();
+      setDraft((d) => ({ ...d, id: localSaved.id }));
+      onSaved?.(localSaved);
+      setSavedAt(Date.now());
+      setTimeout(() => setSavedAt(null), 2500);
       return;
     }
 

@@ -63,8 +63,8 @@ export default function GuzelShowcasePanel({
       items.push({
         id: s.id,
         type: 'service',
-        titleAr: s.name_ar || s.name || 'جلسة غزل سبا',
-        titleEn: s.name_en || s.name || 'Guzel Spa Ritual',
+        titleAr: s.name_ar || s.name || 'جلسة جوزال ميديكال سبا',
+        titleEn: s.name_en || s.name || 'Guzel Medical Spa Ritual',
         subtitleAr: s.description_ar || 'جلسة عناية متكاملة',
         subtitleEn: s.description_en || 'Signature spa ritual',
         price: s.price,
@@ -83,7 +83,7 @@ export default function GuzelShowcasePanel({
         type: 'product',
         titleAr: p.name_ar,
         titleEn: p.name_en,
-        subtitleAr: p.description_ar || 'منتج عناية أصلي من مجموعة غزل',
+        subtitleAr: p.description_ar || 'منتج عناية أصلي من مجموعة جوزال',
         subtitleEn: p.description_en || 'Guzel botanical skincare line',
         price: p.price,
         imgKey: p.sheet_key || DEFAULT_CELL_KEYS[idx % DEFAULT_CELL_KEYS.length],
@@ -116,7 +116,7 @@ export default function GuzelShowcasePanel({
       items.push({
         id: `cell-${items.length}`,
         type: 'service',
-        titleAr: fallbackSvc?.name_ar || 'طقس غزل الملكي للنضارة',
+        titleAr: fallbackSvc?.name_ar || 'طقس جوزال الملكي للنضارة',
         titleEn: fallbackSvc?.name_en || 'Guzel Radiance Ritual',
         subtitleAr: 'جلسة عناية فاخرة',
         subtitleEn: 'Luxury beauty session',
@@ -175,8 +175,8 @@ export default function GuzelShowcasePanel({
           />
           <span className="u-title-2 font-medium">
             {lang === 'ar'
-              ? 'استوديو خدمات ومنتجات غزل سبا (Guzel Showcase)'
-              : 'Guzel Spa Services & Skincare Studio'}
+              ? 'استوديو خدمات ومنتجات جوزال ميديكال سبا (Guzel Showcase)'
+              : 'Guzel Medical Spa Services & Skincare Studio'}
           </span>
         </div>
 
@@ -202,7 +202,7 @@ export default function GuzelShowcasePanel({
                 <Sparkles className="h-3 w-3" />
                 {activeItem?.type === 'product'
                   ? lang === 'ar'
-                    ? 'منتج غزل أصلي'
+                    ? 'منتج جوزال أصلي'
                     : 'Guzel Skincare'
                   : lang === 'ar'
                   ? 'جلسة سبا ملكية'
@@ -257,12 +257,12 @@ export default function GuzelShowcasePanel({
               <div>
                 <div className="text-[1.1rem] font-medium leading-tight text-[#f6e9f4]">
                   {lang === 'ar'
-                    ? 'كتالوج جلسات ومنتجات غزل التفاعلي'
+                    ? 'كتالوج جلسات ومنتجات جوزال التفاعلي'
                     : 'Guzel Interactive Rituals & Products'}
                 </div>
                 <div className="text-[0.75rem] text-[#f6e9f4]/50 mt-0.5">
                   {lang === 'ar'
-                    ? `مجموعة غزل سبا · ${selectedIndices.length} مختارة من ${showcaseItems.length} (اضغطي على أي صورة للمعاينة والحجز)`
+                    ? `مجموعة جوزال ميديكال سبا · ${selectedIndices.length} مختارة من ${showcaseItems.length} (اضغطي على أي صورة للمعاينة والحجز)`
                     : `Guzel Collection · ${selectedIndices.length} selected of ${showcaseItems.length} (Click any card to preview & book)`}
                 </div>
               </div>
@@ -283,7 +283,7 @@ export default function GuzelShowcasePanel({
                       ? 'عرض: جلسات السبا فقط'
                       : 'Showing: Spa Rituals Only'
                     : lang === 'ar'
-                    ? 'عرض: منتجات غزل فقط'
+                    ? 'عرض: منتجات جوزال فقط'
                     : 'Showing: Guzel Skincare Only'}
                 </span>
               </button>
@@ -439,7 +439,7 @@ export default function GuzelShowcasePanel({
           </h3>
           <p className="u-body-2 u-fonts-64 max-w-[32rem]">
             {lang === 'ar'
-              ? 'اختاري سيروم غزل باللافندر أو جلسة الهيدرا فيشل والحمام المغربي الملكي، واستمتعي بتجربة استرخاء متكاملة في كبائن خاصة ومعقمة بالكامل.'
+              ? 'اختاري سيروم جوزال باللافندر أو جلسة الهيدرا فيشل والحمام المغربي الملكي، واستمتعي بتجربة استرخاء متكاملة في كبائن خاصة ومعقمة بالكامل.'
               : 'Explore Guzel Lavender Dropper Serums, rejuvenating HydraFacials, and authentic Moroccan Hammam rituals — all synced in real time from our studio.'}
           </p>
         </div>

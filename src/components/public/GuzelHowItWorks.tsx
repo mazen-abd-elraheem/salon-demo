@@ -202,7 +202,7 @@ export default function GuzelHowItWorks() {
       >
         <div className="w-full lg:w-[32rem] shrink-0">
           <span className="u-tag" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
-            {lang === 'ar' ? 'علامات وطقوس غزل المعتمدة' : 'Trusted by'}
+            {lang === 'ar' ? 'علامات وطقوس جوزال المعتمدة' : 'Trusted by'}
           </span>
         </div>
 

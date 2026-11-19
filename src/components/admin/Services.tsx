@@ -29,8 +29,8 @@ const SHEET_CELL_PRESETS = [
   { key: 'ringb:3', labelAr: 'مساج واسترخاء', labelEn: 'Lavender Relaxation' },
   { key: 'ringb:1', labelAr: 'ميك آب وإشراقة', labelEn: 'Soft Glam Profile' },
   { key: 'studio:1', labelAr: 'عناية وترميم', labelEn: 'Studio Beauty Shot' },
-  { key: 'styled:0', labelAr: 'قطارة سيروم غزل', labelEn: 'Guzel Dropper Serum' },
-  { key: 'prod:0', labelAr: 'مجموعة غزل الكاملة', labelEn: 'Guzel Trio Set' },
+  { key: 'styled:0', labelAr: 'قطارة سيروم جوزال', labelEn: 'Guzel Dropper Serum' },
+  { key: 'prod:0', labelAr: 'مجموعة جوزال الكاملة', labelEn: 'Guzel Trio Set' },
   { key: 'pre:1', labelAr: 'بشرة زجاجية ناعمة', labelEn: 'Glass Skin Closeup' },
 ];
 
@@ -205,7 +205,7 @@ export default function Services() {
     <div className="space-y-8">
       <PageHeader
         eyebrow={lang === 'ar' ? 'الخدمات وصور العرض' : 'Services & Visual Assets'}
-        title={lang === 'ar' ? 'منيو جلسات غزل سبا وصور العرض' : 'Guzel Spa Services & Photos'}
+        title={lang === 'ar' ? 'منيو جلسات جوزال ميديكال سبا وصور العرض' : 'Guzel Medical Spa Services & Photos'}
         subtitle={
           lang === 'ar'
             ? 'أضيفي أو عدلي الجلسات واربطي كل جلسة بصورتها المخصصة لتظهر لحظياً في الحلقة الدوارة واستوديو العرض بالصفحة الرئيسية.'
@@ -389,7 +389,7 @@ function ServiceModal({
               <input
                 value={draft.name_ar}
                 onChange={(e) => setDraft({ ...draft, name_ar: e.target.value })}
-                placeholder="جلسة هيدرا فيشل غزل"
+                placeholder="جلسة هيدرا فيشل جوزال"
                 className="field-input"
               />
             </div>
@@ -473,7 +473,7 @@ function ServiceModal({
                   onClick={() => setDraft({ ...draft, image_url: '' })}
                   className="text-[11px] text-rose-600 underline"
                 >
-                  {lang === 'ar' ? 'استعادة صورة غزل الافتراضية' : 'Reset to Guzel Sheet'}
+                  {lang === 'ar' ? 'استعادة صورة جوزال الافتراضية' : 'Reset to Guzel Sheet'}
                 </button>
               )}
             </div>
@@ -504,7 +504,7 @@ function ServiceModal({
                 <div>
                   <label className="block text-[10px] opacity-70 mb-1">
                     {lang === 'ar'
-                      ? 'أو اختاري خلية من شيت صور غزل (Cell-by-Cell Crop):'
+                      ? 'أو اختاري خلية من شيت صور جوزال (Cell-by-Cell Crop):'
                       : 'Or select a Guzel sheet cell (Cell-by-Cell Crop):'}
                   </label>
                   <select

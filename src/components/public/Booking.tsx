@@ -1014,7 +1014,7 @@ export default function Booking({
                         {lang === 'ar' ? (
                           <>
                             <strong>اتفاقية استخدام البيانات والخصوصية:</strong> أوافق على قيام{' '}
-                            <strong>غزل سبا (Guzel Spa)</strong> بجمع واستخدام بياناتي الشخصية (الاسم، رقم الهاتف، البريد الإلكتروني، وتفاصيل الحجز وإيصال الدفع) لغرض تأكيد وإدارة موعدي وإرسال إشعارات الحجز، وذلك وفقاً لـ{' '}
+                            <strong>جوزال ميديكال سبا (Guzel Medical Spa)</strong> بجمع واستخدام بياناتي الشخصية (الاسم، رقم الهاتف، البريد الإلكتروني، وتفاصيل الحجز وإيصال الدفع) لغرض تأكيد وإدارة موعدي وإرسال إشعارات الحجز، وذلك وفقاً لـ{' '}
                             <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#b14bd9]">
                               سياسة الخصوصية واستخدام البيانات
                             </a>{' '}
@@ -1027,7 +1027,7 @@ export default function Booking({
                         ) : (
                           <>
                             <strong>User Data Usage Agreement:</strong> I explicitly consent to{' '}
-                            <strong>Guzel Spa</strong> collecting and processing my personal data (name, phone number, email, booking preferences, and payment receipt) strictly for appointment scheduling, verification, and service notifications in accordance with the{' '}
+                            <strong>Guzel Medical Spa</strong> collecting and processing my personal data (name, phone number, email, booking preferences, and payment receipt) strictly for appointment scheduling, verification, and service notifications in accordance with the{' '}
                             <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#b14bd9]">
                               Privacy &amp; Data Usage Policy
                             </a>{' '}

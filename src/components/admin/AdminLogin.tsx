@@ -56,12 +56,12 @@ export default function AdminLogin({ onSubmit, loading, error, portalTitle }: Ad
             className="inline-flex items-center gap-2 text-sm text-[#f6e9f4]/80 hover:text-[#f6e9f4] no-underline"
           >
             {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
-            {lang === 'ar' ? 'الرجوع لموقع غزل سبا' : 'Back to Guzel Spa'}
+            {lang === 'ar' ? 'الرجوع لموقع جوزال ميديكال سبا' : 'Back to Guzel Medical Spa'}
           </Link>
           <div>
             <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-[#cbb6ea]">
               <GuzelLogoIcon className="h-4 w-4" />
-              {portalTitle || (lang === 'ar' ? 'بوابة إدارة غزل سبا' : 'Guzel Spa Staff Portal')}
+              {portalTitle || (lang === 'ar' ? 'بوابة إدارة جوزال ميديكال سبا' : 'Guzel Medical Spa Staff Portal')}
             </div>
             <h1 className="mt-4 text-4xl xl:text-5xl font-normal leading-tight">
               {lang === 'ar' ? 'إدارة الأناقة،' : 'The Guzel Atelier,'}
@@ -73,11 +73,11 @@ export default function AdminLogin({ onSubmit, loading, error, portalTitle }: Ad
             <p className="mt-5 max-w-md text-sm text-[#f6e9f4]/75 leading-relaxed">
               {lang === 'ar'
                 ? 'منطقة محمية مخصصة للإدارة وطاقم العمل المصرح لهم فقط. لا يُسمح لحسابات العميلات بالدخول إلى لوحة الإدارة أو الكاشير.'
-                : 'Restricted area for authorized Guzel Spa management and staff only. Client accounts are strictly isolated from administrative controls.'}
+                : 'Restricted area for authorized Guzel Medical Spa management and staff only. Client accounts are strictly isolated from administrative controls.'}
             </p>
           </div>
           <div className="text-[11px] uppercase tracking-widest text-[#f6e9f4]/50">
-            {lang === 'ar' ? 'غزل سبا للجمال والاسترخاء · نظام الإدارة المؤمّن' : 'Guzel Spa · Role-Verified Security Suite'}
+            {lang === 'ar' ? 'جوزال ميديكال سبا للجمال والاسترخاء · نظام الإدارة المؤمّن' : 'Guzel Medical Spa · Role-Verified Security Suite'}
           </div>
         </div>
       </div>

@@ -28,9 +28,9 @@ import PhImage from '../public/PhImage';
 import { supabase } from '../../lib/supabase';
 
 const PRODUCT_SHEET_PRESETS = [
-  { key: 'styled:0', labelAr: 'سيروم غزل بالقطارة', labelEn: 'Guzel Dropper Serum' },
-  { key: 'styled:1', labelAr: 'أنبوب كريم غزل البنفسجي', labelEn: 'Guzel Lavender Tube' },
-  { key: 'styled2:1', labelAr: 'جار كريم غزل الوردي', labelEn: 'Guzel Blush Cream Jar' },
+  { key: 'styled:0', labelAr: 'سيروم جوزال بالقطارة', labelEn: 'Guzel Dropper Serum' },
+  { key: 'styled:1', labelAr: 'أنبوب كريم جوزال البنفسجي', labelEn: 'Guzel Lavender Tube' },
+  { key: 'styled2:1', labelAr: 'جار كريم جوزال الوردي', labelEn: 'Guzel Blush Cream Jar' },
   { key: 'prod:0', labelAr: 'المجموعة الثلاثية الكاملة', labelEn: 'Guzel Complete Trio Set' },
   { key: 'styled2:0', labelAr: 'سيروم على الحجر الطبيعي', labelEn: 'Serum on Travertine' },
   { key: 'styled2:2', labelAr: 'سيروم مخملي بنفسجي', labelEn: 'Plum Velvet Serum' },
@@ -510,7 +510,7 @@ export default function Inventory() {
                     onClick={() => setImageUrl('')}
                     className="text-[10px] text-rose-600 underline"
                   >
-                    {lang === 'ar' ? 'استعادة صورة غزل' : 'Reset'}
+                    {lang === 'ar' ? 'استعادة صورة جوزال' : 'Reset'}
                   </button>
                 )}
               </div>

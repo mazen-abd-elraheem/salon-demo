@@ -435,7 +435,7 @@ export const defaultBusinessHours: BusinessHour[] = [
 export const defaultBlockedDates: BlockedDate[] = [];
 
 export const defaultSettings: BusinessSettings = {
-  id: 'bs-default',
+  id: 'a0000000-0000-0000-0000-000000000001',
   business_name: 'جوزال ميديكال سبا',
   business_name_en: 'Guzel Medical Spa',
   tagline: 'Guzel Medical Spa for beauty and relaxation',
@@ -1016,10 +1016,24 @@ export function getLocalSettings(): BusinessSettings {
       if (
         !parsed.business_name ||
         parsed.business_name.includes('ميزون') ||
+        parsed.business_name.includes('غزل') ||
         parsed.business_name === 'غزل سبا للجمال والاسترخاء'
       ) {
         parsed.business_name = 'جوزال ميديكال سبا';
         parsed.business_name_en = 'Guzel Medical Spa';
+      }
+      if (!parsed.tagline_ar || parsed.tagline_ar.includes('غزل')) {
+        parsed.tagline_ar = 'جوزال ميديكال سبا للجمال والاسترخاء';
+      }
+      if (!parsed.tagline || parsed.tagline.includes('Guzel spa')) {
+        parsed.tagline = 'Guzel Medical Spa for beauty and relaxation';
+      }
+      if (
+        parsed.id === 'bs-default' ||
+        !parsed.id ||
+        !/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(parsed.id)
+      ) {
+        parsed.id = defaultSettings.id;
       }
       return parsed;
     }

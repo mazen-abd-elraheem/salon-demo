@@ -1,19 +1,22 @@
 -- ===========================================================================
--- Maison Lumière Beauty Atelier & Spa - Master Supabase Database Schema
+-- Guzel Medical Spa (جوزال ميديكال سبا) - Master Supabase Database Schema
 -- ===========================================================================
 -- 1. EXTENSIONS
 create extension if not exists "pgcrypto";
 -- 2. BUSINESS SETTINGS
 create table if not exists public.business_settings (
   id uuid primary key default gen_random_uuid(),
-  business_name text not null default 'ميزون لوميير بيوتي سنتر وسبا',
-  business_name_en text not null default 'Maison Lumière Beauty Center & Spa',
-  business_email text default 'contact@maisonlumiere.beauty',
+  business_name text not null default 'جوزال ميديكال سبا',
+  business_name_en text not null default 'Guzel Medical Spa',
+  tagline text default 'Guzel Medical Spa for beauty and relaxation',
+  tagline_ar text default 'جوزال ميديكال سبا للجمال والاسترخاء',
+  facebook_url text default 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr',
+  business_email text default 'concierge@guzelspa.beauty',
   business_phone text default '01012345678',
   business_address text default '١٥ شارع البرازيل، الزمالك، القاهرة',
   logo_url text,
-  instapay_ipa text default 'maisonlumiere@instapay',
-  instapay_name text default 'Maison Lumiere Spa',
+  instapay_ipa text default 'guzelspa@instapay',
+  instapay_name text default 'Guzel Medical Spa',
   vodafone_cash_number text default '01012345678',
   deposit_percentage numeric(5, 2) not null default 50.00,
   deposit_hold_minutes integer not null default 30,
@@ -24,7 +27,10 @@ create table if not exists public.business_settings (
 );
 alter table public.business_settings add column if not exists logo_url text;
 alter table public.business_settings add column if not exists booking_notice_hours integer not null default 2;
-alter table public.business_settings add column if not exists business_name_en text default 'Maison Lumière Beauty Center & Spa';
+alter table public.business_settings add column if not exists business_name_en text default 'Guzel Medical Spa';
+alter table public.business_settings add column if not exists tagline text default 'Guzel Medical Spa for beauty and relaxation';
+alter table public.business_settings add column if not exists tagline_ar text default 'جوزال ميديكال سبا للجمال والاسترخاء';
+alter table public.business_settings add column if not exists facebook_url text default 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr';
 -- 3. BUSINESS HOURS & BLOCKED DATES
 create table if not exists public.business_hours (
   id uuid primary key default gen_random_uuid(),
@@ -354,8 +360,38 @@ alter table public.packages add column if not exists sheet_key text;
 alter table public.products add column if not exists image_url text;
 alter table public.products add column if not exists sheet_key text;
 alter table public.business_settings add column if not exists facebook_url text default 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr';
-alter table public.business_settings add column if not exists tagline text default 'Guzel spa for beauty and relaxation';
-alter table public.business_settings add column if not exists tagline_ar text default 'غزل سبا للجمال والاسترخاء';
+alter table public.business_settings add column if not exists tagline text default 'Guzel Medical Spa for beauty and relaxation';
+alter table public.business_settings add column if not exists tagline_ar text default 'جوزال ميديكال سبا للجمال والاسترخاء';
+
+-- 18.5 PAYMENT GATEWAYS (Paymob, Fawry, Kashier/Stripe, InstaPay, Vodafone Cash, Cash)
+create table if not exists public.payment_gateways (
+  id text primary key,
+  name_ar text not null,
+  name_en text not null,
+  badge_ar text,
+  badge_en text,
+  description_ar text,
+  description_en text,
+  is_enabled boolean not null default true,
+  is_online boolean not null default true,
+  provider text not null default 'manual',
+  api_key text,
+  secret_key text,
+  merchant_id text,
+  iframe_id text,
+  account_number text,
+  account_name text,
+  qr_code_url text,
+  instructions_ar text,
+  instructions_en text,
+  updated_at timestamptz not null default now()
+);
+
+alter table public.payment_gateways enable row level security;
+drop policy if exists "Public can view payment gateways" on public.payment_gateways;
+create policy "Public can view payment gateways" on public.payment_gateways for select using (true);
+drop policy if exists "Admins can manage payment gateways" on public.payment_gateways;
+create policy "Admins can manage payment gateways" on public.payment_gateways for all using (true) with check (true);
 
 drop policy if exists "Anyone can read staff users" on public.staff_users;
 create policy "Anyone can read staff users" on public.staff_users for select using (auth.role() = 'authenticated' or public.is_admin());
@@ -369,10 +405,25 @@ drop policy if exists "Anyone can manage attendance" on public.attendance_record
 create policy "Anyone can manage attendance" on public.attendance_records for all using (true) with check (true);
 drop policy if exists "Anyone can manage appointments" on public.appointments;
 create policy "Anyone can manage appointments" on public.appointments for all using (true) with check (true);
+
 -- 21. SEED DATA
+-- Ensure existing settings row is updated with official Guzel Medical Spa brand
+update public.business_settings
+set
+  business_name = 'جوزال ميديكال سبا',
+  business_name_en = 'Guzel Medical Spa',
+  tagline = 'Guzel Medical Spa for beauty and relaxation',
+  tagline_ar = 'جوزال ميديكال سبا للجمال والاسترخاء',
+  facebook_url = 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr'
+where business_name like '%ميزون%' or business_name like '%غزل%';
+
 insert into public.business_settings (
+  id,
   business_name,
   business_name_en,
+  tagline,
+  tagline_ar,
+  facebook_url,
   business_email,
   business_phone,
   business_address,
@@ -386,13 +437,17 @@ insert into public.business_settings (
   cancellation_notice_hours
 )
 select
-  'غزل سبا للجمال والاسترخاء',
-  'Guzel Spa',
+  'a0000000-0000-0000-0000-000000000001'::uuid,
+  'جوزال ميديكال سبا',
+  'Guzel Medical Spa',
+  'Guzel Medical Spa for beauty and relaxation',
+  'جوزال ميديكال سبا للجمال والاسترخاء',
+  'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr',
   'concierge@guzelspa.beauty',
   '01012345678',
   '١٥ شارع البرازيل، الزمالك، القاهرة',
   'guzelspa@instapay',
-  'Guzel Spa Egypt',
+  'Guzel Medical Spa',
   '01012345678',
   50.00,
   30,
@@ -400,6 +455,22 @@ select
   2,
   24
 where not exists (select 1 from public.business_settings limit 1);
+
+-- Payment Gateways Seed
+insert into public.payment_gateways (id, name_ar, name_en, badge_ar, badge_en, description_ar, description_en, is_enabled, is_online, provider, account_number, account_name) values
+  ('instapay', 'إنستاباي (InstaPay Egypt)', 'InstaPay Instant Transfer', 'تحويل بنكي لحظي مجاني', 'Instant Bank Transfer', 'تحويل فوري مباشر لعنوان الدفع الخاص بجوزال ميديكال سبا مع رفع صورة الإيصال.', 'Direct instant transfer to Guzel Medical Spa IPA address with receipt upload.', true, true, 'manual', 'guzelspa@instapay', 'Guzel Medical Spa'),
+  ('vodafone_cash', 'فودافون كاش ومحافظ إلكترونية', 'Vodafone Cash & Mobile Wallets', 'محافظ مصر الذكية 010', 'Smart Mobile Wallets', 'تحويل مباشر لمحفظة فودافون كاش المعتمدة للجلسات مع تأكيد آلي خلال دقائق.', 'Direct transfer to Guzel Spa verified Vodafone Cash wallet with fast confirmation.', true, true, 'manual', '01012345678', 'Guzel Medical Spa'),
+  ('paymob', 'باي موب (Paymob Egypt)', 'Paymob Online Payment', 'فيزا ومستركارد وميزة', 'Visa, Mastercard & Meeza', 'بوابة دفع إلكتروني مؤمّنة تدعم البطاقات البنكية المصرية والدولية وبطاقات ميزة الوطنية.', 'PCI-DSS certified gateway supporting debit/credit cards and Egypt national Meeza cards.', true, true, 'paymob', null, null),
+  ('fawry', 'فوري باي (Fawry Pay)', 'Fawry Pay Code', 'كود دفع بجميع منافذ مصر', 'Nationwide Cash Code', 'إصدار كود مرجعي فوري للسداد نقداً في أكثر من ١٩٠ ألف منفذ وماكينة فوري في مصر.', 'Generate an instant reference code to pay in cash across 190,000+ Fawry POS nationwide.', true, true, 'fawry', null, null),
+  ('kashier', 'كاشير / سترايب جلوبال', 'Kashier / Stripe Global', 'بطاقات دولية وعربية', 'Global Credit Cards', 'سداد إلكتروني مباشر وآمن للعميلات من خارج مصر وبطاقات الائتمان الخليجية والدولية.', 'Direct seamless checkout for international credit cards and GCC client accounts.', true, true, 'kashier', null, null),
+  ('cash', 'الدفع نقداً بالفرع (Cash In-Branch)', 'Cash In-Branch', 'كاش عند الوصول', 'Pay at Reception Desk', 'تسوية الدفعة المتبقية أو الحجز المباشر نقداً أو بفيزا الاستقبال في مقر جوزال ميديكال سبا بالزمالك.', 'Pay remaining balance or direct walk-in reservations at Guzel Medical Spa Zamalek reception.', true, false, 'cash', null, null)
+on conflict (id) do update set
+  name_ar = excluded.name_ar,
+  name_en = excluded.name_en,
+  badge_ar = excluded.badge_ar,
+  badge_en = excluded.badge_en,
+  description_ar = excluded.description_ar,
+  description_en = excluded.description_en;
 insert into public.business_hours (weekday, is_open, start_time, end_time) values
   (0, true, '10:00:00', '22:00:00'),
   (1, true, '10:00:00', '22:00:00'),

@@ -309,18 +309,17 @@ export default function Hero({ settings, services = [], products = [], onBook }:
       </div>
 
       {/* Centre Headline Layer Inside the Ring (hero__center) */}
-      <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center pointer-events-none pt-6 sm:pt-10 pb-14 sm:pb-0 px-6 text-center">
+      <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center pointer-events-none pt-4 sm:pt-6 pb-12 sm:pb-0 px-4 sm:px-6 text-center">
         <div
           ref={centerRef}
-          className="relative flex flex-col items-center justify-center max-w-[26rem] sm:max-w-[32rem] px-6 py-8 rounded-full transition-transform duration-150 ease-out"
+          className="relative flex flex-col items-center justify-center max-w-[28rem] sm:max-w-[34rem] px-6 sm:px-10 py-7 sm:py-9 rounded-3xl sm:rounded-full transition-transform duration-150 ease-out backdrop-blur-md border border-white/70 shadow-[0_12px_36px_rgba(58,29,67,0.07)]"
           style={{
-            background:
-              'radial-gradient(circle, var(--mainbg, #f9f0f5) 48%, rgba(249, 240, 245, 0) 78%)',
+            backgroundColor: 'rgba(255, 255, 255, 0.75)',
           }}
         >
           {/* Brand Eyebrow Pill */}
           <span
-            className="pointer-events-auto mb-3 inline-flex items-center gap-2 rounded-full px-3.5 py-1 text-[11px] sm:text-xs font-semibold tracking-wide border shadow-clean"
+            className="pointer-events-auto mb-3.5 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-[11px] sm:text-xs font-bold tracking-wide border shadow-sm backdrop-blur-sm"
             style={{
               backgroundColor: 'var(--secondbg, #f3e6f0)',
               borderColor: 'var(--lines, #e8d7e4)',
@@ -336,39 +335,45 @@ export default function Hero({ settings, services = [], products = [], onBook }:
             data-hero-text
             className="pointer-events-auto font-display font-bold text-center tracking-tight"
             style={{
-              fontSize: 'calc(var(--R) * 0.165)',
-              lineHeight: lang === 'ar' ? 1.24 : 0.98,
+              fontSize: 'clamp(2.1rem, 3.4vw, 3.8rem)',
+              lineHeight: lang === 'ar' ? 1.35 : 1.02,
+              fontFamily: lang === 'ar' ? "'Cairo', 'Noto Kufi Arabic', 'Tajawal', sans-serif" : undefined,
             }}
           >
             {lang === 'ar' ? (
-              <>
+              <div className="flex flex-col items-center">
                 <span
                   ref={(el) => {
                     wordRefs.current[0] = el;
                   }}
-                  className="inline-block"
+                  className="inline-block font-extrabold text-[#3a1d43]"
                 >
                   جمالكِ،
                 </span>
-                <br />
-                <span
-                  ref={(el) => {
-                    wordRefs.current[1] = el;
-                  }}
-                  className="it inline-block mx-1 text-[#b14bd9]"
-                  style={{ fontSize: '1.08em' }}
-                >
-                  بإشراقة
-                </span>{' '}
-                <span
-                  ref={(el) => {
-                    wordRefs.current[2] = el;
-                  }}
-                  className="inline-block"
-                >
-                  متجددة.
+                <span className="inline-flex items-center justify-center gap-2 mt-0.5">
+                  <span
+                    ref={(el) => {
+                      wordRefs.current[1] = el;
+                    }}
+                    className="inline-block text-[#b14bd9] font-bold"
+                    style={{
+                      fontFamily: "'Amiri', 'Noto Naskh Arabic', serif",
+                      fontStyle: 'normal',
+                      fontSize: '1.12em',
+                    }}
+                  >
+                    بإشراقة
+                  </span>
+                  <span
+                    ref={(el) => {
+                      wordRefs.current[2] = el;
+                    }}
+                    className="inline-block font-extrabold text-[#3a1d43]"
+                  >
+                    متجددة.
+                  </span>
                 </span>
-              </>
+              </div>
             ) : (
               <>
                 <span
@@ -410,11 +415,11 @@ export default function Hero({ settings, services = [], products = [], onBook }:
           </h1>
 
           {/* Action Buttons Inside Ring */}
-          <div className="pointer-events-auto mt-5 flex flex-wrap items-center justify-center gap-2.5">
+          <div className="pointer-events-auto mt-5 flex flex-wrap items-center justify-center gap-3">
             <button
               type="button"
               onClick={onBook}
-              className="rounded-full px-6 py-2.5 text-xs sm:text-sm font-bold inline-flex items-center gap-2 transition-all duration-200 hover:scale-105 cursor-pointer border-0 shadow-soft"
+              className="rounded-full px-6 py-2.5 text-xs sm:text-sm font-bold inline-flex items-center gap-2 transition-all duration-200 hover:scale-105 active:scale-95 cursor-pointer border-0 shadow-soft"
               style={{
                 backgroundColor: 'var(--btn-bg, #cbb6ea)',
                 color: 'var(--btn-ink, #2c1433)',
@@ -426,7 +431,7 @@ export default function Hero({ settings, services = [], products = [], onBook }:
 
             <Link
               to="/services"
-              className="rounded-full px-4 py-2.5 text-xs font-semibold no-underline border transition-colors hover:bg-white/80"
+              className="rounded-full px-5 py-2.5 text-xs font-bold no-underline border transition-all duration-200 hover:bg-white/90 active:scale-95 shadow-sm"
               style={{
                 borderColor: 'var(--lines, #e8d7e4)',
                 backgroundColor: 'var(--secondbg, #f3e6f0)',
@@ -439,28 +444,28 @@ export default function Hero({ settings, services = [], products = [], onBook }:
         </div>
       </div>
 
-      {/* Desktop Vertical Looping Chip List — Strictly pinned to far outer edge, never overlapping center! */}
+      {/* Desktop Vertical Looping Chip List — Strictly pinned to far outer viewport edge */}
       <div
         ref={chipWrapRef}
-        className="hidden xl:flex pointer-events-none z-[3] absolute top-[11rem] bottom-[11rem] items-center"
+        className="hidden 2xl:flex pointer-events-none z-[3] absolute top-1/2 -translate-y-1/2 items-center"
         style={{
-          [isRTL ? 'left' : 'right']: '2rem',
+          [isRTL ? 'left' : 'right']: '2.5rem',
         }}
         aria-hidden="true"
       >
-        <div className="relative h-[16.5rem] w-48 overflow-hidden flex flex-col items-end">
+        <div className="relative h-[18rem] w-52 overflow-hidden flex flex-col items-end p-2 rounded-2xl bg-white/40 backdrop-blur-sm border border-white/60 shadow-sm">
           {[0, 1].map((dup) => (
             <div
               key={dup}
-              className="animate-hero-chips flex flex-col items-end gap-2 pb-2 shrink-0 w-full"
+              className="animate-hero-chips flex flex-col items-end gap-2.5 pb-2.5 shrink-0 w-full"
             >
               {chips.map((chip) => (
                 <div
                   key={`${dup}-${chip}`}
-                  className="px-3.5 py-1.5 rounded-xl border text-xs font-semibold whitespace-nowrap shadow-clean"
+                  className="px-4 py-2 rounded-xl border text-xs font-bold whitespace-nowrap shadow-sm backdrop-blur-md"
                   style={{
-                    borderColor: 'var(--fonts-20, #3a1d4333)',
-                    backgroundColor: 'var(--mainbg, #f9f0f5)',
+                    borderColor: 'var(--lines, #e8d7e4)',
+                    backgroundColor: 'rgba(255, 255, 255, 0.85)',
                     color: 'var(--fonts-100, #3a1d43)',
                   }}
                 >
@@ -471,15 +476,15 @@ export default function Hero({ settings, services = [], products = [], onBook }:
           ))}
 
           <div
-            className="absolute inset-x-0 top-0 h-14 pointer-events-none"
+            className="absolute inset-x-0 top-0 h-10 pointer-events-none rounded-t-2xl"
             style={{
-              background: 'linear-gradient(180deg, var(--mainbg), var(--mainbg-gradient))',
+              background: 'linear-gradient(180deg, var(--mainbg, #f9f0f5) 20%, transparent)',
             }}
           />
           <div
-            className="absolute inset-x-0 bottom-0 h-14 pointer-events-none"
+            className="absolute inset-x-0 bottom-0 h-10 pointer-events-none rounded-b-2xl"
             style={{
-              background: 'linear-gradient(180deg, var(--mainbg-gradient), var(--mainbg))',
+              background: 'linear-gradient(0deg, var(--mainbg, #f9f0f5) 20%, transparent)',
             }}
           />
         </div>
@@ -487,7 +492,7 @@ export default function Hero({ settings, services = [], products = [], onBook }:
 
       {/* Tablet & Mobile Horizontal Chip Strip at Bottom (below the ring) */}
       <div
-        className="flex xl:hidden pointer-events-none z-[3] absolute bottom-14 inset-x-0 h-10 items-center justify-center px-4"
+        className="flex 2xl:hidden pointer-events-none z-[3] absolute bottom-14 inset-x-0 h-10 items-center justify-center px-4"
         aria-hidden="true"
       >
         <div className="relative w-full max-w-[32rem] h-10 overflow-hidden flex flex-row items-center">

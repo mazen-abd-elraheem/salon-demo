@@ -59,7 +59,7 @@ export function ServicesScreen() {
         <section className="container-page pt-10 pb-12">
           <span className="eyebrow">
             <span className="eyebrow-dot" />
-            {lang === 'ar' ? 'قائمة خدمات غزل سبا' : 'Guzel Spa Menu'}
+            {lang === 'ar' ? 'قائمة خدمات جوزال ميديكال سبا' : 'Guzel Medical Spa Menu'}
           </span>
           <h1 className="u-h1 mt-4">
             {lang === 'ar' ? (
@@ -74,8 +74,8 @@ export function ServicesScreen() {
           </h1>
           <p className="mt-4 max-w-2xl text-sm sm:text-base" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
             {lang === 'ar'
-              ? 'كل جلسة في غزل سبا تتم في كابينة خاصة معقمة باستخدام منتجات غزل الأصلية باللافندر والهيالورونيك على يد خبيرات متخصصات.'
-              : 'Every ritual at Guzel Spa takes place in a private, sanitized suite using our botanical lavender and hyaluronic formulations.'}
+              ? 'كل جلسة في جوزال ميديكال سبا تتم في كابينة خاصة معقمة باستخدام منتجات جوزال الأصلية باللافندر والهيالورونيك على يد خبيرات متخصصات.'
+              : 'Every ritual at Guzel Medical Spa takes place in a private, sanitized suite using our botanical lavender and hyaluronic formulations.'}
           </p>
         </section>
 
@@ -165,7 +165,7 @@ export function PackagesScreen() {
           </h1>
           <p className="mt-4 text-sm sm:text-base" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
             {lang === 'ar'
-              ? 'صممنا باقات غزل الملكية لتجمع لكِ بين الحمام المغربي، الهيدرا فيشل بسيروم غزل، المساج العطري، وترميم الشعر في تجربة واحدة متناغمة.'
+              ? 'صممنا باقات جوزال الملكية لتجمع لكِ بين الحمام المغربي، الهيدرا فيشل بسيروم جوزال، المساج العلاجي، وترميم الشعر في تجربة واحدة متناغمة.'
               : 'Our multi-ritual packages combine Moroccan hammam, Guzel Lavender Serum HydraFacial, aromatherapy massage, and hair therapy into one seamless retreat.'}
           </p>
         </div>
@@ -291,12 +291,12 @@ export function ProductsScreen() {
           <div className="lg:col-span-6 p-8 sm:p-12 flex flex-col justify-center">
             <span className="inline-flex items-center gap-1.5 rounded-full bg-[#cbb6ea] text-[#2c1433] px-3.5 py-1 text-xs font-semibold w-fit">
               <Sparkles className="h-3.5 w-3.5" />
-              {lang === 'ar' ? 'خط العناية الحصري من غزل سبا' : 'Guzel Signature Skincare Line'}
+              {lang === 'ar' ? 'خط العناية الحصري من جوزال ميديكال سبا' : 'Guzel Signature Skincare Line'}
             </span>
             <h1 className="mt-4 text-3xl sm:text-5xl font-normal leading-tight">
               {lang === 'ar' ? (
                 <>
-                  مستحضرات <span className="it text-[#b14bd9]">غزل</span> باللافندر والهيالورونيك.
+                  مستحضرات <span className="it text-[#b14bd9]">جوزال</span> باللافندر والهيالورونيك.
                 </>
               ) : (
                 <>
@@ -306,12 +306,12 @@ export function ProductsScreen() {
             </h1>
             <p className="mt-4 text-sm leading-relaxed" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
               {lang === 'ar'
-                ? 'سيروم غزل الزجاجي بالقطارة، أنبوب الترطيب باللافندر المات، وجار الكريم الوردي المخملي — جميع الصور والمنتجات محدثة لحظياً من مخزون الإدارة.'
+                ? 'سيروم جوزال الزجاجي بالقطارة، أنبوب الترطيب باللافندر المات، وجار الكريم الوردي المخملي — جميع الصور والمنتجات محدثة لحظياً من مخزون الإدارة.'
                 : 'Featuring the frosted lavender glass dropper serum, matte lavender hydrating squeeze tube, and frosted blush-pink velvet cream jar — synced live with our studio inventory.'}
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Link to="/book" className="btn-primary no-underline text-xs">
-                {lang === 'ar' ? 'احجزي جلسة + منتج غزل' : 'Book Ritual + Skincare'}
+                {lang === 'ar' ? 'احجزي جلسة + منتج جوزال' : 'Book Ritual + Skincare'}
               </Link>
             </div>
           </div>
@@ -371,7 +371,7 @@ export function ProductsScreen() {
             const displayName = lang === 'ar' ? prod.name_ar : prod.name_en;
             const displayDesc =
               lang === 'ar'
-                ? prod.description_ar || 'منتج أصلي من مجموعة غزل للعناية الفائقة.'
+                ? prod.description_ar || 'منتج أصلي من مجموعة جوزال للعناية الفائقة.'
                 : prod.description_en || 'Authentic Guzel botanical formulation.';
 
             return (
@@ -493,10 +493,10 @@ export function AboutScreen() {
   const values = [
     {
       icon: Leaf,
-      title: lang === 'ar' ? 'منتجات غزل الطبيعية ١٠٠٪' : '100% Botanical Guzel Formulas',
+      title: lang === 'ar' ? 'منتجات جوزال الطبيعية ١٠٠٪' : '100% Botanical Guzel Formulas',
       body:
         lang === 'ar'
-          ? 'نستخدم سيروم وكريمات غزل باللافندر والهيالورونيك، وصابون مغربي بلدي أصلي.'
+          ? 'نستخدم سيروم وكريمات جوزال باللافندر والهيالورونيك، وصابون مغربي بلدي أصلي.'
           : 'Formulated with pure lavender, hyaluronic acid, and authentic Moroccan argan.',
     },
     {
@@ -592,7 +592,7 @@ export function AboutScreen() {
             }}
           >
             <h2 className="text-2xl font-bold mb-4">
-              {lang === 'ar' ? 'خبيرات وأخصائيات غزل سبا' : 'Our Senior Specialists'}
+              {lang === 'ar' ? 'خبيرات وأخصائيات جوزال ميديكال سبا' : 'Our Senior Specialists'}
             </h2>
             <div className="space-y-3">
               {defaultSpecialists.map((sp) => (
@@ -659,7 +659,7 @@ export function AboutScreen() {
                 className="btn-primary no-underline text-xs inline-flex items-center gap-2"
               >
                 <Facebook className="h-4 w-4" />
-                <span>{lang === 'ar' ? 'صفحة غزل سبا على فيسبوك' : 'Guzel Spa on Facebook'}</span>
+                <span>{lang === 'ar' ? 'صفحة جوزال ميديكال سبا على فيسبوك' : 'Guzel Medical Spa on Facebook'}</span>
               </a>
               <a
                 href={`https://wa.me/2${phone.replace(/\D/g, '')}`}
@@ -677,7 +677,7 @@ export function AboutScreen() {
         {/* Suites Overview */}
         <div>
           <h2 className="text-2xl font-bold mb-6">
-            {lang === 'ar' ? 'أجنحة وكبائن غزل سبا الخاصة' : 'Private Suites & Cabins'}
+            {lang === 'ar' ? 'أجنحة وكبائن جوزال ميديكال سبا الخاصة' : 'Private Suites & Cabins'}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {defaultRooms.map((room) => (

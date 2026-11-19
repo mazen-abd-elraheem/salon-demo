@@ -99,7 +99,7 @@ export default function GuzelStepSlides({
           <>
             اختاري جلساتكِ
             <br />
-            ومنتجات <span className="it text-[1.08em]">غزل.</span>
+            ومنتجات <span className="it text-[1.08em]">جوزال.</span>
           </>
         ) : (
           <>
@@ -111,7 +111,7 @@ export default function GuzelStepSlides({
       b1Tag: lang === 'ar' ? '+٢٠ جلسة ومنتج عناية' : '20+ ritual & serum presets',
       b1Text:
         lang === 'ar'
-          ? 'نسّقي جلسات الهيدرا فيشل والحمام المغربي مع سيروم وكريم غزل الوردي.'
+          ? 'نسّقي جلسات الهيدرا فيشل والحمام المغربي مع سيروم وكريم جوزال الوردي.'
           : 'Stack your Guzel serums, facials and spa rituals side by side.',
       b2Tag: lang === 'ar' ? 'تخصيص كامل لبشرتكِ' : 'Multiple ritual choices',
       b2Text:
@@ -123,7 +123,7 @@ export default function GuzelStepSlides({
           wide: true,
           imgKey: 'prod:0',
           customImg: prodImgs[0] || null,
-          caption: lang === 'ar' ? 'مجموعة غزل للعناية بالبشرة' : 'Guzel skincare set',
+          caption: lang === 'ar' ? 'مجموعة جوزال للعناية بالبشرة' : 'Guzel skincare set',
           arrow: '→',
         },
         {
@@ -172,7 +172,7 @@ export default function GuzelStepSlides({
           imgKey: 'styled:0',
           customImg: svcImgs[0] || null,
           spinChip: lang === 'ar' ? 'جاري التجهيز…' : 'Preparing…',
-          caption: lang === 'ar' ? 'مجموعة سيروم غزل باللافندر' : 'Guzel Serum Collection',
+          caption: lang === 'ar' ? 'مجموعة سيروم جوزال باللافندر' : 'Guzel Serum Collection',
           arrow: '→',
         },
         {
@@ -259,12 +259,12 @@ export default function GuzelStepSlides({
       b1Tag: lang === 'ar' ? 'فاتورة QR ذكية بالفرع' : 'Smart in-branch QR tab',
       b1Text:
         lang === 'ar'
-          ? 'تابعي جلستكِ وأضيفي أي منتج من غزل وسددي بمسح رمز QR من موبايلكِ.'
+          ? 'تابعي جلستكِ وأضيفي أي منتج من جوزال وسددي بمسح رمز QR من موبايلكِ.'
           : 'Enjoy seamless check-in, add-on serums, and instant QR checkout.',
       b2Tag: lang === 'ar' ? 'حجز بضغطة واحدة' : 'One-click reservation',
       b2Text:
         lang === 'ar'
-          ? 'احجزي جلستكِ الآن واستعدي ليوم من الدلال والهدوء في غزل سبا.'
+          ? 'احجزي جلستكِ الآن واستعدي ليوم من الدلال والهدوء في جوزال ميديكال سبا.'
           : 'Every ritual and product ready for you in a single click.',
       cards: [
         {
@@ -273,7 +273,7 @@ export default function GuzelStepSlides({
           fy: 0.35,
           caption:
             lang === 'ar'
-              ? 'حملة إشراقة الصيف من غزل · ٢٤ جلسة ومنتج'
+              ? 'حملة إشراقة الصيف من جوزال · ٢٤ جلسة ومنتج'
               : 'Summer glow campaign · 24 rituals',
           arrow: '↓',
         },

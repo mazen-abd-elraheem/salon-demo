@@ -87,14 +87,14 @@ export function LegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
 
               <h1 className="text-3xl sm:text-4xl font-bold">
                 {lang === 'ar'
-                  ? 'سياسة الخصوصية واتفاقية استخدام بيانات العميلات — غزل سبا'
-                  : 'Privacy Policy & User Data Usage Agreement — Guzel Spa'}
+                  ? 'سياسة الخصوصية واتفاقية استخدام بيانات العميلات — جوزال ميديكال سبا'
+                  : 'Privacy Policy & User Data Usage Agreement — Guzel Medical Spa'}
               </h1>
 
               {lang === 'ar' ? (
                 <div className="space-y-4 text-sm leading-relaxed">
                   <p>
-                    يلتزم <strong>غزل سبا للجمال والاسترخاء (Guzel Spa)</strong> بأعلى معايير السرية والأمان في حماية بيانات عميلاته. باستخدامكِ للموقع أو تسجيل حساب أو إتمام حجز، فإنكِ توافقين صراحةً على البنود التالية:
+                    يلتزم <strong>جوزال ميديكال سبا للجمال والاسترخاء (Guzel Medical Spa)</strong> بأعلى معايير السرية والأمان في حماية بيانات عميلاته. باستخدامكِ للموقع أو تسجيل حساب أو إتمام حجز، فإنكِ توافقين صراحةً على البنود التالية:
                   </p>
                   <h3 className="text-lg font-bold mt-4">١. البيانات التي نقوم بجمعها بموافقتكِ:</h3>
                   <ul className="list-disc ps-5 space-y-1.5">
@@ -104,7 +104,7 @@ export function LegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
                   </ul>
                   <h3 className="text-lg font-bold mt-4">٢. كيف نستخدم بياناتكِ:</h3>
                   <ul className="list-disc ps-5 space-y-1.5">
-                    <li>إدارة وتأكيد مواعيدكِ في غزل سبا ومنع تضارب الحجوزات.</li>
+                    <li>إدارة وتأكيد مواعيدكِ في جوزال ميديكال سبا ومنع تضارب الحجوزات.</li>
                     <li>إصدار فاتورة الـ QR الذكية داخل الفرع ومتابعة سجل جلساتكِ السابقة.</li>
                     <li>لا يتم أبداً بيع أو مشاركة بياناتكِ أو أرقام هواتفكِ مع أي طرف ثالث أو جهات إعلانية خارجية.</li>
                   </ul>
@@ -150,8 +150,8 @@ export function LegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
 
               <h1 className="text-3xl sm:text-4xl font-bold">
                 {lang === 'ar'
-                  ? 'شروط الخدمة واتفاقية المستخدم — غزل سبا'
-                  : 'Terms of Service & User Agreement — Guzel Spa'}
+                  ? 'شروط الخدمة واتفاقية المستخدم — جوزال ميديكال سبا'
+                  : 'Terms of Service & User Agreement — Guzel Medical Spa'}
               </h1>
 
               {lang === 'ar' ? (
@@ -166,7 +166,7 @@ export function LegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
                   </p>
                   <h3 className="text-lg font-bold">٣. استخدام الموقع والصلاحيات:</h3>
                   <p>
-                    الموقع مخصص لحجز جلسات ومنتجات غزل سبا للعميلات. يُحظر أي محاولة للدخول غير المصرح به إلى لوحات الإدارة أو أنظمة الكاشير المخصصة للموظفين فقط.
+                    الموقع مخصص لحجز جلسات ومنتجات جوزال ميديكال سبا للعميلات. يُحظر أي محاولة للدخول غير المصرح به إلى لوحات الإدارة أو أنظمة الكاشير المخصصة للموظفين فقط.
                   </p>
                 </div>
               ) : (
@@ -181,7 +181,7 @@ export function LegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
                   </p>
                   <h3 className="text-lg font-bold">3. Authorized Platform Usage:</h3>
                   <p>
-                    This platform is provided for Guzel Spa clients to browse and book beauty rituals. Administrative and POS routes are strictly restricted to authenticated salon personnel.
+                    This platform is provided for Guzel Medical Spa clients to browse and book beauty rituals. Administrative and POS routes are strictly restricted to authenticated salon personnel.
                   </p>
                 </div>
               )}
@@ -199,14 +199,14 @@ export function LegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
 
               <h1 className="text-3xl sm:text-4xl font-bold">
                 {lang === 'ar'
-                  ? 'سياسة ملفات الارتباط (Cookies) — غزل سبا'
-                  : 'Cookie & Storage Policy — Guzel Spa'}
+                  ? 'سياسة ملفات الارتباط (Cookies) — جوزال ميديكال سبا'
+                  : 'Cookie & Storage Policy — Guzel Medical Spa'}
               </h1>
 
               {lang === 'ar' ? (
                 <div className="space-y-4 text-sm leading-relaxed">
                   <p>
-                    يستخدم موقع <strong>غزل سبا</strong> تقنيات التخزين المحلي (LocalStorage &amp; SessionStorage) وملفات الارتباط الأساسية فقط من أجل:
+                    يستخدم موقع <strong>جوزال ميديكال سبا</strong> تقنيات التخزين المحلي (LocalStorage &amp; SessionStorage) وملفات الارتباط الأساسية فقط من أجل:
                   </p>
                   <ul className="list-disc ps-5 space-y-1.5">
                     <li>حفظ تفضيل اللغة الخاصة بكِ (العربية أو الإنجليزية).</li>

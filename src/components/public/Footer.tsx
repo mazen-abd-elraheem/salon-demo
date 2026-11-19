@@ -57,8 +57,8 @@ export default function Footer({ settings }: FooterProps) {
 
           <p className="mt-4 max-w-sm text-sm leading-relaxed" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
             {lang === 'ar'
-              ? 'غزل سبا للجمال والاسترخاء — ملاذكِ الهادئ لجلسات الهيدرا فيشل، الحمام المغربي الملكي، المساج العطري، ومنتجات غزل الأصلية للعناية بالبشرة.'
-              : 'Discover ultimate tranquility at Guzel Spa. Explore our luxury beauty and relaxation services, from rejuvenating facials to soothing massages and signature Guzel skincare.'}
+              ? 'جوزال ميديكال سبا للجمال والاسترخاء — ملاذكِ الهادئ لجلسات الهيدرا فيشل، الحمام المغربي الملكي، المساج العلاجي، ومنتجات جوزال الأصلية للعناية بالبشرة.'
+              : 'Discover ultimate tranquility at Guzel Medical Spa. Explore our luxury beauty and relaxation services, from rejuvenating facials to soothing massages and signature Guzel skincare.'}
           </p>
 
           <div className="mt-6 flex items-center gap-3">
@@ -68,8 +68,8 @@ export default function Footer({ settings }: FooterProps) {
               rel="noopener noreferrer"
               className="grid h-10 w-10 place-items-center rounded-full border transition hover:bg-[#cbb6ea] hover:text-[#2c1433]"
               style={{ borderColor: 'var(--fonts-20, #3a1d4333)', color: 'var(--fonts-100, #3a1d43)' }}
-              aria-label="Guzel Spa Facebook"
-              title="Guzel Spa Official Facebook"
+              aria-label="Guzel Medical Spa Facebook"
+              title="Guzel Medical Spa Official Facebook"
             >
               <Facebook className="h-4 w-4" />
             </a>
@@ -79,7 +79,7 @@ export default function Footer({ settings }: FooterProps) {
               rel="noopener noreferrer"
               className="grid h-10 w-10 place-items-center rounded-full border transition hover:bg-[#cbb6ea] hover:text-[#2c1433]"
               style={{ borderColor: 'var(--fonts-20, #3a1d4333)', color: 'var(--fonts-100, #3a1d43)' }}
-              aria-label="Guzel Spa Instagram"
+              aria-label="Guzel Medical Spa Instagram"
             >
               <Instagram className="h-4 w-4" />
             </a>
@@ -89,7 +89,7 @@ export default function Footer({ settings }: FooterProps) {
               rel="noopener noreferrer"
               className="grid h-10 w-10 place-items-center rounded-full border transition hover:bg-[#cbb6ea] hover:text-[#2c1433]"
               style={{ borderColor: 'var(--fonts-20, #3a1d4333)', color: 'var(--fonts-100, #3a1d43)' }}
-              aria-label="Guzel Spa WhatsApp"
+              aria-label="Guzel Medical Spa WhatsApp"
             >
               <MessageCircle className="h-4 w-4" />
             </a>
@@ -99,7 +99,7 @@ export default function Footer({ settings }: FooterProps) {
         {/* Main Menu Screens Column */}
         <div className="lg:col-span-3">
           <div className="text-xs font-semibold uppercase tracking-wider" style={{ color: 'var(--fonts-50, #3a1d4380)' }}>
-            {lang === 'ar' ? 'أقسام غزل سبا' : 'Explore Guzel'}
+            {lang === 'ar' ? 'أقسام جوزال ميديكال سبا' : 'Explore Guzel'}
           </div>
           <ul className="mt-4 space-y-2.5 text-sm">
             <li>
@@ -114,7 +114,7 @@ export default function Footer({ settings }: FooterProps) {
             </li>
             <li>
               <Link to="/products" className="no-underline hover:opacity-65 transition" style={{ color: 'var(--fonts-100, #3a1d43)' }}>
-                {lang === 'ar' ? 'منتجات غزل للعناية' : 'Guzel Skincare Line'}
+                {lang === 'ar' ? 'منتجات جوزال للعناية' : 'Guzel Skincare Line'}
               </Link>
             </li>
             <li>
@@ -124,7 +124,7 @@ export default function Footer({ settings }: FooterProps) {
             </li>
             <li>
               <Link to="/about" className="no-underline hover:opacity-65 transition" style={{ color: 'var(--fonts-100, #3a1d43)' }}>
-                {lang === 'ar' ? 'عن غزل سبا وتواصلي معنا' : 'About Guzel & Contact'}
+                {lang === 'ar' ? 'عن جوزال ميديكال سبا وتواصلي معنا' : 'About Guzel & Contact'}
               </Link>
             </li>
             <li>
@@ -203,8 +203,8 @@ export default function Footer({ settings }: FooterProps) {
           </span>
           <span>
             {lang === 'ar'
-              ? 'غزل سبا للجمال والاسترخاء · بالحجز المسبق'
-              : 'Guzel spa for beauty and relaxation · By Appointment'}
+              ? 'جوزال ميديكال سبا للجمال والاسترخاء · بالحجز المسبق'
+              : 'Guzel Medical Spa for beauty and relaxation · By Appointment'}
           </span>
         </div>
       </div>

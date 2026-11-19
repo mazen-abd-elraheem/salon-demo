@@ -4,3 +4,4 @@ Disallow: /admin
 Disallow: /reception
 
 Sitemap: https://guzelspa.beauty/sitemap.xml
+
