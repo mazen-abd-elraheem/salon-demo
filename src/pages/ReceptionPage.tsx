@@ -54,14 +54,21 @@ import {
   buildCompletionWhatsAppUrl,
 } from '../lib/whatsapp';
 import { DynamicQRCode } from '../lib/qrCode';
+import CheckoutPage from './CheckoutPage';
+import { clearVerifiedStaffSession, getVerifiedStaffSession } from '../lib/staffAuth';
+import { GuzelLogoIcon } from '../components/public/GuzelSvgIcons';
 
 export default function ReceptionPage() {
   const { lang, toggleLang, isRTL } = useLanguage();
+  const [activeView, setActiveView] = useState<'pos' | 'smart_checkout'>('pos');
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
   const [statusFilter, setStatusFilter] = useState<string>('active');
   const [selectedBookingId, setSelectedBookingId] = useState<string | null>(null);
   const [soundEnabled, setSoundEnabled] = useState(true);
+
+  const staffSession = getVerifiedStaffSession();
+  const canViewAdmin = staffSession?.role === 'admin' || staffSession?.role === 'manager';
 
   // Modals
   const [showAddServiceModal, setShowAddServiceModal] = useState(false);
@@ -71,7 +78,9 @@ export default function ReceptionPage() {
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
   // Active cashier
-  const activeStaffName = 'رنا نبيل (الكاشير)';
+  const activeStaffName = staffSession?.name
+    ? `${staffSession.name} (${staffSession.role === 'admin' ? 'مدير النظام' : staffSession.role === 'manager' ? 'مديرة الفرع' : 'الاستقبال والكاشير'})`
+    : 'رنا نبيل (الكاشير)';
   const currentShift = defaultShifts[1]; // Evening shift
 
   // Load bookings
@@ -335,8 +344,8 @@ export default function ReceptionPage() {
         );
       case 'checkout_pending':
         return (
-          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200">
-            <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse" />
+          <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold bg-[#f3e6f0] text-[#73358c] border border-[#cbb6ea]">
+            <span className="w-1.5 h-1.5 rounded-full bg-[#b14bd9] animate-pulse" />
             {lang === 'ar' ? 'بانتظار اعتماد السداد' : 'Checkout Pending'}
           </span>
         );
@@ -376,24 +385,40 @@ export default function ReceptionPage() {
     : '';
 
   return (
-    <div className="min-h-screen bg-[#FDFCFB] text-espresso font-sans">
+    <div
+      className="min-h-screen text-espresso font-sans"
+      style={{
+        backgroundColor: 'var(--mainbg, #f9f0f5)',
+        color: 'var(--fonts-100, #3a1d43)',
+      }}
+    >
       {/* Top Banner & Header */}
-      <header className="sticky top-0 z-30 border-b border-pearl/80 bg-ivory/95 backdrop-blur-md px-4 sm:px-8 py-3.5 transition-all">
+      <header
+        className="sticky top-0 z-30 border-b backdrop-blur-xl px-4 sm:px-8 py-3.5 transition-all"
+        style={{
+          backgroundColor: 'rgba(249, 240, 245, 0.88)',
+          borderColor: 'rgba(58, 29, 67, 0.09)',
+        }}
+      >
         <div className="max-w-7xl mx-auto flex flex-wrap items-center justify-between gap-4">
           <div className="flex items-center gap-3.5">
-            <div className="w-10 h-10 rounded-2xl bg-gradient-to-br from-rosegold-300 to-rosegold-500 flex items-center justify-center text-ivory shadow-soft">
-              <Store className="w-5 h-5" />
-            </div>
+            <Link
+              to="/"
+              className="w-10 h-10 rounded-2xl bg-[#cbb6ea] flex items-center justify-center text-[#3a1d43] shadow-soft no-underline"
+              title={lang === 'ar' ? 'الرئيسية' : 'Home'}
+            >
+              <GuzelLogoIcon className="w-5 h-5" />
+            </Link>
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-base sm:text-lg font-bold text-espresso font-display">
+                <h1 className="text-base sm:text-lg font-bold text-[#3a1d43] font-display">
                   {lang === 'ar' ? 'جوزال ميديكال سبا • شاشة الاستقبال والكاشير' : 'Guzel Medical Spa • Reception & POS'}
                 </h1>
-                <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-rosegold-100/60 text-rosegold-700 font-medium">
+                <span className="hidden sm:inline-block text-[11px] px-2.5 py-0.5 rounded-full bg-[#cbb6ea]/45 text-[#3a1d43] font-bold border border-[#3a1d43]/10">
                   {currentShift.name_ar} (16:00 - 23:00)
                 </span>
               </div>
-              <p className="text-xs text-mocha-500">
+              <p className="text-xs text-[#3a1d43]/65">
                 {lang === 'ar'
                   ? `الكاشير المناوب: ${activeStaffName}`
                   : `Active Staff: ${activeStaffName}`}
@@ -401,17 +426,17 @@ export default function ReceptionPage() {
             </div>
           </div>
 
-          <div className="flex items-center gap-2 sm:gap-3">
+          <div className="flex items-center gap-2 sm:gap-2.5">
             {/* Staff Attendance Quick Button */}
             <button
               type="button"
               onClick={() => setAttendanceModalOpen(true)}
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-emerald-300 bg-emerald-50 text-emerald-800 hover:bg-emerald-100 text-xs font-semibold transition shadow-xs"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-emerald-300 bg-emerald-50/90 text-emerald-800 hover:bg-emerald-100 text-xs font-bold transition shadow-xs cursor-pointer"
               title={lang === 'ar' ? 'تسجيل حضور وانصراف الموظفات' : 'Staff Attendance'}
             >
               <UserCheck className="w-3.5 h-3.5 text-emerald-600" />
               <span className="hidden sm:inline">{lang === 'ar' ? 'حضور الموظفات' : 'Staff Clock'}</span>
-              <span className="h-5 min-w-[20px] px-1 rounded-full bg-emerald-600 text-white text-[10px] grid place-items-center font-bold">
+              <span className="h-5 min-w-[20px] px-1 rounded-full bg-emerald-600 text-white text-[10px] grid place-items-center font-mono font-bold">
                 {activeStaffAttendance.length}
               </span>
             </button>
@@ -421,10 +446,10 @@ export default function ReceptionPage() {
               type="button"
               onClick={() => setSoundEnabled(!soundEnabled)}
               title={soundEnabled ? 'تنبيهات الصوت مفعلة' : 'الصوت مكتوم'}
-              className={`p-2 rounded-xl border transition ${
+              className={`p-2 rounded-full border transition cursor-pointer ${
                 soundEnabled
-                  ? 'border-rosegold-300 bg-rosegold-50 text-rosegold-600'
-                  : 'border-pearl bg-pearl/30 text-mocha-400'
+                  ? 'border-[#b14bd9]/30 bg-[#cbb6ea]/35 text-[#3a1d43]'
+                  : 'border-[#e8d7e4] bg-white/60 text-[#3a1d43]/50'
               }`}
             >
               {soundEnabled ? <Volume2 className="w-4 h-4" /> : <VolumeX className="w-4 h-4" />}
@@ -434,19 +459,32 @@ export default function ReceptionPage() {
             <button
               type="button"
               onClick={toggleLang}
-              className="px-3 py-1.5 rounded-xl border border-mocha-400/20 bg-pearl/40 hover:bg-pearl/80 text-xs font-semibold text-espresso transition"
+              className="px-3 py-1.5 rounded-full border border-[#3a1d43]/15 bg-white/80 hover:bg-white text-xs font-bold text-[#3a1d43] transition cursor-pointer"
             >
-              {lang === 'ar' ? 'English' : 'عربي'}
+              {lang === 'ar' ? 'English' : 'العربية'}
             </button>
 
-            {/* Link to Admin */}
-            <Link
-              to="/admin/appointments"
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl border border-mocha-400/25 bg-white hover:bg-pearl/30 text-xs font-medium text-espresso transition shadow-xs"
-            >
-              <span>{lang === 'ar' ? 'لوحة التحكم' : 'Admin'}</span>
-              <ArrowRight className={`w-3.5 h-3.5 ${isRTL ? 'rotate-180' : ''}`} />
-            </Link>
+            {/* Link to Admin (Only shown for Admin & Manager roles) */}
+            {canViewAdmin ? (
+              <Link
+                to="/admin"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#3a1d43] hover:opacity-90 text-xs font-bold text-white transition shadow-xs no-underline"
+              >
+                <span>{lang === 'ar' ? 'لوحة الإدارة' : 'Admin Suite'}</span>
+                <ArrowRight className={`w-3.5 h-3.5 ${isRTL ? 'rotate-180' : ''}`} />
+              </Link>
+            ) : (
+              <button
+                type="button"
+                onClick={() => {
+                  clearVerifiedStaffSession();
+                  window.location.href = '/login';
+                }}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full border border-[#3a1d43]/15 bg-white/80 hover:bg-rose-50 text-xs font-bold text-[#3a1d43] transition cursor-pointer"
+              >
+                <span>{lang === 'ar' ? 'تسجيل خروج' : 'Sign Out'}</span>
+              </button>
+            )}
           </div>
         </div>
       </header>
@@ -455,41 +493,100 @@ export default function ReceptionPage() {
       <main className="max-w-7xl mx-auto px-4 sm:px-8 py-6">
         {/* KPI Stats Bar */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-3 sm:gap-4 mb-6">
-          <div className="p-4 rounded-2xl bg-white border border-pearl/80 shadow-soft">
-            <p className="text-xs font-medium text-mocha-500 mb-1">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white/85 backdrop-blur-md border border-[#e8d7e4] shadow-softer">
+            <p className="text-xs font-semibold text-[#3a1d43]/65 mb-1">
               {lang === 'ar' ? 'فواتير مفتوحة بالفرع' : 'In-Branch Open Tabs'}
             </p>
-            <p className="text-2xl font-bold text-espresso">
+            <p className="text-2xl sm:text-3xl font-extrabold font-mono text-[#3a1d43]">
               {bookings.filter((b) => b.status === 'checked_in').length}
             </p>
           </div>
-          <div className="p-4 rounded-2xl bg-white border border-pearl/80 shadow-soft">
-            <p className="text-xs font-medium text-mocha-500 mb-1">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white/85 backdrop-blur-md border border-[#e8d7e4] shadow-softer">
+            <p className="text-xs font-semibold text-[#3a1d43]/65 mb-1">
               {lang === 'ar' ? 'عربين بانتظار المراجعة' : 'Pending Deposits'}
             </p>
-            <p className="text-2xl font-bold text-rose-600">
+            <p className="text-2xl sm:text-3xl font-extrabold font-mono text-[#b14bd9]">
               {bookings.filter((b) => b.status === 'pending_verification').length}
             </p>
           </div>
-          <div className="p-4 rounded-2xl bg-white border border-pearl/80 shadow-soft">
-            <p className="text-xs font-medium text-mocha-500 mb-1">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white/85 backdrop-blur-md border border-[#e8d7e4] shadow-softer">
+            <p className="text-xs font-semibold text-[#3a1d43]/65 mb-1">
               {lang === 'ar' ? 'حجوزات اليوم المؤكدة' : 'Confirmed Today'}
             </p>
-            <p className="text-2xl font-bold text-espresso">
+            <p className="text-2xl sm:text-3xl font-extrabold font-mono text-[#3a1d43]">
               {bookings.filter((b) => b.status === 'confirmed').length}
             </p>
           </div>
-          <div className="p-4 rounded-2xl bg-white border border-pearl/80 shadow-soft">
-            <p className="text-xs font-medium text-mocha-500 mb-1">
+          <div className="p-4 sm:p-5 rounded-3xl bg-white/85 backdrop-blur-md border border-[#e8d7e4] shadow-softer">
+            <p className="text-xs font-semibold text-[#3a1d43]/65 mb-1">
               {lang === 'ar' ? 'فواتير مكتملة اليوم' : 'Completed Invoices'}
             </p>
-            <p className="text-2xl font-bold text-emerald-600">
+            <p className="text-2xl sm:text-3xl font-extrabold font-mono text-emerald-600">
               {bookings.filter((b) => b.status === 'completed').length}
             </p>
           </div>
         </div>
 
-        {/* Master-Detail Layout */}
+        {/* Receptionist Mode Switcher: 1. Live POS & Customer Tabs | 2. In-Branch Smart Checkout */}
+        <div
+          className="mb-6 p-1.5 rounded-full border inline-flex flex-wrap items-center gap-1.5 backdrop-blur-md"
+          style={{
+            backgroundColor: 'rgba(255, 255, 255, 0.78)',
+            borderColor: 'rgba(58, 29, 67, 0.1)',
+          }}
+        >
+          <button
+            type="button"
+            onClick={() => setActiveView('pos')}
+            className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer border-0"
+            style={{
+              backgroundColor: activeView === 'pos' ? '#3a1d43' : 'transparent',
+              color: activeView === 'pos' ? '#ffffff' : '#3a1d43',
+              boxShadow: activeView === 'pos' ? '0 8px 20px -6px rgba(58,29,67,0.3)' : 'none',
+            }}
+          >
+            <Store className="w-4 h-4" />
+            <span>
+              {lang === 'ar'
+                ? 'إدارة الفواتير والطلبات الحية (POS)'
+                : 'Live Customer Tabs & POS'}
+            </span>
+          </button>
+
+          <button
+            type="button"
+            onClick={() => setActiveView('smart_checkout')}
+            className="px-5 py-2.5 rounded-full text-xs sm:text-sm font-bold transition-all duration-200 flex items-center gap-2 cursor-pointer border-0"
+            style={{
+              backgroundColor: activeView === 'smart_checkout' ? '#3a1d43' : 'transparent',
+              color: activeView === 'smart_checkout' ? '#ffffff' : '#3a1d43',
+              boxShadow: activeView === 'smart_checkout' ? '0 8px 20px -6px rgba(58,29,67,0.3)' : 'none',
+            }}
+          >
+            <CreditCard className="w-4 h-4 text-[#e58fb6]" />
+            <span>
+              {lang === 'ar'
+                ? 'الفاتورة الرقمية وشاشة الدفع الذكي بالفرع'
+                : 'In-Branch Smart Checkout & Settlement'}
+            </span>
+          </button>
+        </div>
+
+        {activeView === 'smart_checkout' ? (
+          <CheckoutPage
+            embeddedInReception
+            initialBookingId={selectedBookingId}
+            onSettled={() => {
+              reloadData();
+              triggerToast(
+                lang === 'ar'
+                  ? 'تم تحصيل وإغلاق الفاتورة بنجاح من شاشة الدفع الذكي ✨'
+                  : 'Invoice settled and closed from Smart Checkout!',
+              );
+            }}
+          />
+        ) : (
+        /* Master-Detail Layout */
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
           {/* Left / Sidebar Column: Search & Bookings List (5 cols) */}
           <div className="lg:col-span-5 space-y-4">
@@ -773,7 +870,7 @@ export default function ReceptionPage() {
                           <span
                             className={`px-1.5 py-0.5 rounded text-[10px] font-semibold ${
                               addon.type === 'service'
-                                ? 'bg-amber-100 text-amber-800'
+                                ? 'bg-[#f3e6f0] text-[#73358c]'
                                 : 'bg-purple-100 text-purple-800'
                             }`}
                           >
@@ -892,7 +989,7 @@ export default function ReceptionPage() {
                                 className={`text-[10px] font-semibold px-1.5 py-0.5 rounded ${
                                   p.status === 'verified'
                                     ? 'bg-emerald-100 text-emerald-800'
-                                    : 'bg-amber-100 text-amber-800'
+                                    : 'bg-[#f3e6f0] text-[#73358c]'
                                 }`}
                               >
                                 {p.status === 'verified' ? 'معتمد' : 'بانتظار المراجعة'}
@@ -904,13 +1001,26 @@ export default function ReceptionPage() {
                     </div>
                   )}
 
-                  {/* Cashier Final Settlement Button */}
+                  {/* Cashier Final Settlement & Smart Checkout Buttons */}
                   {selectedBooking.status !== 'completed' && (
-                    <div className="mt-5 pt-3 border-t border-pearl/80">
+                    <div className="mt-5 pt-3 border-t border-pearl/80 flex flex-col sm:flex-row gap-2.5">
+                      <button
+                        type="button"
+                        onClick={() => setActiveView('smart_checkout')}
+                        className="flex-1 py-3 px-4 rounded-full border border-[#cbb6ea] bg-[#f3e6f0] hover:bg-[#cbb6ea]/50 text-[#3a1d43] font-bold text-xs sm:text-sm transition flex items-center justify-center gap-2 cursor-pointer"
+                      >
+                        <CreditCard className="w-4 h-4 text-[#73358c]" />
+                        <span>
+                          {lang === 'ar'
+                            ? 'فتح شاشة الدفع الذكي والفاتورة'
+                            : 'Open Smart Checkout Screen'}
+                        </span>
+                      </button>
+
                       <button
                         type="button"
                         onClick={handleApproveFinalSettlement}
-                        className="w-full py-3 px-4 rounded-xl bg-espresso hover:bg-espresso/90 text-ivory font-semibold text-sm transition shadow-soft flex items-center justify-center gap-2"
+                        className="flex-1 py-3 px-4 rounded-full bg-espresso hover:bg-espresso/90 text-ivory font-bold text-xs sm:text-sm transition shadow-soft flex items-center justify-center gap-2 cursor-pointer"
                       >
                         <CheckCircle2 className="w-4 h-4 text-rosegold-300" />
                         <span>
@@ -931,6 +1041,7 @@ export default function ReceptionPage() {
             )}
           </div>
         </div>
+        )}
       </main>
 
       {/* Modal: Add Extra Service */}

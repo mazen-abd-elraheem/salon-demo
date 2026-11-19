@@ -222,11 +222,11 @@ export default function Inventory() {
             <p className="text-xs text-mocha-500 font-medium">
               {lang === 'ar' ? 'منتجات أوشكت على النفاد' : 'Low Stock Alert (<= 5)'}
             </p>
-            <p className={`text-2xl font-bold font-mono mt-1 ${lowStockCount > 0 ? 'text-amber-600' : 'text-espresso'}`}>
+            <p className={`text-2xl font-bold font-mono mt-1 ${lowStockCount > 0 ? 'text-[#b14bd9]' : 'text-espresso'}`}>
               {lowStockCount}
             </p>
           </div>
-          <span className={`p-2.5 rounded-xl ${lowStockCount > 0 ? 'bg-amber-50 text-amber-600' : 'bg-pearl/40 text-mocha-500'}`}>
+          <span className={`p-2.5 rounded-xl ${lowStockCount > 0 ? 'bg-[#f3e6f0] text-[#b14bd9]' : 'bg-pearl/40 text-mocha-500'}`}>
             <AlertTriangle className="w-5 h-5" />
           </span>
         </div>
@@ -322,11 +322,11 @@ export default function Inventory() {
                         <span
                           className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full font-mono font-semibold ${
                             isLow
-                              ? 'bg-amber-50 text-amber-700 border border-amber-200'
+                              ? 'bg-[#f3e6f0] text-[#73358c] border border-[#cbb6ea]'
                               : 'bg-emerald-50 text-emerald-700 border border-emerald-200'
                           }`}
                         >
-                          {isLow && <AlertTriangle className="w-3 h-3 text-amber-500" />}
+                          {isLow && <AlertTriangle className="w-3 h-3 text-[#b14bd9]" />}
                           <span>{prod.stock_quantity} {lang === 'ar' ? 'عبوة' : 'units'}</span>
                         </span>
                       </td>

@@ -763,13 +763,16 @@ export function getLocalBookingByToken(token: string): Booking | null {
 
 export function getLocalBookingByPhone(phone: string, bookingNumber?: string): Booking | null {
   const cleanPhone = phone.trim().replace(/\s+/g, '');
+  const cleanCode = bookingNumber?.trim().toUpperCase().replace(/^#/, '');
   const bookings = getLocalBookings();
   return (
-    bookings.find(
-      (b) =>
-        b.customer_phone.replace(/\s+/g, '') === cleanPhone &&
-        (!bookingNumber || b.booking_number.toUpperCase() === bookingNumber.trim().toUpperCase()),
-    ) || null
+    bookings.find((b) => {
+      const phoneMatches = b.customer_phone.replace(/\s+/g, '') === cleanPhone;
+      if (!phoneMatches) return false;
+      if (!cleanCode) return true;
+      const bNum = b.booking_number.toUpperCase();
+      return bNum === cleanCode || bNum.endsWith(`-${cleanCode}`);
+    }) || null
   );
 }
 
@@ -1162,6 +1165,12 @@ export function getLocalPaymentGateways(): PaymentGatewayConfig[] {
   } catch {
     return defaultPaymentGateways;
   }
+}
+
+export function getPublicPaymentGateways(): PaymentGatewayConfig[] {
+  return getLocalPaymentGateways().map(({ secret_key, hmac_secret, ...safeConfig }) => ({
+    ...safeConfig,
+  }));
 }
 
 export function saveLocalPaymentGateways(gateways: PaymentGatewayConfig[]) {

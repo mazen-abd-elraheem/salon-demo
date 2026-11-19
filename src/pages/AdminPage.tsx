@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
-import { Loader2, ShieldOff, Sparkles } from 'lucide-react';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
+import { Loader2, ShieldOff } from 'lucide-react';
 import { useAdminAuth } from '../hooks/useAdminAuth';
 import AdminLogin from '../components/admin/AdminLogin';
 import AdminLayout from '../components/admin/AdminLayout';
@@ -19,6 +19,7 @@ import PaymentGatewaysPage from '../components/admin/PaymentGatewaysPage';
 import { supabase } from '../lib/supabase';
 import type { BusinessSettings } from '../lib/types';
 import { useLanguage } from '../context/LanguageContext';
+import { GuzelLogoIcon } from '../components/public/GuzelSvgIcons';
 
 export default function AdminPage() {
   const auth = useAdminAuth();
@@ -40,12 +41,10 @@ export default function AdminPage() {
     };
   }, [auth.isAdmin]);
 
-  // Loading state: only while we genuinely don't know yet.
   if (auth.loading) {
     return <LoadingScreen />;
   }
 
-  // No session → show login form.
   if (!auth.session) {
     return (
       <AdminLogin
@@ -56,7 +55,12 @@ export default function AdminPage() {
     );
   }
 
-  // Signed in but NOT in admin_users.
+  // If authenticated staff is a receptionist, redirect immediately to /reception POS
+  if (auth.role === 'receptionist') {
+    return <Navigate to="/reception" replace />;
+  }
+
+  // Signed in but NOT an authorized admin or manager
   if (auth.isAdmin === false) {
     return (
       <UnauthorizedScreen
@@ -66,13 +70,14 @@ export default function AdminPage() {
     );
   }
 
-  // Session present but admin check hasn't resolved yet — keep waiting.
   if (auth.isAdmin === null) {
     return <LoadingScreen subtitle="Verifying admin access…" />;
   }
 
+  const isSuperAdmin = auth.role === 'admin' || !auth.role;
+
   return (
-    <AdminLayout user={auth.user} onSignOut={auth.signOut} brand={brand}>
+    <AdminLayout user={auth.user} role={auth.role} onSignOut={auth.signOut} brand={brand}>
       <Routes>
         <Route path="/" element={<Overview brand={brand} />} />
         <Route path="/appointments" element={<Appointments />} />
@@ -82,9 +87,15 @@ export default function AdminPage() {
         <Route path="/reconciliation" element={<Reconciliation />} />
         <Route path="/packages" element={<Packages />} />
         <Route path="/inventory" element={<Inventory />} />
-        <Route path="/roles" element={<RoleManagement />} />
+        <Route
+          path="/roles"
+          element={isSuperAdmin ? <RoleManagement /> : <Navigate to="/admin" replace />}
+        />
         <Route path="/attendance" element={<Attendance />} />
-        <Route path="/payment-gateways" element={<PaymentGatewaysPage />} />
+        <Route
+          path="/payment-gateways"
+          element={isSuperAdmin ? <PaymentGatewaysPage /> : <Navigate to="/admin" replace />}
+        />
         <Route
           path="/settings"
           element={
@@ -99,17 +110,20 @@ export default function AdminPage() {
 function LoadingScreen({ subtitle }: { subtitle?: string }) {
   const { lang } = useLanguage();
   return (
-    <div className="grid min-h-screen place-items-center bg-ivory">
+    <div
+      className="grid min-h-screen place-items-center"
+      style={{ backgroundColor: 'var(--mainbg, #f9f0f5)', color: 'var(--fonts-100, #3a1d43)' }}
+    >
       <div className="text-center">
-        <div className="mx-auto grid h-12 w-12 place-items-center rounded-full bg-gradient-to-br from-rosegold-200 to-rosegold-400 text-ivory">
-          <Sparkles className="h-5 w-5" />
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-[#cbb6ea] text-[#3a1d43] shadow-soft">
+          <GuzelLogoIcon className="h-7 w-7" />
         </div>
-        <p className="mt-5 font-display text-2xl text-espresso">
-          {lang === 'ar' ? 'جوزال ميديكال سبا • إدارة الصالون' : 'Guzel Medical Spa Suite'}
+        <p className="mt-5 font-display font-bold text-2xl text-[#3a1d43]">
+          {lang === 'ar' ? 'جوزال ميديكال سبا • لوحة الإدارة' : 'Guzel Medical Spa Suite'}
         </p>
-        <p className="mt-2 inline-flex items-center gap-2 text-sm text-mocha-500">
-          <Loader2 className="h-4 w-4 animate-spin" />
-          {subtitle ?? (lang === 'ar' ? 'جاري التحميل...' : 'Loading…')}
+        <p className="mt-2 inline-flex items-center gap-2 text-sm text-[#3a1d43]/65">
+          <Loader2 className="h-4 w-4 animate-spin text-[#b14bd9]" />
+          {subtitle ?? (lang === 'ar' ? 'جاري التحقق والتحميل...' : 'Loading…')}
         </p>
       </div>
     </div>
@@ -125,30 +139,33 @@ function UnauthorizedScreen({
 }) {
   const { lang } = useLanguage();
   return (
-    <div className="grid min-h-screen place-items-center bg-ivory p-6">
+    <div
+      className="grid min-h-screen place-items-center p-6"
+      style={{ backgroundColor: 'var(--mainbg, #f9f0f5)', color: 'var(--fonts-100, #3a1d43)' }}
+    >
       <div className="card-soft max-w-md p-8 text-center">
-        <div className="mx-auto grid h-14 w-14 place-items-center rounded-full bg-blush-100 text-blush-600">
-          <ShieldOff className="h-5 w-5" />
+        <div className="mx-auto grid h-14 w-14 place-items-center rounded-2xl bg-rose-100 text-rose-600">
+          <ShieldOff className="h-6 w-6" />
         </div>
-        <h1 className="font-display mt-5 text-3xl text-espresso">
-          {lang === 'ar' ? 'غير مصرح بالدخول' : 'Access not granted'}
+        <h1 className="font-display font-bold mt-5 text-2xl sm:text-3xl text-[#3a1d43]">
+          {lang === 'ar' ? 'غير مصرح بالدخول' : 'Access Restricted'}
         </h1>
-        <p className="mt-3 text-sm text-mocha-600">
+        <p className="mt-3 text-sm text-[#3a1d43]/70 leading-relaxed">
           {lang === 'ar' ? (
             <>
-              تم تسجيل الدخول {email && <strong>({email})</strong>}، لكن هذا الحساب ليس لديه صلاحيات الإدارة. يرجى مراجعة إدارة الصالون.
+              تم تسجيل الدخول {email && <strong>({email})</strong>}، لكن هذا الحساب ليس لديه صلاحيات الإدارة العليا.
             </>
           ) : (
             <>
-              You are signed in {email && <strong>({email})</strong>}, but you are not authorized as an admin. Ask the studio owner to add your user id to the admin list.
+              You are signed in {email && <strong>({email})</strong>}, but you are not authorized as an administrator.
             </>
           )}
         </p>
         <div className="mt-7 flex items-center justify-center gap-3">
-          <Link to="/" className="btn-secondary">
+          <Link to="/" className="btn-secondary no-underline">
             {lang === 'ar' ? 'الرجوع للموقع' : 'Return to website'}
           </Link>
-          <button onClick={onSignOut} className="btn-primary">
+          <button onClick={onSignOut} className="btn-primary cursor-pointer border-0">
             {lang === 'ar' ? 'تسجيل الخروج' : 'Sign out'}
           </button>
         </div>

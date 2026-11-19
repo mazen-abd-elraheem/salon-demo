@@ -88,7 +88,7 @@ export function useAdminAuth() {
 
         const isAdminRole = staffSess.role === 'admin' || staffSess.role === 'manager';
         const isStaffRole =
-          isAdminRole || staffSess.role === 'receptionist' || staffSess.role === 'specialist';
+          isAdminRole || staffSess.role === 'receptionist';
 
         setState({
           loading: false,

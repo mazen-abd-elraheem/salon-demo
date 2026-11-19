@@ -21,6 +21,7 @@ import {
   clockOutStaff,
 } from '../../lib/mockData';
 import { useLanguage } from '../../context/LanguageContext';
+import PageHeader from './PageHeader';
 
 export default function Attendance() {
   const { lang } = useLanguage();
@@ -151,37 +152,34 @@ export default function Attendance() {
 
   return (
     <div className="space-y-6">
-      {/* Top Header */}
-      <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-        <div>
-          <h1 className="font-display text-2xl font-bold text-espresso">
-            {lang === 'ar' ? 'سجل حضور وانصراف الموظفات' : 'Staff Attendance & Shifts'}
-          </h1>
-          <p className="text-xs text-mocha-500 mt-1">
-            {lang === 'ar'
-              ? 'متابعة مباشرة لتواجد الأخصائيات وموظفات الاستقبال، الورديات، وساعات العمل اليومية'
-              : 'Live tracking of salon specialists, shifts, clock-ins, and working hours'}
-          </p>
-        </div>
+      <PageHeader
+        eyebrow={lang === 'ar' ? 'الموارد البشرية والورديات' : 'Staff Attendance'}
+        title={lang === 'ar' ? 'سجل حضور وانصراف الموظفات' : 'Staff Attendance & Shifts'}
+        subtitle={
+          lang === 'ar'
+            ? 'متابعة مباشرة لتواجد الأخصائيات وموظفات الاستقبال، الورديات، وساعات العمل اليومية.'
+            : 'Live tracking of salon specialists, shifts, clock-ins, and working hours.'
+        }
+        actions={
+          <div className="flex items-center gap-2.5">
+            <button
+              onClick={handleExportCSV}
+              className="inline-flex items-center gap-1.5 rounded-full border border-pearl/90 bg-white px-4 py-2 text-xs font-bold text-mocha-700 shadow-clean hover:bg-ivory transition cursor-pointer"
+            >
+              <Download className="h-3.5 w-3.5" />
+              <span>{lang === 'ar' ? 'تصدير كشف Excel' : 'Export CSV'}</span>
+            </button>
 
-        <div className="flex items-center gap-2.5">
-          <button
-            onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 rounded-xl border border-pearl/90 bg-white px-3.5 py-2 text-xs font-semibold text-mocha-700 shadow-clean hover:bg-ivory transition"
-          >
-            <Download className="h-3.5 w-3.5" />
-            <span>{lang === 'ar' ? 'تصدير كشف Excel' : 'Export CSV'}</span>
-          </button>
-
-          <button
-            onClick={() => setModalOpen(true)}
-            className="btn-primary text-xs py-2 px-4 inline-flex items-center gap-1.5"
-          >
-            <Plus className="h-4 w-4" />
-            <span>{lang === 'ar' ? 'تسجيل حضور يدوي' : 'Manual Entry'}</span>
-          </button>
-        </div>
-      </div>
+            <button
+              onClick={() => setModalOpen(true)}
+              className="btn-primary !text-xs !py-2 !px-4 inline-flex items-center gap-1.5 cursor-pointer border-0"
+            >
+              <Plus className="h-4 w-4" />
+              <span>{lang === 'ar' ? 'تسجيل حضور يدوي' : 'Manual Entry'}</span>
+            </button>
+          </div>
+        }
+      />
 
       {/* KPI Metrics */}
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
@@ -215,17 +213,17 @@ export default function Attendance() {
           </span>
         </div>
 
-        <div className="rounded-2xl border border-amber-200 bg-amber-50/60 p-4 shadow-clean">
+        <div className="rounded-2xl border border-[#cbb6ea] bg-[#f3e6f0]/75 p-4 shadow-clean">
           <div className="flex items-center justify-between">
-            <span className="text-xs font-semibold text-amber-800">
+            <span className="text-xs font-semibold text-[#73358c]">
               {lang === 'ar' ? 'حالات تأخير' : 'Late Arrivals'}
             </span>
-            <AlertTriangle className="h-4 w-4 text-amber-600" />
+            <AlertTriangle className="h-4 w-4 text-[#b14bd9]" />
           </div>
-          <div className="font-display text-2xl font-bold text-amber-900 mt-2">
+          <div className="font-display text-2xl font-bold text-[#3a1d43] mt-2">
             {stats.late}
           </div>
-          <span className="text-[10px] text-amber-700">
+          <span className="text-[10px] text-[#73358c]">
             {lang === 'ar' ? 'حضور بعد موعد الوردية' : 'Beyond grace period'}
           </span>
         </div>
@@ -367,7 +365,7 @@ export default function Attendance() {
                       </td>
                       <td className="px-4 py-3">
                         {r.status === 'late' ? (
-                          <span className="rounded-full bg-amber-100 px-2 py-0.5 text-[10px] font-semibold text-amber-800">
+                          <span className="rounded-full bg-[#f3e6f0] px-2 py-0.5 text-[10px] font-semibold text-[#73358c]">
                             {lang === 'ar' ? 'متأخرة' : 'Late'}
                           </span>
                         ) : r.clock_out ? (

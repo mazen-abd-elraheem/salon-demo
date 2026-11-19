@@ -1,4 +1,4 @@
-import { Mail, MapPin, Phone, Facebook, Instagram, MessageCircle, QrCode } from 'lucide-react';
+import { Mail, MapPin, Phone, Facebook, Instagram, MessageCircle } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import { useLanguage } from '../../context/LanguageContext';
 import type { BusinessSettings } from '../../lib/types';
@@ -144,12 +144,6 @@ export default function Footer({ settings }: FooterProps) {
             <li>
               <Link to="/login" className="no-underline hover:opacity-65 transition" style={{ color: 'var(--fonts-100, #3a1d43)' }}>
                 {lang === 'ar' ? 'تسجيل الدخول / حسابي' : 'Client Login / Profile'}
-              </Link>
-            </li>
-            <li>
-              <Link to="/checkout" className="inline-flex items-center gap-1.5 no-underline hover:opacity-65 transition font-medium" style={{ color: 'var(--fonts-100, #3a1d43)' }}>
-                <QrCode className="h-3.5 w-3.5 text-[#b14bd9]" />
-                <span>{lang === 'ar' ? 'سداد الفاتورة QR' : 'In-Branch QR Pay'}</span>
               </Link>
             </li>
             <li>

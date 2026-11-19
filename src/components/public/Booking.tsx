@@ -42,7 +42,7 @@ import {
   defaultServices,
   defaultSettings,
   defaultSpecialists,
-  getLocalPaymentGateways,
+  getPublicPaymentGateways,
   saveLocalBooking,
 } from '../../lib/mockData';
 import {
@@ -128,9 +128,9 @@ export default function Booking({
   const [dataConsentAgreed, setDataConsentAgreed] = useState<boolean>(false);
   const [consentError, setConsentError] = useState<string | null>(null);
 
-  // 50% Deposit Payment (Connected to Admin Payment Gateways)
+  // 50% Deposit Payment (Connected to Public-Safe Payment Gateways without secret keys)
   const onlineGateways = useMemo(
-    () => getLocalPaymentGateways().filter((g) => g.enabled && g.supports_online_deposit),
+    () => getPublicPaymentGateways().filter((g) => g.enabled && g.supports_online_deposit),
     [],
   );
   const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayProvider>(

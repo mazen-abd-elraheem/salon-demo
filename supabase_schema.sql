@@ -389,9 +389,9 @@ create table if not exists public.payment_gateways (
 
 alter table public.payment_gateways enable row level security;
 drop policy if exists "Public can view payment gateways" on public.payment_gateways;
-create policy "Public can view payment gateways" on public.payment_gateways for select using (true);
+create policy "Public can view payment gateways" on public.payment_gateways for select using (is_enabled = true or public.is_admin());
 drop policy if exists "Admins can manage payment gateways" on public.payment_gateways;
-create policy "Admins can manage payment gateways" on public.payment_gateways for all using (true) with check (true);
+create policy "Admins can manage payment gateways" on public.payment_gateways for all using (public.is_admin()) with check (public.is_admin());
 
 drop policy if exists "Anyone can read staff users" on public.staff_users;
 create policy "Anyone can read staff users" on public.staff_users for select using (auth.role() = 'authenticated' or public.is_admin());

@@ -9,7 +9,6 @@ import {
   Droplets,
   HeartHandshake,
   Home,
-  QrCode,
   ShieldCheck,
   Sparkles,
   User,
@@ -283,12 +282,6 @@ export default function Navbar({ settings, onBook }: NavbarProps) {
       sub: lang === 'ar' ? 'تأكيد فوري للموعد' : 'Instant slot reservation',
       to: '/book',
       icon: CalendarCheck,
-    },
-    {
-      label: lang === 'ar' ? 'سداد الفاتورة بالفرع (QR)' : 'In-Branch QR Checkout',
-      sub: lang === 'ar' ? 'دفع سريع وآمن بالفرع' : 'Fast contactless checkout',
-      to: '/checkout',
-      icon: QrCode,
     },
   ];
 

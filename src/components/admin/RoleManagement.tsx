@@ -130,7 +130,7 @@ export default function RoleManagement() {
   const roleLabels: Record<StaffRole, { ar: string; en: string; badge: string }> = {
     admin: { ar: 'مدير عام', en: 'Admin', badge: 'bg-purple-100 text-purple-800' },
     manager: { ar: 'مديرة الفرع', en: 'Manager', badge: 'bg-blue-100 text-blue-800' },
-    receptionist: { ar: 'موظفة استقبال وكاشير', en: 'Receptionist', badge: 'bg-amber-100 text-amber-800' },
+    receptionist: { ar: 'موظفة استقبال وكاشير', en: 'Receptionist', badge: 'bg-[#f3e6f0] text-[#73358c]' },
     specialist: { ar: 'أخصائية تجميل', en: 'Specialist', badge: 'bg-emerald-100 text-emerald-800' },
   };
 

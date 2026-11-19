@@ -3,7 +3,12 @@ import { Filter, Loader2, Mail, Phone, Search, X } from 'lucide-react';
 import PageHeader from './PageHeader';
 import { StatusBadge, prettyDate, prettyTime } from './Overview';
 import { supabase } from '../../lib/supabase';
-import { defaultServices } from '../../lib/mockData';
+import {
+  defaultServices,
+  getLocalBookings,
+  getLocalServices,
+  updateLocalBookingStatus,
+} from '../../lib/mockData';
 import type { Appointment, AppointmentStatus, Service } from '../../lib/types';
 import { formatDuration, formatPrice, initialsFromName } from '../../lib/format';
 import { useLanguage } from '../../context/LanguageContext';
@@ -41,26 +46,44 @@ export default function Appointments() {
       const loadedAppts = (a?.data as Appointment[]) ?? [];
       const loadedServices = (s?.data as Service[]) ?? [];
 
-      let finalAppts = loadedAppts;
-      if (finalAppts.length === 0) {
-        try {
-          const raw = localStorage.getItem('maison_local_appointments') || '[]';
-          finalAppts = JSON.parse(raw);
-        } catch {
-          // ignore
+      const finalAppts = [...loadedAppts];
+      try {
+        const raw = localStorage.getItem('maison_local_appointments') || '[]';
+        const localAppts: Appointment[] = JSON.parse(raw);
+        for (const item of localAppts) {
+          if (!finalAppts.some((x) => x.id === item.id)) {
+            finalAppts.push(item);
+          }
+        }
+      } catch {
+        // ignore
+      }
+
+      for (const b of getLocalBookings()) {
+        if (!finalAppts.some((x) => x.id === b.id || x.booking_number === b.booking_number)) {
+          finalAppts.push({
+            ...b,
+            service_id: b.items?.[0]?.service_id || 'svc-1',
+          });
         }
       }
 
       setAppts(finalAppts);
-      setServices(loadedServices.length > 0 ? loadedServices : defaultServices);
+      const localSvcs = getLocalServices();
+      setServices(
+        loadedServices.length > 0
+          ? loadedServices
+          : localSvcs.length > 0
+          ? localSvcs
+          : defaultServices,
+      );
     } catch {
-      try {
-        const raw = localStorage.getItem('maison_local_appointments') || '[]';
-        setAppts(JSON.parse(raw));
-      } catch {
-        setAppts([]);
-      }
-      setServices(defaultServices);
+      const v2 = getLocalBookings().map((b) => ({
+        ...b,
+        service_id: b.items?.[0]?.service_id || 'svc-1',
+      }));
+      setAppts(v2);
+      setServices(getLocalServices());
     } finally {
       setLoading(false);
     }
@@ -115,6 +138,8 @@ export default function Appointments() {
     } catch {
       // ignore
     }
+
+    updateLocalBookingStatus(id, status as any);
 
     setUpdatingId(null);
     setAppts((prev) => prev.map((a) => (a.id === id ? { ...a, status } : a)));

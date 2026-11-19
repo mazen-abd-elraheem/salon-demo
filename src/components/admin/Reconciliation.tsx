@@ -18,6 +18,7 @@ import { useLanguage } from '../../context/LanguageContext';
 import { formatPrice } from '../../lib/format';
 import { getLocalBookings, defaultShifts, defaultRooms } from '../../lib/mockData';
 import type { Payment, Booking } from '../../lib/types';
+import PageHeader from './PageHeader';
 
 export default function Reconciliation() {
   const { lang } = useLanguage();
@@ -109,88 +110,85 @@ export default function Reconciliation() {
 
   return (
     <div className="space-y-6">
-      {/* Title & Filter Bar */}
-      <div className="flex flex-wrap items-center justify-between gap-4 pb-4 border-b border-pearl/80">
-        <div>
-          <h1 className="text-xl font-bold font-display text-espresso">
-            {lang === 'ar' ? 'التقفيل المالي والورديات اليومية' : 'Daily Shift Reconciliation'}
-          </h1>
-          <p className="text-xs text-mocha-500 mt-1">
-            {lang === 'ar'
-              ? 'تقرير محاسبي مفصل بحصيلة الدرج والكاش والتحويلات الرقمية لكل وردية'
-              : 'Detailed end-of-day accounting across cash drawer, InstaPay and Vodafone Cash'}
-          </p>
-        </div>
+      <PageHeader
+        eyebrow={lang === 'ar' ? 'الحسابات والورديات' : 'Financial Reconciliation'}
+        title={lang === 'ar' ? 'التقفيل المالي والورديات اليومية' : 'Daily Shift Reconciliation'}
+        subtitle={
+          lang === 'ar'
+            ? 'تقرير محاسبي مفصل بحصيلة الدرج والكاش والتحويلات الرقمية لكل وردية'
+            : 'Detailed end-of-day accounting across cash drawer, InstaPay and Vodafone Cash'
+        }
+        actions={
+          <div className="flex flex-wrap items-center gap-2.5">
+            {/* Date Picker */}
+            <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-full border border-pearl bg-white text-xs">
+              <Calendar className="w-3.5 h-3.5 text-mocha-400" />
+              <input
+                type="date"
+                value={selectedDate}
+                onChange={(e) => setSelectedDate(e.target.value)}
+                className="focus:outline-none font-mono text-espresso text-xs"
+              />
+            </div>
 
-        <div className="flex flex-wrap items-center gap-3">
-          {/* Date Picker */}
-          <div className="flex items-center gap-1.5 px-3 py-1.5 rounded-xl border border-pearl bg-white text-xs">
-            <Calendar className="w-3.5 h-3.5 text-mocha-400" />
-            <input
-              type="date"
-              value={selectedDate}
-              onChange={(e) => setSelectedDate(e.target.value)}
-              className="focus:outline-none font-mono text-espresso text-xs"
-            />
+            {/* Shift Selector */}
+            <div className="flex items-center rounded-full border border-pearl bg-white p-1 text-xs">
+              <button
+                type="button"
+                onClick={() => setSelectedShift('all')}
+                className={`px-3 py-1 rounded-full transition cursor-pointer ${
+                  selectedShift === 'all'
+                    ? 'bg-espresso text-ivory font-semibold'
+                    : 'text-mocha-500 hover:text-espresso'
+                }`}
+              >
+                {lang === 'ar' ? 'اليوم بالكامل' : 'Full Day'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedShift('morning')}
+                className={`px-3 py-1 rounded-full transition cursor-pointer ${
+                  selectedShift === 'morning'
+                    ? 'bg-espresso text-ivory font-semibold'
+                    : 'text-mocha-500 hover:text-espresso'
+                }`}
+              >
+                {lang === 'ar' ? 'الصباحية (10-16)' : 'Morning'}
+              </button>
+              <button
+                type="button"
+                onClick={() => setSelectedShift('evening')}
+                className={`px-3 py-1 rounded-full transition cursor-pointer ${
+                  selectedShift === 'evening'
+                    ? 'bg-espresso text-ivory font-semibold'
+                    : 'text-mocha-500 hover:text-espresso'
+                }`}
+              >
+                {lang === 'ar' ? 'المسائية (16-23)' : 'Evening'}
+              </button>
+            </div>
+
+            {/* Action buttons */}
+            <button
+              type="button"
+              onClick={handleExportCSV}
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full border border-mocha-400/20 bg-pearl/40 hover:bg-pearl/80 text-xs font-semibold text-espresso transition cursor-pointer"
+            >
+              <Download className="w-3.5 h-3.5" />
+              <span>{lang === 'ar' ? 'تصدير كشف Excel' : 'Export CSV'}</span>
+            </button>
+
+            <button
+              type="button"
+              onClick={handlePrint}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-espresso hover:bg-espresso/90 text-ivory text-xs font-semibold transition cursor-pointer"
+            >
+              <Printer className="w-3.5 h-3.5" />
+              <span>{lang === 'ar' ? 'طباعة التقفيل' : 'Print Sheet'}</span>
+            </button>
           </div>
-
-          {/* Shift Selector */}
-          <div className="flex items-center rounded-xl border border-pearl bg-white p-1 text-xs">
-            <button
-              type="button"
-              onClick={() => setSelectedShift('all')}
-              className={`px-2.5 py-1 rounded-lg transition ${
-                selectedShift === 'all'
-                  ? 'bg-espresso text-ivory font-semibold'
-                  : 'text-mocha-500 hover:text-espresso'
-              }`}
-            >
-              {lang === 'ar' ? 'اليوم بالكامل' : 'Full Day'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedShift('morning')}
-              className={`px-2.5 py-1 rounded-lg transition ${
-                selectedShift === 'morning'
-                  ? 'bg-espresso text-ivory font-semibold'
-                  : 'text-mocha-500 hover:text-espresso'
-              }`}
-            >
-              {lang === 'ar' ? 'الصباحية (10-16)' : 'Morning'}
-            </button>
-            <button
-              type="button"
-              onClick={() => setSelectedShift('evening')}
-              className={`px-2.5 py-1 rounded-lg transition ${
-                selectedShift === 'evening'
-                  ? 'bg-espresso text-ivory font-semibold'
-                  : 'text-mocha-500 hover:text-espresso'
-              }`}
-            >
-              {lang === 'ar' ? 'المسائية (16-23)' : 'Evening'}
-            </button>
-          </div>
-
-          {/* Action buttons */}
-          <button
-            type="button"
-            onClick={handleExportCSV}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl border border-mocha-400/20 bg-pearl/40 hover:bg-pearl/80 text-xs font-semibold text-espresso transition"
-          >
-            <Download className="w-3.5 h-3.5" />
-            <span>{lang === 'ar' ? 'تصدير كشف Excel' : 'Export CSV'}</span>
-          </button>
-
-          <button
-            type="button"
-            onClick={handlePrint}
-            className="inline-flex items-center gap-1.5 px-3 py-2 rounded-xl bg-espresso hover:bg-espresso/90 text-ivory text-xs font-semibold transition"
-          >
-            <Printer className="w-3.5 h-3.5" />
-            <span>{lang === 'ar' ? 'طباعة التقفيل' : 'Print Sheet'}</span>
-          </button>
-        </div>
-      </div>
+        }
+      />
 
       {/* KPI Financial Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
