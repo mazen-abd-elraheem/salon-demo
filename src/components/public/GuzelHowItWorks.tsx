@@ -41,12 +41,17 @@ export default function GuzelHowItWorks() {
     return () => obs.disconnect();
   }, []);
 
-  // Live requestAnimationFrame Brightness Loop for the 6 crawling phrases (Section 8.12)
+  // Viewport-aware Brightness Loop for the 6 crawling phrases (pauses automatically when offscreen)
   useEffect(() => {
     let rafId = 0;
+    let isVisible = false;
     const fadeFinish = 0.15;
 
     const tick = () => {
+      if (!isVisible || document.hidden) {
+        rafId = 0;
+        return;
+      }
       const win = windowRef.current;
       if (win) {
         const winRect = win.getBoundingClientRect();
@@ -70,8 +75,43 @@ export default function GuzelHowItWorks() {
       rafId = requestAnimationFrame(tick);
     };
 
-    rafId = requestAnimationFrame(tick);
-    return () => cancelAnimationFrame(rafId);
+    const startLoop = () => {
+      if (!rafId && isVisible && !document.hidden) {
+        rafId = requestAnimationFrame(tick);
+      }
+    };
+
+    const el = sectionRef.current;
+    let obs: IntersectionObserver | null = null;
+    if (el && typeof IntersectionObserver !== 'undefined') {
+      obs = new IntersectionObserver(
+        (entries) => {
+          isVisible = Boolean(entries[0]?.isIntersecting);
+          if (isVisible) {
+            startLoop();
+          } else if (rafId) {
+            cancelAnimationFrame(rafId);
+            rafId = 0;
+          }
+        },
+        { threshold: 0.01 },
+      );
+      obs.observe(el);
+    } else {
+      isVisible = true;
+      startLoop();
+    }
+
+    const onVisibility = () => {
+      if (!document.hidden && isVisible) startLoop();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      obs?.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+      if (rafId) cancelAnimationFrame(rafId);
+    };
   }, []);
 
   const flashColor =

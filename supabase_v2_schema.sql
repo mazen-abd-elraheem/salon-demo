@@ -280,71 +280,6 @@ alter table public.staff_users enable row level security;
 alter table public.admin_users enable row level security;
 alter table public.attendance_records enable row level security;
 alter table public.appointments enable row level security;
--- 20. RLS POLICIES
-drop policy if exists "Public can view business settings" on public.business_settings;
-create policy "Public can view business settings" on public.business_settings for select using (true);
-drop policy if exists "Admins can manage business settings" on public.business_settings;
-create policy "Admins can manage business settings" on public.business_settings for all using (true) with check (true);
-drop policy if exists "Public can view business hours" on public.business_hours;
-create policy "Public can view business hours" on public.business_hours for select using (true);
-drop policy if exists "Admins can manage business hours" on public.business_hours;
-create policy "Admins can manage business hours" on public.business_hours for all using (true) with check (true);
-drop policy if exists "Public can view blocked dates" on public.blocked_dates;
-create policy "Public can view blocked dates" on public.blocked_dates for select using (true);
-drop policy if exists "Admins can manage blocked dates" on public.blocked_dates;
-create policy "Admins can manage blocked dates" on public.blocked_dates for all using (true) with check (true);
-drop policy if exists "Public can read rooms" on public.rooms;
-create policy "Public can read rooms" on public.rooms for select using (true);
-drop policy if exists "Admins can manage rooms" on public.rooms;
-create policy "Admins can manage rooms" on public.rooms for all using (true) with check (true);
-drop policy if exists "Public can read specialists" on public.specialists;
-create policy "Public can read specialists" on public.specialists for select using (true);
-drop policy if exists "Admins can manage specialists" on public.specialists;
-create policy "Admins can manage specialists" on public.specialists for all using (true) with check (true);
-drop policy if exists "Public can read services" on public.services;
-create policy "Public can read services" on public.services for select using (true);
-drop policy if exists "Admins can manage services" on public.services;
-create policy "Admins can manage services" on public.services for all using (true) with check (true);
-drop policy if exists "Public can read packages" on public.packages;
-create policy "Public can read packages" on public.packages for select using (true);
-drop policy if exists "Admins can manage packages" on public.packages;
-create policy "Admins can manage packages" on public.packages for all using (true) with check (true);
-drop policy if exists "Public can read package_services" on public.package_services;
-create policy "Public can read package_services" on public.package_services for select using (true);
-drop policy if exists "Admins can manage package_services" on public.package_services;
-create policy "Admins can manage package_services" on public.package_services for all using (true) with check (true);
-drop policy if exists "Public can read products" on public.products;
-create policy "Public can read products" on public.products for select using (true);
-drop policy if exists "Admins can manage products" on public.products;
-create policy "Admins can manage products" on public.products for all using (true) with check (true);
-drop policy if exists "Public can read promo_codes" on public.promo_codes;
-create policy "Public can read promo_codes" on public.promo_codes for select using (true);
-drop policy if exists "Admins can manage promo_codes" on public.promo_codes;
-create policy "Admins can manage promo_codes" on public.promo_codes for all using (true) with check (true);
-drop policy if exists "Public can read shifts" on public.shifts;
-create policy "Public can read shifts" on public.shifts for select using (true);
-drop policy if exists "Admins can manage shifts" on public.shifts;
-create policy "Admins can manage shifts" on public.shifts for all using (true) with check (true);
-drop policy if exists "Public can create bookings" on public.bookings;
-create policy "Public can create bookings" on public.bookings for insert with check (true);
-drop policy if exists "Anyone can read bookings" on public.bookings;
-create policy "Anyone can read bookings" on public.bookings for select using (true);
-drop policy if exists "Admins can manage bookings" on public.bookings;
-create policy "Admins can manage bookings" on public.bookings for all using (true) with check (true);
-drop policy if exists "Public can create booking items" on public.booking_items;
-create policy "Public can create booking items" on public.booking_items for insert with check (true);
-drop policy if exists "Anyone can read booking items" on public.booking_items;
-create policy "Anyone can read booking items" on public.booking_items for select using (true);
-drop policy if exists "Admins can manage booking items" on public.booking_items;
-create policy "Admins can manage booking items" on public.booking_items for all using (true) with check (true);
-drop policy if exists "Anyone can manage tab addons" on public.tab_addons;
-create policy "Anyone can manage tab addons" on public.tab_addons for all using (true) with check (true);
-drop policy if exists "Public can insert payments" on public.payments;
-create policy "Public can insert payments" on public.payments for insert with check (true);
-drop policy if exists "Anyone can read payments" on public.payments;
-create policy "Anyone can read payments" on public.payments for select using (true);
-drop policy if exists "Admins can manage payments" on public.payments;
-create policy "Admins can manage payments" on public.payments for all using (true) with check (true);
 -- Helper function to verify authenticated admin status (Security Audit Fix)
 create or replace function public.is_admin()
 returns boolean language sql security definer as $$
@@ -352,6 +287,86 @@ returns boolean language sql security definer as $$
     select 1 from public.admin_users where user_id = auth.uid()
   );
 $$;
+
+-- 20. HARDENED RLS POLICIES (Public Read Catalog + Public Insert Bookings + Admin-Only Management)
+drop policy if exists "Public can view business settings" on public.business_settings;
+create policy "Public can view business settings" on public.business_settings for select using (true);
+drop policy if exists "Admins can manage business settings" on public.business_settings;
+create policy "Admins can manage business settings" on public.business_settings for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can view business hours" on public.business_hours;
+create policy "Public can view business hours" on public.business_hours for select using (true);
+drop policy if exists "Admins can manage business hours" on public.business_hours;
+create policy "Admins can manage business hours" on public.business_hours for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can view blocked dates" on public.blocked_dates;
+create policy "Public can view blocked dates" on public.blocked_dates for select using (true);
+drop policy if exists "Admins can manage blocked dates" on public.blocked_dates;
+create policy "Admins can manage blocked dates" on public.blocked_dates for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read rooms" on public.rooms;
+create policy "Public can read rooms" on public.rooms for select using (true);
+drop policy if exists "Admins can manage rooms" on public.rooms;
+create policy "Admins can manage rooms" on public.rooms for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read specialists" on public.specialists;
+create policy "Public can read specialists" on public.specialists for select using (true);
+drop policy if exists "Admins can manage specialists" on public.specialists;
+create policy "Admins can manage specialists" on public.specialists for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read services" on public.services;
+create policy "Public can read services" on public.services for select using (true);
+drop policy if exists "Admins can manage services" on public.services;
+create policy "Admins can manage services" on public.services for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read packages" on public.packages;
+create policy "Public can read packages" on public.packages for select using (true);
+drop policy if exists "Admins can manage packages" on public.packages;
+create policy "Admins can manage packages" on public.packages for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read package_services" on public.package_services;
+create policy "Public can read package_services" on public.package_services for select using (true);
+drop policy if exists "Admins can manage package_services" on public.package_services;
+create policy "Admins can manage package_services" on public.package_services for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read products" on public.products;
+create policy "Public can read products" on public.products for select using (true);
+drop policy if exists "Admins can manage products" on public.products;
+create policy "Admins can manage products" on public.products for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read promo_codes" on public.promo_codes;
+create policy "Public can read promo_codes" on public.promo_codes for select using (is_active = true or public.is_admin());
+drop policy if exists "Admins can manage promo_codes" on public.promo_codes;
+create policy "Admins can manage promo_codes" on public.promo_codes for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can read shifts" on public.shifts;
+create policy "Public can read shifts" on public.shifts for select using (true);
+drop policy if exists "Admins can manage shifts" on public.shifts;
+create policy "Admins can manage shifts" on public.shifts for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can create bookings" on public.bookings;
+create policy "Public can create bookings" on public.bookings for insert with check (true);
+drop policy if exists "Anyone can read bookings" on public.bookings;
+create policy "Anyone can read bookings" on public.bookings for select using (public.is_admin() or auth.role() = 'authenticated');
+drop policy if exists "Admins can manage bookings" on public.bookings;
+create policy "Admins can manage bookings" on public.bookings for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Public can create booking items" on public.booking_items;
+create policy "Public can create booking items" on public.booking_items for insert with check (true);
+drop policy if exists "Anyone can read booking items" on public.booking_items;
+create policy "Anyone can read booking items" on public.booking_items for select using (public.is_admin() or auth.role() = 'authenticated');
+drop policy if exists "Admins can manage booking items" on public.booking_items;
+create policy "Admins can manage booking items" on public.booking_items for all using (public.is_admin()) with check (public.is_admin());
+
+drop policy if exists "Anyone can manage tab addons" on public.tab_addons;
+create policy "Anyone can manage tab addons" on public.tab_addons for all using (public.is_admin() or auth.role() = 'authenticated') with check (public.is_admin() or auth.role() = 'authenticated');
+
+drop policy if exists "Public can insert payments" on public.payments;
+create policy "Public can insert payments" on public.payments for insert with check (true);
+drop policy if exists "Anyone can read payments" on public.payments;
+create policy "Anyone can read payments" on public.payments for select using (public.is_admin() or auth.role() = 'authenticated');
+drop policy if exists "Admins can manage payments" on public.payments;
+create policy "Admins can manage payments" on public.payments for all using (public.is_admin()) with check (public.is_admin());
 
 alter table public.services add column if not exists image_url text;
 alter table public.services add column if not exists sheet_key text;
@@ -402,9 +417,11 @@ create policy "Anyone can read admin users" on public.admin_users for select usi
 drop policy if exists "Admins can manage admin users" on public.admin_users;
 create policy "Admins can manage admin users" on public.admin_users for all using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "Anyone can manage attendance" on public.attendance_records;
-create policy "Anyone can manage attendance" on public.attendance_records for all using (true) with check (true);
+create policy "Staff can manage attendance" on public.attendance_records for all using (public.is_admin() or auth.role() = 'authenticated') with check (public.is_admin() or auth.role() = 'authenticated');
 drop policy if exists "Anyone can manage appointments" on public.appointments;
-create policy "Anyone can manage appointments" on public.appointments for all using (true) with check (true);
+create policy "Public can create appointments" on public.appointments for insert with check (true);
+drop policy if exists "Admins can manage appointments" on public.appointments;
+create policy "Admins can manage appointments" on public.appointments for all using (public.is_admin() or auth.role() = 'authenticated') with check (public.is_admin() or auth.role() = 'authenticated');
 
 -- 21. SEED DATA
 -- Ensure existing settings row is updated with official Guzel Medical Spa brand

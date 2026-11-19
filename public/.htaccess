@@ -1,7 +1,6 @@
 # ----------------------------------------------------------------------
-# Guzel Spa (غزل سبا) — Single Page App (Vite + React Router) on Hostinger
-# Makes every route (/services, /packages, /products, /how-it-works, /about,
-# /book, /legal/*, /login, /admin, /reception) fall back to index.html.
+# Guzel Medical Spa (جوزال ميديكال سبا) — SPA Routing, Performance & Security
+# Optimized for Hostinger Apache / LiteSpeed
 # ----------------------------------------------------------------------
 
 <IfModule mod_rewrite.c>
@@ -28,21 +27,32 @@
 </IfModule>
 
 <IfModule mod_headers.c>
-  # Security Headers
+  # Hardened HTTP Security Headers
   Header always set X-Content-Type-Options "nosniff"
   Header always set X-Frame-Options "SAMEORIGIN"
   Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "camera=(), microphone=(), geolocation=(), payment=(self)"
+  Header always set Strict-Transport-Security "max-age=31536000; includeSubDomains"
+  Header always set Content-Security-Policy "frame-ancestors 'self'; object-src 'none'; base-uri 'self';"
 
+  # HTML: Never cache entry shell so deployments propagate immediately
   <FilesMatch "\.(?:html)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
   </FilesMatch>
+
+  # Versioned static assets, WebP sheets & WOFF2 fonts: 1-year immutable cache
   <FilesMatch "\.(?:js|mjs|css|svg|woff|woff2|png|jpg|jpeg|gif|webp|ico)$">
     Header set Cache-Control "public, max-age=31536000, immutable"
   </FilesMatch>
 </IfModule>
 
+# Gzip & Brotli Compression
 <IfModule mod_deflate.c>
-  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
+  AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml application/font-woff2
+</IfModule>
+
+<IfModule mod_brotli.c>
+  AddOutputFilterByType BROTLI_COMPRESS text/html text/css text/javascript application/javascript application/json image/svg+xml
 </IfModule>
 
 Options -Indexes

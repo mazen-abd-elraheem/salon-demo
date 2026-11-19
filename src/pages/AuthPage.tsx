@@ -128,7 +128,7 @@ export default function AuthPage({ mode: initialMode = 'login' }: AuthPageProps)
     // Ensure registering customer never has staff access
     clearVerifiedStaffSession();
 
-    const res = registerCustomer(name, phone, email);
+    const res = registerCustomer(name, phone, email, regPassword);
     if (res.ok && res.user) {
       setCustomer(res.user);
       window.dispatchEvent(new CustomEvent('guzel:auth-updated'));

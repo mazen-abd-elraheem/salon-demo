@@ -19,6 +19,7 @@ import type {
   AttendanceStatus,
   ShiftType,
 } from './types';
+import { hashLocalPassword } from './security';
 
 export const defaultRooms: Room[] = [
   {
@@ -1234,10 +1235,19 @@ export function getCurrentCustomer(): CustomerUser | null {
   return null;
 }
 
-export function loginCustomer(phoneOrEmail: string, _pass: string): { ok: boolean; user?: CustomerUser; error?: string } {
+interface StoredCustomerUser extends CustomerUser {
+  password_hash?: string;
+}
+
+export function loginCustomer(phoneOrEmail: string, pass: string): { ok: boolean; user?: CustomerUser; error?: string } {
   try {
+    const cleanPass = (pass || '').trim();
+    if (!cleanPass || cleanPass.length < 4) {
+      return { ok: false, error: 'يرجى إدخال كلمة المرور الصحيحة' };
+    }
+
     const rawUsers = localStorage.getItem('maison_registered_customers') || '[]';
-    const users: CustomerUser[] = JSON.parse(rawUsers);
+    const users: StoredCustomerUser[] = JSON.parse(rawUsers);
     const clean = phoneOrEmail.trim().replace(/\D/g, '');
     const user = users.find(
       (u) =>
@@ -1245,45 +1255,61 @@ export function loginCustomer(phoneOrEmail: string, _pass: string): { ok: boolea
         (u.email && u.email.toLowerCase() === phoneOrEmail.trim().toLowerCase()),
     );
     if (!user) {
-      // Allow demo fast sign in for any valid phone
-      if (clean.length === 11) {
-        const demoUser: CustomerUser = {
-          id: 'cust-' + Date.now(),
-          name: 'عميلة جوزال ميديكال سبا',
-          phone: clean,
-          created_at: new Date().toISOString(),
-        };
-        localStorage.setItem('maison_current_customer', JSON.stringify(demoUser));
-        return { ok: true, user: demoUser };
-      }
-      return { ok: false, error: 'رقم الهاتف أو كلمة المرور غير صحيحة' };
+      return {
+        ok: false,
+        error: 'الحساب غير مسجل. يرجى إنشاء حساب جديد أولاً أو التحقق من بيانات الدخول.',
+      };
     }
-    localStorage.setItem('maison_current_customer', JSON.stringify(user));
-    return { ok: true, user };
+
+    // Verify salted password hash strictly so arbitrary passwords cannot access another customer's profile
+    if (user.password_hash) {
+      const candidateHash = hashLocalPassword(user.phone, cleanPass);
+      if (candidateHash !== user.password_hash) {
+        return { ok: false, error: 'رقم الهاتف أو كلمة المرور غير صحيحة' };
+      }
+    }
+
+    const { password_hash: _stripped, ...publicUser } = user;
+    localStorage.setItem('maison_current_customer', JSON.stringify(publicUser));
+    return { ok: true, user: publicUser };
   } catch {
     return { ok: false, error: 'حدث خطأ أثناء تسجيل الدخول' };
   }
 }
 
-export function registerCustomer(name: string, phone: string, email?: string): { ok: boolean; user?: CustomerUser; error?: string } {
+export function registerCustomer(
+  name: string,
+  phone: string,
+  email?: string,
+  password?: string,
+): { ok: boolean; user?: CustomerUser; error?: string } {
   try {
     const rawUsers = localStorage.getItem('maison_registered_customers') || '[]';
-    const users: CustomerUser[] = JSON.parse(rawUsers);
+    const users: StoredCustomerUser[] = JSON.parse(rawUsers);
     const clean = phone.trim().replace(/\D/g, '');
     if (clean.length !== 11) {
       return { ok: false, error: 'يرجى إدخال رقم هاتف مصري صحيح (١١ رقم)' };
     }
-    const newUser: CustomerUser = {
+    const cleanPass = (password || '').trim();
+    if (cleanPass.length < 6) {
+      return { ok: false, error: 'كلمة المرور يجب أن تتكون من ٦ أحرف على الأقل' };
+    }
+    if (users.some((u) => u.phone.replace(/\D/g, '') === clean)) {
+      return { ok: false, error: 'رقم الهاتف مسجل مسبقاً. يرجى تسجيل الدخول.' };
+    }
+    const newUser: StoredCustomerUser = {
       id: 'cust-' + Date.now(),
       name: name.trim(),
       phone: clean,
       email: email?.trim() || null,
+      password_hash: hashLocalPassword(clean, cleanPass),
       created_at: new Date().toISOString(),
     };
     users.push(newUser);
     localStorage.setItem('maison_registered_customers', JSON.stringify(users));
-    localStorage.setItem('maison_current_customer', JSON.stringify(newUser));
-    return { ok: true, user: newUser };
+    const { password_hash: _stripped, ...publicUser } = newUser;
+    localStorage.setItem('maison_current_customer', JSON.stringify(publicUser));
+    return { ok: true, user: publicUser };
   } catch {
     return { ok: false, error: 'حدث خطأ أثناء إنشاء الحساب' };
   }

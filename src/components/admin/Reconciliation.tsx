@@ -19,6 +19,7 @@ import { formatPrice } from '../../lib/format';
 import { getLocalBookings, defaultShifts, defaultRooms } from '../../lib/mockData';
 import type { Payment, Booking } from '../../lib/types';
 import PageHeader from './PageHeader';
+import { downloadSafeCsv } from '../../lib/security';
 
 export default function Reconciliation() {
   const { lang } = useLanguage();
@@ -77,7 +78,7 @@ export default function Reconciliation() {
     return { cash, vodafone, instapay, deposits, settlements, grandTotal };
   }, [payments]);
 
-  // Handle Export CSV
+  // Handle Safe Export CSV (CSV Formula Injection hardened)
   const handleExportCSV = () => {
     const headers = ['التاريخ', 'رقم الحجز', 'اسم العميلة', 'وسيلة الدفع', 'النوع', 'المبلغ (ج.م)', 'الموظفة المسؤولة', 'الوردية'];
     const rows = payments.map((p) => [
@@ -91,17 +92,7 @@ export default function Reconciliation() {
       p.shift_name || 'عام',
     ]);
 
-    const csvContent =
-      'data:text/csv;charset=utf-8,\uFEFF' +
-      [headers.join(','), ...rows.map((e) => e.join(','))].join('\n');
-
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `reconciliation_${selectedDate}_${selectedShift}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    downloadSafeCsv(`reconciliation_${selectedDate}_${selectedShift}.csv`, headers, rows);
   };
 
   const handlePrint = () => {

@@ -18,6 +18,7 @@ import type { BusinessSettings } from '../../lib/types';
 import { getCurrentCustomer, getLocalSettings } from '../../lib/mockData';
 import { GuzelLogoIcon } from './GuzelSvgIcons';
 import { getVerifiedStaffSession } from '../../lib/staffAuth';
+import { sanitizeSafeUrl } from '../../lib/security';
 
 interface NavbarProps {
   settings?: BusinessSettings | null;
@@ -81,8 +82,10 @@ export default function Navbar({ settings, onBook }: NavbarProps) {
       ? activeSettings?.business_name?.trim() || 'جوزال ميديكال سبا'
       : activeSettings?.business_name_en?.trim() || 'Guzel Medical Spa';
 
-  const facebookUrl =
-    activeSettings?.facebook_url || 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr';
+  const facebookUrl = sanitizeSafeUrl(
+    activeSettings?.facebook_url,
+    'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr',
+  );
 
   const whatsappUrl = `https://wa.me/2${(activeSettings?.business_phone || '01012345678').replace(/\D/g, '')}`;
 
@@ -130,20 +133,46 @@ export default function Navbar({ settings, onBook }: NavbarProps) {
     }
   }, [menuOpen]);
 
-  // Live Scroll Percentage Readout + Scrolled elevation detection
+  // Event-driven Scroll Percentage Readout + Scrolled elevation (Zero idle CPU usage)
   useEffect(() => {
     let rafId = 0;
-    const updateScroll = () => {
+    let ticking = false;
+    let lastPct = -1;
+    let lastScrolled: boolean | null = null;
+
+    const compute = () => {
+      ticking = false;
       const docEl = document.documentElement;
       const m = docEl.scrollHeight - window.innerHeight;
       const sy = window.scrollY;
       const pct = m <= 0 ? 0 : Math.min(100, Math.max(0, Math.round((sy / m) * 100)));
-      setScrollPercent(pct);
-      setScrolled(sy > 16);
-      rafId = requestAnimationFrame(updateScroll);
+      const nextScrolled = sy > 16;
+
+      if (pct !== lastPct) {
+        lastPct = pct;
+        setScrollPercent(pct);
+      }
+      if (nextScrolled !== lastScrolled) {
+        lastScrolled = nextScrolled;
+        setScrolled(nextScrolled);
+      }
     };
-    rafId = requestAnimationFrame(updateScroll);
-    return () => cancelAnimationFrame(rafId);
+
+    const onScrollOrResize = () => {
+      if (!ticking) {
+        ticking = true;
+        rafId = requestAnimationFrame(compute);
+      }
+    };
+
+    compute();
+    window.addEventListener('scroll', onScrollOrResize, { passive: true });
+    window.addEventListener('resize', onScrollOrResize, { passive: true });
+    return () => {
+      cancelAnimationFrame(rafId);
+      window.removeEventListener('scroll', onScrollOrResize);
+      window.removeEventListener('resize', onScrollOrResize);
+    };
   }, []);
 
   // Scramble label helper (20 frames × 20ms with '•' character)

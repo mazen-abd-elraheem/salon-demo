@@ -6,6 +6,21 @@ export default defineConfig({
   // domain root (public_html) or a subfolder on Hostinger.
   base: './',
   plugins: [react()],
+  build: {
+    target: 'es2020',
+    cssCodeSplit: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-react': ['react', 'react-dom', 'react-router-dom'],
+          'vendor-supabase': ['@supabase/supabase-js'],
+          'vendor-icons': ['lucide-react'],
+          'vendor-date': ['date-fns'],
+        },
+      },
+    },
+  },
   server: {
     port: 5173,
     open: true,

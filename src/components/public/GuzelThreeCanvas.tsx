@@ -33,7 +33,7 @@ export default function GuzelThreeCanvas() {
         powerPreference: 'high-performance',
       });
       renderer.setSize(width, height);
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
       if (THREE.ACESFilmicToneMapping) {
         renderer.toneMapping = THREE.ACESFilmicToneMapping;
         renderer.toneMappingExposure = 1.1;
@@ -54,11 +54,11 @@ export default function GuzelThreeCanvas() {
       rimLight.position.set(-6, -5, 6);
       scene.add(rimLight);
 
-      // Floating translucent botanical dew spheres
+      // Floating translucent botanical dew spheres (20 segments = ~60% fewer vertices, smooth 60fps)
       const group = new THREE.Group();
       scene.add(group);
 
-      const geo = new THREE.SphereGeometry(1, 32, 32);
+      const geo = new THREE.SphereGeometry(1, 20, 20);
       const colors = [0xcbb6ea, 0xe58fb6, 0xecdcef, 0xd8c5f1, 0xf6d0d9];
       const orbs: {
         mesh: any;
@@ -125,8 +125,13 @@ export default function GuzelThreeCanvas() {
       window.addEventListener('resize', onResize);
 
       const clock = new THREE.Clock();
+      let isInView = true;
 
       const animate = () => {
+        if (!isInView || document.hidden) {
+          frameId = 0;
+          return;
+        }
         frameId = requestAnimationFrame(animate);
         const elapsed = clock.getElapsedTime();
 
@@ -145,13 +150,44 @@ export default function GuzelThreeCanvas() {
         renderer.render(scene, camera);
       };
 
-      animate();
+      const startRender = () => {
+        if (!frameId && isInView && !document.hidden) {
+          animate();
+        }
+      };
+
+      let observer: IntersectionObserver | null = null;
+      if (typeof IntersectionObserver !== 'undefined') {
+        observer = new IntersectionObserver(
+          (entries) => {
+            isInView = Boolean(entries[0]?.isIntersecting);
+            if (isInView) {
+              startRender();
+            } else if (frameId) {
+              cancelAnimationFrame(frameId);
+              frameId = 0;
+            }
+          },
+          { threshold: 0.01 },
+        );
+        observer.observe(container);
+      }
+
+      const onVisibilityChange = () => {
+        if (!document.hidden && isInView) startRender();
+      };
+      document.addEventListener('visibilitychange', onVisibilityChange);
+
+      startRender();
 
       return () => {
-        cancelAnimationFrame(frameId);
+        if (frameId) cancelAnimationFrame(frameId);
+        observer?.disconnect();
+        document.removeEventListener('visibilitychange', onVisibilityChange);
         window.removeEventListener('mousemove', onMouseMove);
         window.removeEventListener('resize', onResize);
         try {
+          geo.dispose();
           renderer?.dispose();
         } catch {
           // ignore

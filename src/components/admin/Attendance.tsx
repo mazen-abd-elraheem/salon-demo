@@ -22,6 +22,7 @@ import {
 } from '../../lib/mockData';
 import { useLanguage } from '../../context/LanguageContext';
 import PageHeader from './PageHeader';
+import { downloadSafeCsv } from '../../lib/security';
 
 export default function Attendance() {
   const { lang } = useLanguage();
@@ -140,14 +141,7 @@ export default function Attendance() {
       r.notes || '',
     ]);
 
-    const csvContent = 'data:text/csv;charset=utf-8,\uFEFF' + [headers, ...rows].map((e) => e.join(',')).join('\n');
-    const encodedUri = encodeURI(csvContent);
-    const link = document.createElement('a');
-    link.setAttribute('href', encodedUri);
-    link.setAttribute('download', `attendance-${selectedDate}.csv`);
-    document.body.appendChild(link);
-    link.click();
-    document.body.removeChild(link);
+    downloadSafeCsv(`attendance-${selectedDate}.csv`, headers, rows);
   };
 
   return (

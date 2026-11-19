@@ -366,9 +366,8 @@ function MetricCard({
     >
       <div className="relative flex items-center justify-between gap-2">
         <span
-          className={`text-[11px] font-bold uppercase tracking-wider ${
-            isPlum ? 'text-[#cbb6ea]' : 'text-[#3a1d43]/65'
-          }`}
+          className={`text-[11px] font-bold uppercase tracking-wider ${isPlum ? 'text-[#cbb6ea]' : 'text-[#3a1d43]/65'
+            }`}
         >
           {label}
         </span>
@@ -387,9 +386,8 @@ function MetricCard({
       </div>
       {hint && (
         <div
-          className={`relative mt-1 text-[11px] ${
-            isPlum ? 'text-white/70' : 'text-[#3a1d43]/55'
-          }`}
+          className={`relative mt-1 text-[11px] ${isPlum ? 'text-white/70' : 'text-[#3a1d43]/55'
+            }`}
         >
           {hint}
         </div>
