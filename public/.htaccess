@@ -1,43 +1,38 @@
 # ----------------------------------------------------------------------
-# Maison Lumière — Single Page App (Vite + React Router) on Apache/Hostinger
-# Makes every route fall back to index.html so deep links and refreshes
-# (e.g. /admin, /admin/appointments) load the app instead of a 404 / blank page.
+# Guzel Spa (غزل سبا) — Single Page App (Vite + React Router) on Hostinger
+# Makes every route (/services, /packages, /products, /how-it-works, /about,
+# /book, /legal/*, /login, /admin, /reception) fall back to index.html.
 # ----------------------------------------------------------------------
 
 <IfModule mod_rewrite.c>
   RewriteEngine On
-
-  # Serve the app from the document root.
   RewriteBase /
 
-  # If the request is for an existing file or directory, serve it as-is
-  # (this covers /assets/*.js, /assets/*.css, /favicon.svg, etc.).
+  # Serve existing files & directories directly (/assets/sheets/*.webp, /assets/fonts/*.woff2, etc.)
   RewriteCond %{REQUEST_FILENAME} -f [OR]
   RewriteCond %{REQUEST_FILENAME} -d
   RewriteRule ^ - [L]
 
-  # Otherwise, send everything to index.html and let React Router handle it.
-  RewriteRule ^ index.html [L]
+  # Route all SPA virtual paths to index.html
+  RewriteRule ^ index.html [QSA,L]
 </IfModule>
 
-# ----------------------------------------------------------------------
-# Correct MIME types so the browser actually executes the JS module.
-# A wrong/empty MIME type is a common cause of a blank page on shared hosting.
-# ----------------------------------------------------------------------
 <IfModule mod_mime.c>
   AddType text/javascript           .js .mjs
   AddType text/css                  .css
   AddType image/svg+xml             .svg
+  AddType image/webp                .webp
   AddType application/json          .json
   AddType application/font-woff     .woff
   AddType application/font-woff2    .woff2
 </IfModule>
 
-# ----------------------------------------------------------------------
-# Caching: never cache index.html (so new deploys are picked up),
-# cache fingerprinted assets aggressively.
-# ----------------------------------------------------------------------
 <IfModule mod_headers.c>
+  # Security Headers
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+
   <FilesMatch "\.(?:html)$">
     Header set Cache-Control "no-cache, no-store, must-revalidate"
   </FilesMatch>
@@ -46,10 +41,8 @@
   </FilesMatch>
 </IfModule>
 
-# Optional: gzip compression for faster loads.
 <IfModule mod_deflate.c>
   AddOutputFilterByType DEFLATE text/html text/css text/javascript application/javascript application/json image/svg+xml
 </IfModule>
 
-# Don't expose directory listings.
 Options -Indexes

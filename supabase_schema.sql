@@ -339,14 +339,32 @@ drop policy if exists "Anyone can read payments" on public.payments;
 create policy "Anyone can read payments" on public.payments for select using (true);
 drop policy if exists "Admins can manage payments" on public.payments;
 create policy "Admins can manage payments" on public.payments for all using (true) with check (true);
+-- Helper function to verify authenticated admin status (Security Audit Fix)
+create or replace function public.is_admin()
+returns boolean language sql security definer as $$
+  select exists (
+    select 1 from public.admin_users where user_id = auth.uid()
+  );
+$$;
+
+alter table public.services add column if not exists image_url text;
+alter table public.services add column if not exists sheet_key text;
+alter table public.packages add column if not exists image_url text;
+alter table public.packages add column if not exists sheet_key text;
+alter table public.products add column if not exists image_url text;
+alter table public.products add column if not exists sheet_key text;
+alter table public.business_settings add column if not exists facebook_url text default 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr';
+alter table public.business_settings add column if not exists tagline text default 'Guzel spa for beauty and relaxation';
+alter table public.business_settings add column if not exists tagline_ar text default 'غزل سبا للجمال والاسترخاء';
+
 drop policy if exists "Anyone can read staff users" on public.staff_users;
-create policy "Anyone can read staff users" on public.staff_users for select using (true);
+create policy "Anyone can read staff users" on public.staff_users for select using (auth.role() = 'authenticated' or public.is_admin());
 drop policy if exists "Admins can manage staff users" on public.staff_users;
-create policy "Admins can manage staff users" on public.staff_users for all using (true) with check (true);
+create policy "Admins can manage staff users" on public.staff_users for all using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "Anyone can read admin users" on public.admin_users;
-create policy "Anyone can read admin users" on public.admin_users for select using (true);
+create policy "Anyone can read admin users" on public.admin_users for select using (auth.uid() = user_id or public.is_admin());
 drop policy if exists "Admins can manage admin users" on public.admin_users;
-create policy "Admins can manage admin users" on public.admin_users for all using (true) with check (true);
+create policy "Admins can manage admin users" on public.admin_users for all using (public.is_admin()) with check (public.is_admin());
 drop policy if exists "Anyone can manage attendance" on public.attendance_records;
 create policy "Anyone can manage attendance" on public.attendance_records for all using (true) with check (true);
 drop policy if exists "Anyone can manage appointments" on public.appointments;
@@ -368,13 +386,13 @@ insert into public.business_settings (
   cancellation_notice_hours
 )
 select
-  'ميزون لوميير بيوتي سنتر وسبا',
-  'Maison Lumière Beauty Center & Spa',
-  'contact@maisonlumiere.beauty',
+  'غزل سبا للجمال والاسترخاء',
+  'Guzel Spa',
+  'concierge@guzelspa.beauty',
   '01012345678',
   '١٥ شارع البرازيل، الزمالك، القاهرة',
-  'maisonlumiere@instapay',
-  'Maison Lumiere Spa',
+  'guzelspa@instapay',
+  'Guzel Spa Egypt',
   '01012345678',
   50.00,
   30,

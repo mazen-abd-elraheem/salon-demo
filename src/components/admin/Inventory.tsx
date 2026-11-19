@@ -23,6 +23,18 @@ import {
   updateProductStock,
 } from '../../lib/mockData';
 import type { Product } from '../../lib/types';
+import { compressReceiptImage } from '../../lib/imageCompressor';
+import PhImage from '../public/PhImage';
+import { supabase } from '../../lib/supabase';
+
+const PRODUCT_SHEET_PRESETS = [
+  { key: 'styled:0', labelAr: 'سيروم غزل بالقطارة', labelEn: 'Guzel Dropper Serum' },
+  { key: 'styled:1', labelAr: 'أنبوب كريم غزل البنفسجي', labelEn: 'Guzel Lavender Tube' },
+  { key: 'styled2:1', labelAr: 'جار كريم غزل الوردي', labelEn: 'Guzel Blush Cream Jar' },
+  { key: 'prod:0', labelAr: 'المجموعة الثلاثية الكاملة', labelEn: 'Guzel Complete Trio Set' },
+  { key: 'styled2:0', labelAr: 'سيروم على الحجر الطبيعي', labelEn: 'Serum on Travertine' },
+  { key: 'styled2:2', labelAr: 'سيروم مخملي بنفسجي', labelEn: 'Plum Velvet Serum' },
+];
 
 export default function Inventory() {
   const { lang } = useLanguage();
@@ -35,10 +47,13 @@ export default function Inventory() {
   // Form State
   const [nameAr, setNameAr] = useState('');
   const [nameEn, setNameEn] = useState('');
-  const [category, setCategory] = useState('hair');
+  const [category, setCategory] = useState('skincare');
   const [price, setPrice] = useState<number>(0);
   const [stock, setStock] = useState<number>(10);
   const [sku, setSku] = useState('');
+  const [imageUrl, setImageUrl] = useState('');
+  const [sheetKey, setSheetKey] = useState('styled:0');
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
 
   const reload = () => {
     setProducts([...getLocalProducts()]);
@@ -48,10 +63,12 @@ export default function Inventory() {
     setEditingProduct(null);
     setNameAr('');
     setNameEn('');
-    setCategory('hair');
-    setPrice(500);
+    setCategory('skincare');
+    setPrice(650);
     setStock(20);
-    setSku(`SKU-${Date.now().toString().slice(-4)}`);
+    setSku(`GUZEL-${Date.now().toString().slice(-4)}`);
+    setImageUrl('');
+    setSheetKey('styled:0');
     setOpenModal(true);
   };
 
@@ -63,10 +80,26 @@ export default function Inventory() {
     setPrice(p.price);
     setStock(p.stock_quantity);
     setSku(p.sku || '');
+    setImageUrl(p.image_url || '');
+    setSheetKey(p.sheet_key || 'styled:0');
     setOpenModal(true);
   };
 
-  const handleSave = (e: React.FormEvent) => {
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setUploadingPhoto(true);
+    try {
+      const res = await compressReceiptImage(file, 90, 900);
+      setImageUrl(res.dataUrl);
+    } catch {
+      // ignore
+    } finally {
+      setUploadingPhoto(false);
+    }
+  };
+
+  const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!nameAr.trim()) return;
 
@@ -78,6 +111,8 @@ export default function Inventory() {
       price: Number(price) || 0,
       stock_quantity: Number(stock) || 0,
       sku: sku.trim() || undefined,
+      image_url: imageUrl.trim() || null,
+      sheet_key: sheetKey || 'styled:0',
       is_active: true,
       created_at: editingProduct?.created_at || new Date().toISOString(),
     };
@@ -85,6 +120,28 @@ export default function Inventory() {
     saveLocalProduct(newProd);
     reload();
     setOpenModal(false);
+
+    try {
+      const dbPayload = {
+        name_ar: newProd.name_ar,
+        name_en: newProd.name_en,
+        category: newProd.category,
+        price: newProd.price,
+        stock_quantity: newProd.stock_quantity,
+        sku: newProd.sku || null,
+        is_active: true,
+      };
+      const isUuid =
+        editingProduct &&
+        /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(editingProduct.id);
+      if (isUuid) {
+        await supabase.from('products').update(dbPayload).eq('id', editingProduct.id);
+      } else if (!editingProduct) {
+        await supabase.from('products').insert(dbPayload);
+      }
+    } catch {
+      // local save already succeeded
+    }
   };
 
   const handleDelete = (prodId: string) => {
@@ -436,6 +493,58 @@ export default function Inventory() {
                   onChange={(e) => setStock(Number(e.target.value))}
                   className="w-full px-3 py-2 rounded-xl border border-pearl text-xs font-mono focus:border-rosegold-400 focus:outline-none"
                 />
+              </div>
+            </div>
+
+            {/* Product Photo & Sheet Cell Picker */}
+            <div className="rounded-xl border border-pearl bg-[#f9f0f5] p-3 space-y-2">
+              <div className="flex items-center justify-between">
+                <label className="block text-xs font-semibold text-espresso">
+                  {lang === 'ar'
+                    ? 'صورة المنتج (تظهر في المتجر واستوديو العرض):'
+                    : 'Product Photo (Boutique & Showcase):'}
+                </label>
+                {imageUrl && (
+                  <button
+                    type="button"
+                    onClick={() => setImageUrl('')}
+                    className="text-[10px] text-rose-600 underline"
+                  >
+                    {lang === 'ar' ? 'استعادة صورة غزل' : 'Reset'}
+                  </button>
+                )}
+              </div>
+
+              <div className="flex items-center gap-3">
+                <div className="w-16 h-16 rounded-xl overflow-hidden border border-pearl shrink-0">
+                  <PhImage imgKey={sheetKey} customImageUrl={imageUrl} className="w-full h-full" />
+                </div>
+                <div className="flex-1 space-y-1.5">
+                  <label className="inline-block rounded-full bg-[#cbb6ea] text-[#2c1433] px-3 py-1.5 text-[11px] font-semibold cursor-pointer hover:bg-[#e58fb6] transition">
+                    {uploadingPhoto
+                      ? lang === 'ar'
+                        ? 'جاري الرفع...'
+                        : 'Uploading…'
+                      : lang === 'ar'
+                      ? 'رفع صورة منتج مخصصة'
+                      : 'Upload Custom Photo'}
+                    <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
+                  </label>
+                  <select
+                    value={sheetKey}
+                    onChange={(e) => {
+                      setSheetKey(e.target.value);
+                      setImageUrl('');
+                    }}
+                    className="w-full rounded-lg border border-pearl bg-white px-2 py-1 text-[11px]"
+                  >
+                    {PRODUCT_SHEET_PRESETS.map((p) => (
+                      <option key={p.key} value={p.key}>
+                        {lang === 'ar' ? p.labelAr : p.labelEn} ({p.key})
+                      </option>
+                    ))}
+                  </select>
+                </div>
               </div>
             </div>
 

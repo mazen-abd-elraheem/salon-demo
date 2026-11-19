@@ -1,15 +1,18 @@
 import { useState, FormEvent } from 'react';
 import { Link } from 'react-router-dom';
-import { ArrowLeft, ArrowRight, KeyRound, Loader2, Mail, Sparkles, Wand2 } from 'lucide-react';
+import { ArrowLeft, ArrowRight, KeyRound, Loader2, Mail, ShieldCheck } from 'lucide-react';
 import { useLanguage } from '../../context/LanguageContext';
+import { GuzelLogoIcon } from '../public/GuzelSvgIcons';
+import PhImage from '../public/PhImage';
 
 interface AdminLoginProps {
   onSubmit: (email: string, password: string) => Promise<{ ok: boolean; error?: string }>;
   loading: boolean;
   error: string | null;
+  portalTitle?: string;
 }
 
-export default function AdminLogin({ onSubmit, loading, error }: AdminLoginProps) {
+export default function AdminLogin({ onSubmit, loading, error, portalTitle }: AdminLoginProps) {
   const { lang, isRTL } = useLanguage();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -19,132 +22,126 @@ export default function AdminLogin({ onSubmit, loading, error }: AdminLoginProps
     e.preventDefault();
     setLocalError(null);
     if (!email || !password) {
-      setLocalError(lang === 'ar' ? 'من فضلك اكتبي الإيميل وكلمة السر.' : 'Please enter your email and password.');
+      setLocalError(
+        lang === 'ar'
+          ? 'من فضلكِ أدخلي البريد الإلكتروني وكلمة المرور الخاصة بالموظفين.'
+          : 'Please enter your authorized staff email and password.',
+      );
       return;
     }
     const result = await onSubmit(email, password);
-    if (!result.ok) setLocalError(result.error ?? (lang === 'ar' ? 'تعذر تسجيل الدخول.' : 'Unable to sign in.'));
-  }
-
-  function fillDemo() {
-    setEmail('admin@maisonlumiere.beauty');
-    setPassword('admin123');
-    setLocalError(null);
+    if (!result.ok) {
+      setLocalError(
+        result.error ?? (lang === 'ar' ? 'تعذر تسجيل الدخول. غير مصرح للعميلات.' : 'Unauthorized access.'),
+      );
+    }
   }
 
   const message = localError || error;
 
   return (
-    <div className="relative grid min-h-screen grid-cols-1 overflow-hidden lg:grid-cols-2">
-      {/* Left brand panel */}
-      <div className="relative hidden overflow-hidden bg-espresso lg:flex">
-        <img
-          src="https://images.unsplash.com/photo-1560066984-138dadb4c035?auto=format&fit=crop&w=1400&q=80"
-          alt="Beauty studio atmosphere"
-          className="absolute inset-0 h-full w-full object-cover opacity-70"
-        />
-        <div className="absolute inset-0 bg-gradient-to-tr from-espresso via-espresso/80 to-transparent" />
-        <div className="relative z-10 flex flex-col justify-between p-12 text-ivory">
-          <Link to="/" className="inline-flex items-center gap-2 text-sm text-ivory/80 hover:text-ivory">
+    <div
+      className="relative grid min-h-screen grid-cols-1 overflow-hidden lg:grid-cols-2"
+      style={{ backgroundColor: 'var(--mainbg, #f9f0f5)', color: 'var(--fonts-100, #3a1d43)' }}
+    >
+      {/* Left Brand Panel */}
+      <div className="relative hidden overflow-hidden bg-[#25142d] lg:flex">
+        <div className="absolute inset-0 opacity-65">
+          <PhImage imgKey="ringa:1" className="w-full h-full" />
+        </div>
+        <div className="absolute inset-0 bg-gradient-to-tr from-[#25142d] via-[#25142d]/85 to-transparent" />
+        <div className="relative z-10 flex flex-col justify-between p-12 text-[#f6e9f4]">
+          <Link
+            to="/"
+            className="inline-flex items-center gap-2 text-sm text-[#f6e9f4]/80 hover:text-[#f6e9f4] no-underline"
+          >
             {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
-            {lang === 'ar' ? 'الرجوع للموقع' : 'Back to website'}
+            {lang === 'ar' ? 'الرجوع لموقع غزل سبا' : 'Back to Guzel Spa'}
           </Link>
           <div>
-            <div className="inline-flex items-center gap-2 text-[11px] uppercase tracking-wider-3 text-ivory/70">
-              <Sparkles className="h-3.5 w-3.5" />
-              {lang === 'ar' ? 'بوابة إدارة الصالون' : 'Studio Portal'}
+            <div className="inline-flex items-center gap-2 text-xs uppercase tracking-widest text-[#cbb6ea]">
+              <GuzelLogoIcon className="h-4 w-4" />
+              {portalTitle || (lang === 'ar' ? 'بوابة إدارة غزل سبا' : 'Guzel Spa Staff Portal')}
             </div>
-            <h1 className="font-display mt-4 text-5xl leading-[1.05]">
-              {lang === 'ar' ? 'كواليس الأناقة،' : 'The atelier,'}
+            <h1 className="mt-4 text-4xl xl:text-5xl font-normal leading-tight">
+              {lang === 'ar' ? 'إدارة الأناقة،' : 'The Guzel Atelier,'}
               <br />
-              <span className="italic text-rosegold-200">
-                {lang === 'ar' ? 'وإدارة مواعيدك بكل هدوء.' : 'behind the scenes.'}
+              <span className="it text-[#cbb6ea]">
+                {lang === 'ar' ? 'بأعلى معايير الأمان.' : 'behind the scenes.'}
               </span>
             </h1>
-            <p className="mt-5 max-w-md text-ivory/70">
+            <p className="mt-5 max-w-md text-sm text-[#f6e9f4]/75 leading-relaxed">
               {lang === 'ar'
-                ? 'سجلي دخولك للتحكم في المواعيد، قائمة الخدمات، ساعات العمل، ومتابعة طلبات الحجز أول بأول.'
-                : 'Sign in to manage your beauty studio — appointments, services, business hours and more.'}
+                ? 'منطقة محمية مخصصة للإدارة وطاقم العمل المصرح لهم فقط. لا يُسمح لحسابات العميلات بالدخول إلى لوحة الإدارة أو الكاشير.'
+                : 'Restricted area for authorized Guzel Spa management and staff only. Client accounts are strictly isolated from administrative controls.'}
             </p>
           </div>
-          <div className="text-[11px] uppercase tracking-wider-2 text-ivory/50">
-            {lang === 'ar' ? 'ميزون لوميير · لوحة التحكم' : 'Maison Lumière · Studio Suite'}
+          <div className="text-[11px] uppercase tracking-widest text-[#f6e9f4]/50">
+            {lang === 'ar' ? 'غزل سبا للجمال والاسترخاء · نظام الإدارة المؤمّن' : 'Guzel Spa · Role-Verified Security Suite'}
           </div>
         </div>
       </div>
 
-      {/* Form panel */}
-      <div className="flex items-center justify-center bg-ivory p-8">
-        <form onSubmit={handle} className="w-full max-w-md">
+      {/* Form Panel */}
+      <div className="flex items-center justify-center p-6 sm:p-10">
+        <form
+          onSubmit={handle}
+          className="w-full max-w-md rounded-[2rem] border p-8 shadow-soft"
+          style={{
+            backgroundColor: 'var(--secondbg, #f3e6f0)',
+            borderColor: 'var(--lines, #e8d7e4)',
+          }}
+        >
           <Link
             to="/"
-            className="mb-8 inline-flex items-center gap-2 text-sm text-mocha-500 lg:hidden"
+            className="mb-6 inline-flex items-center gap-2 text-xs font-medium lg:hidden no-underline"
+            style={{ color: 'var(--fonts-64, #3a1d43a3)' }}
           >
             {isRTL ? <ArrowRight className="h-4 w-4" /> : <ArrowLeft className="h-4 w-4" />}
             {lang === 'ar' ? 'الرجوع للموقع' : 'Back to website'}
           </Link>
 
-          <span className="eyebrow">
-            <span className="eyebrow-dot" />
-            {lang === 'ar' ? 'دخول الإدارة' : 'Studio Access'}
-          </span>
-          <h2 className="heading-display mt-3 text-4xl">
-            {lang === 'ar' ? 'أهلاً بيكي من تاني.' : 'Welcome back.'}
-          </h2>
-          <p className="mt-2 text-sm text-mocha-500">
-            {lang === 'ar'
-              ? 'سجلي دخولك ببيانات حساب الإدارة الخاص بيكي.'
-              : 'Sign in with your studio admin credentials.'}
-          </p>
-
-          {/* Quick Demo Fill Pill */}
-          <div className="mt-6 flex items-center justify-between rounded-2xl border border-pearl bg-white/70 p-3">
-            <div className="text-xs text-mocha-600">
-              <span className="font-semibold text-espresso">
-                {lang === 'ar' ? 'حساب تجريبي سريع:' : 'Quick Demo Admin:'}
-              </span>{' '}
-              <span className="text-[11px] text-mocha-500">admin@maisonlumiere.beauty / admin123</span>
-            </div>
-            <button
-              type="button"
-              onClick={fillDemo}
-              className="inline-flex items-center gap-1 rounded-xl bg-rosegold-100/60 px-2.5 py-1 text-xs font-semibold text-rosegold-500 hover:bg-rosegold-200/60 transition"
-            >
-              <Wand2 className="h-3 w-3" />
-              {lang === 'ar' ? 'ملء سريع' : 'Autofill'}
-            </button>
+          <div className="inline-flex items-center gap-2 rounded-full px-3 py-1 text-xs font-semibold bg-[#cbb6ea]/40 text-[#3a1d43]">
+            <ShieldCheck className="h-3.5 w-3.5" />
+            <span>{portalTitle || (lang === 'ar' ? 'دخول الطاقم والإدارة فقط' : 'Authorized Staff Only')}</span>
           </div>
+
+          <h2 className="mt-4 text-3xl font-semibold">
+            {lang === 'ar' ? 'تسجيل دخول الإدارة' : 'Staff Sign In'}
+          </h2>
+          <p className="mt-1.5 text-xs" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
+            {lang === 'ar'
+              ? 'أدخلي بيانات حساب الموظف أو المدير المعتمد للوصول للنظام.'
+              : 'Sign in with your role-verified staff or administrator credentials.'}
+          </p>
 
           <div className="mt-6 space-y-5">
             <div>
-              <label className="field-label">{lang === 'ar' ? 'البريد الإلكتروني' : 'Email'}</label>
+              <label className="field-label">{lang === 'ar' ? 'البريد الإلكتروني الوظيفي' : 'Staff Email'}</label>
               <div className="relative mt-2">
                 <Mail
                   className={[
-                    'pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-mocha-400',
+                    'pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 opacity-50',
                     isRTL ? 'right-3.5' : 'left-3.5',
                   ].join(' ')}
                 />
                 <input
-                  type="email"
-                  autoComplete="email"
+                  type="text"
+                  autoComplete="username"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="admin@maisonlumiere.beauty"
-                  className={[
-                    'field-input mt-0',
-                    isRTL ? 'pr-10' : 'pl-10',
-                  ].join(' ')}
+                  placeholder="staff@guzelspa.beauty"
+                  className={['field-input mt-0', isRTL ? 'pr-10' : 'pl-10'].join(' ')}
                 />
               </div>
             </div>
 
             <div>
-              <label className="field-label">{lang === 'ar' ? 'كلمة السر' : 'Password'}</label>
+              <label className="field-label">{lang === 'ar' ? 'كلمة المرور' : 'Password'}</label>
               <div className="relative mt-2">
                 <KeyRound
                   className={[
-                    'pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 text-mocha-400',
+                    'pointer-events-none absolute top-1/2 h-4 w-4 -translate-y-1/2 opacity-50',
                     isRTL ? 'right-3.5' : 'left-3.5',
                   ].join(' ')}
                 />
@@ -154,16 +151,13 @@ export default function AdminLogin({ onSubmit, loading, error }: AdminLoginProps
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   placeholder="••••••••"
-                  className={[
-                    'field-input mt-0',
-                    isRTL ? 'pr-10' : 'pl-10',
-                  ].join(' ')}
+                  className={['field-input mt-0', isRTL ? 'pr-10' : 'pl-10'].join(' ')}
                 />
               </div>
             </div>
 
             {message && (
-              <div className="rounded-2xl border border-blush-300/60 bg-blush-50 px-4 py-3 text-sm text-blush-600">
+              <div className="rounded-2xl border border-red-300 bg-red-50 px-4 py-3 text-xs font-medium text-red-700">
                 {message}
               </div>
             )}
@@ -172,25 +166,27 @@ export default function AdminLogin({ onSubmit, loading, error }: AdminLoginProps
               type="submit"
               disabled={loading}
               className={[
-                'btn-primary w-full justify-center',
+                'btn-primary w-full justify-center py-3.5',
                 loading && 'cursor-wait opacity-75',
               ].join(' ')}
             >
               {loading ? (
                 <>
                   <Loader2 className="h-4 w-4 animate-spin" />
-                  {lang === 'ar' ? 'جاري التحقق...' : 'Signing in…'}
+                  {lang === 'ar' ? 'جاري التحقق من الصلاحية...' : 'Verifying role…'}
                 </>
+              ) : lang === 'ar' ? (
+                'دخول آمن'
               ) : (
-                lang === 'ar' ? 'تسجيل الدخول' : 'Sign in'
+                'Secure Sign In'
               )}
             </button>
           </div>
 
-          <p className="mt-8 text-xs leading-relaxed text-mocha-500">
+          <p className="mt-6 text-[11px] leading-relaxed" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
             {lang === 'ar'
-              ? 'هذه اللوحة مخصصة لفريق عمل الصالون. يتم منح الصلاحيات بإضافة معرف المستخدم إلى جدول admin_users في Supabase.'
-              : 'This area is for studio staff only. Access is granted by adding your Supabase Auth user id to the admin_users table.'}
+              ? 'محمي بنظام التحقق من الأدوار (RBAC). في حال كنتِ عميلة وترغبين في متابعة حجوزاتك، يرجى استخدام بوابة العميلات.'
+              : 'Protected by Role-Based Access Control (RBAC). Customers should use the Client Portal.'}
           </p>
         </form>
       </div>

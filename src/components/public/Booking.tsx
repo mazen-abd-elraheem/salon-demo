@@ -123,6 +123,8 @@ export default function Booking({
   const [promoInput, setPromoInput] = useState('');
   const [appliedPromo, setAppliedPromo] = useState<PromoCode | null>(null);
   const [promoMessage, setPromoMessage] = useState<{ text: string; isError: boolean } | null>(null);
+  const [dataConsentAgreed, setDataConsentAgreed] = useState<boolean>(false);
+  const [consentError, setConsentError] = useState<string | null>(null);
 
   // 50% Deposit Payment
   const [paymentMethod, setPaymentMethod] = useState<'instapay' | 'vodafone_cash'>('instapay');
@@ -980,6 +982,53 @@ export default function Booking({
                       className="field-textarea mt-1.5"
                     />
                   </div>
+
+                  {/* User Data Usage & Privacy Consent Agreement */}
+                  <div className="sm:col-span-2 mt-2 rounded-2xl border p-4" style={{ borderColor: 'var(--lines, #e8d7e4)', backgroundColor: 'var(--secondbg, #f3e6f0)' }}>
+                    <label className="flex items-start gap-3 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={dataConsentAgreed}
+                        onChange={(e) => {
+                          setDataConsentAgreed(e.target.checked);
+                          if (e.target.checked) setConsentError(null);
+                        }}
+                        className="mt-1 h-4 w-4 rounded accent-[#b14bd9] shrink-0"
+                      />
+                      <span className="text-xs leading-relaxed" style={{ color: 'var(--fonts-100, #3a1d43)' }}>
+                        {lang === 'ar' ? (
+                          <>
+                            <strong>اتفاقية استخدام البيانات والخصوصية:</strong> أوافق على قيام{' '}
+                            <strong>غزل سبا (Guzel Spa)</strong> بجمع واستخدام بياناتي الشخصية (الاسم، رقم الهاتف، البريد الإلكتروني، وتفاصيل الحجز وإيصال الدفع) لغرض تأكيد وإدارة موعدي وإرسال إشعارات الحجز، وذلك وفقاً لـ{' '}
+                            <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#b14bd9]">
+                              سياسة الخصوصية واستخدام البيانات
+                            </a>{' '}
+                            و{' '}
+                            <a href="/legal/terms" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#b14bd9]">
+                              شروط الخدمة
+                            </a>
+                            .
+                          </>
+                        ) : (
+                          <>
+                            <strong>User Data Usage Agreement:</strong> I explicitly consent to{' '}
+                            <strong>Guzel Spa</strong> collecting and processing my personal data (name, phone number, email, booking preferences, and payment receipt) strictly for appointment scheduling, verification, and service notifications in accordance with the{' '}
+                            <a href="/legal/privacy" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#b14bd9]">
+                              Privacy &amp; Data Usage Policy
+                            </a>{' '}
+                            and{' '}
+                            <a href="/legal/terms" target="_blank" rel="noopener noreferrer" className="underline font-semibold text-[#b14bd9]">
+                              Terms of Service
+                            </a>
+                            .
+                          </>
+                        )}
+                      </span>
+                    </label>
+                    {consentError && (
+                      <p className="mt-2 text-xs font-semibold text-red-600">{consentError}</p>
+                    )}
+                  </div>
                 </div>
 
                 <div className="mt-8 flex items-center justify-between border-t border-pearl/70 pt-5">
@@ -996,6 +1045,14 @@ export default function Booking({
                       }
                       if (!res.isValid) {
                         setPhoneError(res.error || 'رقم موبايل غير صحيح');
+                        return;
+                      }
+                      if (!dataConsentAgreed) {
+                        setConsentError(
+                          lang === 'ar'
+                            ? 'يرجى الموافقة على اتفاقية استخدام البيانات وسياسة الخصوصية للمتابعة.'
+                            : 'Please accept the User Data Usage Agreement & Privacy Policy to proceed.',
+                        );
                         return;
                       }
                       setStep(4);

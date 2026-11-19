@@ -60,6 +60,8 @@ export interface Service {
   duration_minutes: number;
   price: number;
   room_type_required: RoomType | string;
+  image_url?: string | null;
+  sheet_key?: string | null;
   is_active: boolean;
   created_at?: string;
 }
@@ -72,6 +74,8 @@ export interface Package {
   description_en?: string | null;
   price: number;
   duration_minutes: number;
+  image_url?: string | null;
+  sheet_key?: string | null;
   is_active: boolean;
   services?: Service[];
   created_at?: string;
@@ -81,10 +85,14 @@ export interface Product {
   id: string;
   name_ar: string;
   name_en: string;
+  description_ar?: string | null;
+  description_en?: string | null;
   category: string;
   price: number;
   stock_quantity: number;
   sku?: string | null;
+  image_url?: string | null;
+  sheet_key?: string | null;
   is_active: boolean;
   created_at?: string;
 }
@@ -232,6 +240,8 @@ export interface CustomerUser {
   name: string;
   phone: string;
   email?: string | null;
+  data_consent_agreed?: boolean;
+  data_consent_at?: string;
   created_at?: string;
 }
 
@@ -254,6 +264,9 @@ export interface BusinessSettings {
   id: string;
   business_name: string | null;
   business_name_en?: string | null;
+  tagline?: string | null;
+  tagline_ar?: string | null;
+  facebook_url?: string | null;
   logo_url?: string | null;
   business_email: string | null;
   business_phone: string | null;

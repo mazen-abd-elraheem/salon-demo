@@ -130,70 +130,74 @@ export const defaultSpecialists: Specialist[] = [
 export const defaultServices: Service[] = [
   {
     id: 'svc-1',
-    name: 'Signature Hydrafacial Ritual',
-    name_ar: 'جلسة هيدرا فيشل ونضارة عميقة',
-    name_en: 'Signature Hydrafacial Ritual',
+    name: 'Guzel Signature Hydrafacial & Serum Glow',
+    name_ar: 'جلسة هيدرا فيشل غزل ونضارة السيروم الملكية',
+    name_en: 'Guzel Signature Hydrafacial & Serum Glow',
     category: 'skincare',
     description:
-      'A deep pore cleanse, customized botanical peel, lymphatic drainage, and intense hyaluronic infusion for luminous, rested skin.',
+      'A deep pore cleanse, customized botanical peel, lymphatic drainage, and intense Guzel lavender hyaluronic serum infusion for luminous, rested skin.',
     description_ar:
-      'تنضيف عميق للمسام وتقشير لطيف بأحماض الفواكه مع مساج ليمفاوي وسيروم هيالورونيك لنضارة وإشراقة فورية.',
+      'تنظيف عميق للمسام وتقشير لطيف بأحماض الفواكه مع مساج ليمفاوي وسيروم غزل باللافندر والهيالورونيك لنضارة وإشراقة فورية.',
     description_en:
-      'Deep pore cleanse, botanical peel, lymphatic drainage, and intense hyaluronic infusion.',
+      'Deep pore cleanse, botanical peel, lymphatic drainage, and intense Guzel lavender hyaluronic infusion.',
     duration_minutes: 60,
     price: 1500,
     room_type_required: 'facial_cabin',
+    sheet_key: 'ringa:1',
     is_active: true,
   },
   {
     id: 'svc-2',
-    name: 'Royal Moroccan Bath Ritual',
+    name: 'Royal Moroccan Bath & Atlas Clay Ritual',
     name_ar: 'الحمام المغربي الملكي بالأعشاب والصابون الأسود',
-    name_en: 'Royal Moroccan Bath Ritual',
+    name_en: 'Royal Moroccan Bath & Atlas Clay Ritual',
     category: 'moroccan_bath',
     description:
       'Authentic steam bath, traditional black soap exfoliation, rose clay mask, and total body relaxation.',
     description_ar:
-      'طقس مغربي أصيل: بخار، تلييف بالصابون البلدي، ماسك الطمي الطبيعي مع الورد، وتفتيح وتنعيم فوري للجسم.',
+      'طقس مغربي أصيل في غزل سبا: بخار، تلييف بالصابون البلدي، ماسك الطمي الطبيعي مع الورد، وتفتيح وتنعيم فوري للجسم.',
     description_en:
       'Authentic steam bath, black soap exfoliation, rose clay mask, and total body softening.',
     duration_minutes: 90,
     price: 2200,
     room_type_required: 'moroccan_bath',
+    sheet_key: 'life:0',
     is_active: true,
   },
   {
     id: 'svc-3',
-    name: 'Aromatherapy Relaxation Massage',
-    name_ar: 'جلسة مساج استرخائي بالزيوت العطرية',
-    name_en: 'Aromatherapy Relaxation Massage',
+    name: 'Guzel Lavender Aromatherapy Massage',
+    name_ar: 'جلسة مساج غزل الاسترخائي باللافندر والزيوت العطرية',
+    name_en: 'Guzel Lavender Aromatherapy Massage',
     category: 'massage',
     description:
-      'Full body 60-min therapeutic massage with organic aromatic oils to relieve muscle stiffness and stress.',
+      'Full body 60-min therapeutic massage with organic Guzel lavender and sweet almond aromatic oils to relieve muscle stiffness and stress.',
     description_ar:
-      'مساج كامل للجسم لمدة ٦٠ دقيقة لفك التشنجات العضلية وتهدئة الأعصاب باستخدام أرقى الزيوت العطرية الطبيعية.',
+      'مساج كامل للجسم لمدة ٦٠ دقيقة لفك التشنجات العضلية وتهدئة الأعصاب باستخدام زيوت غزل العطرية باللافندر واللوز الحلو.',
     description_en:
-      'Full body 60-min therapeutic massage with aromatic oils to soothe mind and body.',
+      'Full body 60-min therapeutic massage with Guzel lavender aromatic oils to soothe mind and body.',
     duration_minutes: 60,
     price: 1200,
     room_type_required: 'massage_room',
+    sheet_key: 'ringb:3',
     is_active: true,
   },
   {
     id: 'svc-4',
-    name: 'Soft Glam Makeup & Glow',
-    name_ar: 'ميك آب سواريه ولوك ناعم',
-    name_en: 'Soft Glam Makeup & Glow',
+    name: 'Soft Glam Makeup & Dewy Finish',
+    name_ar: 'ميك آب سواريه ولوك غزل الناعم المشرق',
+    name_en: 'Soft Glam Makeup & Dewy Finish',
     category: 'bridal',
     description:
-      'Skin-first, radiant makeup tailored to your features and evening event. Includes premium prep and lashes.',
+      'Skin-first, radiant makeup tailored to your features and evening event. Includes premium Guzel cream prep and lashes.',
     description_ar:
-      'ميك آب هادي وراقي يبرز جمالك وملامحك الطبيعية مع تجهيز كامل للبشرة وتركيب رموش حبة حبة للمناسبات.',
+      'ميك آب هادي وراقي يبرز جمالك وملامحك الطبيعية مع تجهيز كامل للبشرة بكريم غزل الوردي وتركيب رموش للمناسبات.',
     description_en:
-      'Skin-first radiant makeup tailored to your features with luxury skin prep and delicate lashes.',
+      'Skin-first radiant makeup tailored to your features with luxury Guzel skin prep and delicate lashes.',
     duration_minutes: 75,
     price: 1800,
     room_type_required: 'general',
+    sheet_key: 'ringb:1',
     is_active: true,
   },
   {
@@ -205,19 +209,20 @@ export const defaultServices: Service[] = [
     description:
       'Deep scalp detoxification, caviar hair mask therapy, and a voluminous, bouncy signature blowout.',
     description_ar:
-      'ديتوكس لفروة الرأس مع جلسة ماسك كافيار لترميم الشعر وتصفيف بالسيشوار فوليوم يجنن يدوم أيام.',
+      'ديتوكس لفروة الرأس مع جلسة ماسك كافيار لترميم الشعر وتصفيف بالسيشوار فوليوم ناعم يدوم أيام.',
     description_en:
       'Deep scalp detox, caviar repair mask therapy, and a voluminous signature blowout.',
     duration_minutes: 60,
     price: 1100,
     room_type_required: 'hair_station',
+    sheet_key: 'studio:1',
     is_active: true,
   },
   {
     id: 'svc-6',
-    name: 'Atelier Brow Shaping & Tint',
+    name: 'Atelier Brow Shaping & Botanical Tint',
     name_ar: 'رسم وتنظيف وتحديد حواجب وصبغة طبيعية',
-    name_en: 'Atelier Brow Shaping & Tint',
+    name_en: 'Atelier Brow Shaping & Botanical Tint',
     category: 'nails',
     description:
       'Architectural brow mapping, custom tinting, precision tweezing, and a nourishing keratin finishing balm.',
@@ -228,13 +233,14 @@ export const defaultServices: Service[] = [
     duration_minutes: 45,
     price: 600,
     room_type_required: 'nails_station',
+    sheet_key: 'ringa:3',
     is_active: true,
   },
   {
     id: 'svc-7',
-    name: 'Lash Lift & Keratin Glaze',
+    name: 'Lash Lift & Peptide Keratin Glaze',
     name_ar: 'رفع وتغذية رموش لاش ليفت (Lash Lift)',
-    name_en: 'Lash Lift & Keratin Glaze',
+    name_en: 'Lash Lift & Peptide Keratin Glaze',
     category: 'nails',
     description:
       'Natural lash lift curl and deep obsidian tinting with organic peptide glaze for up to 8 weeks.',
@@ -245,6 +251,7 @@ export const defaultServices: Service[] = [
     duration_minutes: 60,
     price: 900,
     room_type_required: 'facial_cabin',
+    sheet_key: 'pre:1',
     is_active: true,
   },
 ];
@@ -252,26 +259,41 @@ export const defaultServices: Service[] = [
 export const defaultPackages: Package[] = [
   {
     id: 'pkg-1',
-    name_ar: 'باقة العروسة الملكية الشاملة (Royal Bridal Package)',
-    name_en: 'Royal Bridal Signature Package',
+    name_ar: 'باقة عروسة غزل الملكية الشاملة (Guzel Royal Bridal VIP)',
+    name_en: 'Guzel Royal Bridal Signature Package',
     description_ar:
-      'الباقة المتكاملة لليلة العمر: حمام مغربي ملكي + هيدرا فيشل نضارة + ترميم واستشوار الشعر + ميك آب عروسة متكامل.',
+      'الباقة المتكاملة لليلة العمر في غزل سبا: حمام مغربي ملكي + هيدرا فيشل نضارة بسيروم غزل + مساج استرخائي + ترميم الشعر + ميك آب عروسة متكامل.',
     description_en:
-      'Complete bridal journey: Royal Moroccan bath, Hydrafacial, hair therapy, and luxury bridal makeup.',
+      'Complete bridal journey at Guzel Spa: Royal Moroccan bath, Hydrafacial with Guzel Serum, aromatherapy massage, hair therapy, and luxury bridal makeup.',
     price: 6500,
     duration_minutes: 240,
+    sheet_key: 'life:2',
     is_active: true,
   },
   {
     id: 'pkg-2',
-    name_ar: 'باقة الروقان والاسترخاء التام (Total Spa Day)',
-    name_en: 'Total Glow & Relaxation Spa Day',
+    name_ar: 'باقة الروقان والاسترخاء التام (Guzel Total Spa Retreat)',
+    name_en: 'Guzel Total Glow & Relaxation Spa Day',
     description_ar:
-      'يوم دلع كامل: حمام مغربي بالأعشاب + مساج استرخائي ٦٠ دقيقة + تنظيف ونضارة بشرة.',
+      'يوم دلع كامل: حمام مغربي بالأعشاب + مساج استرخائي باللافندر ٦٠ دقيقة + جلسة هيدرا فيشل ونضارة بشرة.',
     description_en:
-      'Full Moroccan bath, 60-min aromatic massage, and restorative facial treatment.',
+      'Full Moroccan bath, 60-min lavender aromatic massage, and restorative Guzel facial treatment.',
     price: 4200,
     duration_minutes: 180,
+    sheet_key: 'life:1',
+    is_active: true,
+  },
+  {
+    id: 'pkg-3',
+    name_ar: 'باقة إشراقة غزل الفورية (Guzel Dewy Radiance Duo)',
+    name_en: 'Guzel Dewy Radiance & Silk Hair Duo',
+    description_ar:
+      'جلسة هيدرا فيشل مع سيروم غزل باللافندر + ترميم الشعر بالكافيار واستشوار ويفي ناعم.',
+    description_en:
+      'Signature Hydrafacial with Guzel Lavender Dropper Serum paired with Caviar Hair Revival and blowout.',
+    price: 2300,
+    duration_minutes: 120,
+    sheet_key: 'studio:0',
     is_active: true,
   },
 ];
@@ -279,52 +301,80 @@ export const defaultPackages: Package[] = [
 export const defaultProducts: Product[] = [
   {
     id: 'prod-1',
-    name_ar: 'سيروم الهيالورونيك اسيد المكثف (30ml)',
-    name_en: 'Intensive Hyaluronic Serum',
+    name_ar: 'سيروم غزل باللافندر والهيالورونيك أسيد (Guzel Dropper Serum 30ml)',
+    name_en: 'Guzel Frosted Lavender Dropper Serum (30ml)',
+    description_ar: 'سيروم غزل الزجاجي باللافندر وحمض الهيالورونيك لنضارة فورية وترطيب عميق للبشرة.',
+    description_en: 'Frosted lavender glass dropper serum with pure hyaluronic acid and botanical lavender extract for glass-skin radiance.',
     category: 'skincare',
-    price: 650,
-    stock_quantity: 25,
-    sku: 'SKIN-HYA-01',
+    price: 750,
+    stock_quantity: 32,
+    sku: 'GUZEL-SRM-01',
+    sheet_key: 'styled:0',
     is_active: true,
   },
   {
     id: 'prod-2',
-    name_ar: 'ماسك الكافيار لترميم الشعر (250g)',
-    name_en: 'Caviar Hair Repair Mask',
-    category: 'hair',
-    price: 850,
-    stock_quantity: 18,
-    sku: 'HAIR-CAV-02',
+    name_ar: 'لوشن وكريم غزل المرطب باللافندر (Guzel Lavender Tube 100ml)',
+    name_en: 'Guzel Matte Lavender Hydrating Tube (100ml)',
+    description_ar: 'أنبوب كريم غزل البنفسجي المات لترطيب وتهدئة البشرة بعد جلسات الفيشل والسبا.',
+    description_en: 'Matte lavender squeeze tube formulated with ceramides and soothing lavender water for silky barrier repair.',
+    category: 'skincare',
+    price: 620,
+    stock_quantity: 28,
+    sku: 'GUZEL-TUB-02',
+    sheet_key: 'styled:1',
     is_active: true,
   },
   {
     id: 'prod-3',
-    name_ar: 'صابون بلدي مغربي أصلي بزيت الزيتون (300g)',
-    name_en: 'Authentic Moroccan Black Soap',
-    category: 'moroccan_bath',
-    price: 350,
-    stock_quantity: 40,
-    sku: 'SPA-SOAP-03',
+    name_ar: 'جار كريم غزل الوردي المخملي للنضارة (Guzel Blush Cream Jar 50ml)',
+    name_en: 'Guzel Frosted Blush-Pink Velvet Cream Jar (50ml)',
+    description_ar: 'كريم غزل الوردي الغني بالببتيدات وزبدة الشيا لنعومة فائقة وإشراقة تدوم طوال اليوم.',
+    description_en: 'Frosted blush-pink glass jar filled with whipped peptide and rosehip cream for dewy, plump illumination.',
+    category: 'skincare',
+    price: 880,
+    stock_quantity: 22,
+    sku: 'GUZEL-JAR-03',
+    sheet_key: 'styled2:1',
     is_active: true,
   },
   {
     id: 'prod-4',
-    name_ar: 'زيت الأرجان النقي المعصور على البارد (100ml)',
-    name_en: 'Cold-Pressed Pure Argan Oil',
+    name_ar: 'مجموعة غزل المتكاملة للعناية بالبشرة (Guzel Complete Trio Set)',
+    name_en: 'Guzel Signature Skincare Trio Collection',
+    description_ar: 'المجموعة الثلاثية الكاملة من غزل: سيروم اللافندر + أنبوب الترطيب + جار الكريم الوردي بسعر خاص.',
+    description_en: 'The complete Guzel ritual: Frosted Lavender Dropper Serum, Matte Lavender Tube, and Blush-Pink Cream Jar together.',
     category: 'skincare',
-    price: 750,
-    stock_quantity: 20,
-    sku: 'OIL-ARG-04',
+    price: 1950,
+    stock_quantity: 15,
+    sku: 'GUZEL-SET-04',
+    sheet_key: 'prod:0',
     is_active: true,
   },
   {
     id: 'prod-5',
-    name_ar: 'سيروم تكثيف وتطويل الرموش والحواجب (10ml)',
-    name_en: 'Peptide Lash & Brow Growth Elixir',
-    category: 'nails',
-    price: 450,
-    stock_quantity: 30,
-    sku: 'LASH-ELX-05',
+    name_ar: 'صابون بلدي مغربي أصلي بزيت الأرجان (300g)',
+    name_en: 'Authentic Moroccan Black Soap with Argan',
+    description_ar: 'صابون مغربي بلدي طبيعي ١٠٠٪ لتقشير وتنعيم الجسم في الحمام المغربي.',
+    description_en: 'Traditional olive and argan black soap for deep hammam exfoliation.',
+    category: 'moroccan_bath',
+    price: 420,
+    stock_quantity: 40,
+    sku: 'GUZEL-SOP-05',
+    sheet_key: 'styled2:0',
+    is_active: true,
+  },
+  {
+    id: 'prod-6',
+    name_ar: 'ماسك الكافيار الملكي لترميم الشعر (250g)',
+    name_en: 'Caviar & Silk Hair Repair Mask (250g)',
+    description_ar: 'ماسك مكثف بخلاصة الكافيار والكيراتين لإعادة الحيوية واللمعان للشعر المجهد.',
+    description_en: 'Intensive caviar and silk protein hair mask for mirror-like shine.',
+    category: 'hair',
+    price: 850,
+    stock_quantity: 18,
+    sku: 'GUZEL-CAV-06',
+    sheet_key: 'styled2:2',
     is_active: true,
   },
 ];
@@ -385,13 +435,16 @@ export const defaultBlockedDates: BlockedDate[] = [];
 
 export const defaultSettings: BusinessSettings = {
   id: 'bs-default',
-  business_name: 'ميزون لوميير بيوتي سنتر وسبا',
-  business_name_en: 'Maison Lumière Beauty Center & Spa',
-  business_email: 'contact@maisonlumiere.beauty',
+  business_name: 'غزل سبا للجمال والاسترخاء',
+  business_name_en: 'Guzel Spa',
+  tagline: 'Guzel spa for beauty and relaxation',
+  tagline_ar: 'غزل سبا للجمال والاسترخاء',
+  facebook_url: 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr',
+  business_email: 'concierge@guzelspa.beauty',
   business_phone: '01012345678',
   business_address: '١٥ شارع البرازيل، الزمالك، القاهرة',
-  instapay_ipa: 'maisonlumiere@instapay',
-  instapay_name: 'Maison Lumière Spa',
+  instapay_ipa: 'guzelspa@instapay',
+  instapay_name: 'Guzel Spa Egypt',
   vodafone_cash_number: '01012345678',
   deposit_percentage: 50,
   deposit_hold_minutes: 30,
@@ -836,15 +889,54 @@ export function resetLocalStaffPassword(userId: string, newPass: string) {
   localStorage.setItem(`maison_pass_${userId}`, newPass);
 }
 
+function notifyDataUpdated(scope: string) {
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(new CustomEvent('guzel:data-updated', { detail: { scope } }));
+  }
+}
+
+// ============================================================================
+// Services Helpers
+// ============================================================================
+
+export function getLocalServices(): Service[] {
+  try {
+    const raw = localStorage.getItem('guzel_v3_services');
+    if (raw) return JSON.parse(raw);
+    localStorage.setItem('guzel_v3_services', JSON.stringify(defaultServices));
+    return defaultServices;
+  } catch {
+    return defaultServices;
+  }
+}
+
+export function saveLocalService(service: Service) {
+  const list = getLocalServices();
+  const idx = list.findIndex((s) => s.id === service.id);
+  if (idx >= 0) {
+    list[idx] = service;
+  } else {
+    list.unshift(service);
+  }
+  localStorage.setItem('guzel_v3_services', JSON.stringify(list));
+  notifyDataUpdated('services');
+}
+
+export function deleteLocalService(serviceId: string) {
+  const list = getLocalServices().filter((s) => s.id !== serviceId);
+  localStorage.setItem('guzel_v3_services', JSON.stringify(list));
+  notifyDataUpdated('services');
+}
+
 // ============================================================================
 // Products / Inventory Helpers
 // ============================================================================
 
 export function getLocalProducts(): Product[] {
   try {
-    const raw = localStorage.getItem('maison_v2_products');
+    const raw = localStorage.getItem('guzel_v3_products');
     if (raw) return JSON.parse(raw);
-    localStorage.setItem('maison_v2_products', JSON.stringify(defaultProducts));
+    localStorage.setItem('guzel_v3_products', JSON.stringify(defaultProducts));
     return defaultProducts;
   } catch {
     return defaultProducts;
@@ -859,12 +951,14 @@ export function saveLocalProduct(product: Product) {
   } else {
     prods.unshift(product);
   }
-  localStorage.setItem('maison_v2_products', JSON.stringify(prods));
+  localStorage.setItem('guzel_v3_products', JSON.stringify(prods));
+  notifyDataUpdated('products');
 }
 
 export function deleteLocalProduct(productId: string) {
   const prods = getLocalProducts().filter((p) => p.id !== productId);
-  localStorage.setItem('maison_v2_products', JSON.stringify(prods));
+  localStorage.setItem('guzel_v3_products', JSON.stringify(prods));
+  notifyDataUpdated('products');
 }
 
 export function updateProductStock(productId: string, delta: number) {
@@ -882,9 +976,9 @@ export function updateProductStock(productId: string, delta: number) {
 
 export function getLocalPackages(): Package[] {
   try {
-    const raw = localStorage.getItem('maison_v2_packages');
+    const raw = localStorage.getItem('guzel_v3_packages');
     if (raw) return JSON.parse(raw);
-    localStorage.setItem('maison_v2_packages', JSON.stringify(defaultPackages));
+    localStorage.setItem('guzel_v3_packages', JSON.stringify(defaultPackages));
     return defaultPackages;
   } catch {
     return defaultPackages;
@@ -899,12 +993,14 @@ export function saveLocalPackage(pkg: Package) {
   } else {
     packages.unshift(pkg);
   }
-  localStorage.setItem('maison_v2_packages', JSON.stringify(packages));
+  localStorage.setItem('guzel_v3_packages', JSON.stringify(packages));
+  notifyDataUpdated('packages');
 }
 
 export function deleteLocalPackage(pkgId: string) {
   const packages = getLocalPackages().filter((p) => p.id !== pkgId);
-  localStorage.setItem('maison_v2_packages', JSON.stringify(packages));
+  localStorage.setItem('guzel_v3_packages', JSON.stringify(packages));
+  notifyDataUpdated('packages');
 }
 
 // ============================================================================
@@ -913,9 +1009,9 @@ export function deleteLocalPackage(pkgId: string) {
 
 export function getLocalSettings(): BusinessSettings {
   try {
-    const raw = localStorage.getItem('maison_v2_settings');
+    const raw = localStorage.getItem('guzel_v3_settings');
     if (raw) return JSON.parse(raw);
-    localStorage.setItem('maison_v2_settings', JSON.stringify(defaultSettings));
+    localStorage.setItem('guzel_v3_settings', JSON.stringify(defaultSettings));
     return defaultSettings;
   } catch {
     return defaultSettings;
@@ -923,7 +1019,8 @@ export function getLocalSettings(): BusinessSettings {
 }
 
 export function saveLocalSettings(settings: BusinessSettings) {
-  localStorage.setItem('maison_v2_settings', JSON.stringify(settings));
+  localStorage.setItem('guzel_v3_settings', JSON.stringify(settings));
+  notifyDataUpdated('settings');
 }
 
 // ============================================================================

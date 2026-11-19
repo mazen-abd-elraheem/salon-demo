@@ -5,7 +5,6 @@ export const translations = {
     // Navbar
     brandSubtitle: 'Beauty Center & Spa',
     navServices: 'Services & Packages',
-    navShowcase: 'Reshoot Studio',
     navAtelier: 'Atelier',
     navBooking: 'Online Booking',
     navReception: 'Reception POS',
@@ -178,7 +177,6 @@ export const translations = {
     // Navbar
     brandSubtitle: 'بيوتي سنتر وسبا متكامل',
     navServices: 'منيو الخدمات والباقات',
-    navShowcase: 'استوديو ريشوت',
     navAtelier: 'عن المكان',
     navBooking: 'احجزي أونلاين',
     navReception: 'كاشير والاستقبال',

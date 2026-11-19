@@ -1,13 +1,20 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabase';
-import { getLocalStaffUsers } from '../lib/mockData';
+import {
+  authenticateStaffCredentials,
+  clearVerifiedStaffSession,
+  getVerifiedStaffSession,
+} from '../lib/staffAuth';
+import type { StaffRole } from '../lib/types';
 
 export interface AdminAuthState {
   loading: boolean;
   session: Session | null;
   user: User | null;
-  isAdmin: boolean | null; // null while unknown, true/false once resolved
+  role: StaffRole | null;
+  isAdmin: boolean | null; // true only for admin/manager
+  isStaff: boolean | null; // true for admin/manager/receptionist
   error: string | null;
 }
 
@@ -16,11 +23,12 @@ export function useAdminAuth() {
     loading: true,
     session: null,
     user: null,
+    role: null,
     isAdmin: null,
+    isStaff: null,
     error: null,
   });
 
-  // Tracks the latest checked user id to avoid stale set-state races.
   const lastCheckedUserId = useRef<string | null>(null);
 
   const checkAdmin = useCallback(async (user: User) => {
@@ -32,26 +40,31 @@ export function useAdminAuth() {
         .maybeSingle();
 
       if (error) {
-        // Transient error — do not sign the admin out automatically.
         setState((prev) => ({
           ...prev,
           loading: false,
-          isAdmin: prev.isAdmin, // keep prior value if known
+          isAdmin: prev.isAdmin ?? false,
+          isStaff: prev.isStaff ?? false,
           error: error.message,
         }));
         return;
       }
 
+      const isConfirmedAdmin = !!data;
       setState((prev) => ({
         ...prev,
         loading: false,
-        isAdmin: !!data,
+        role: isConfirmedAdmin ? 'admin' : null,
+        isAdmin: isConfirmedAdmin,
+        isStaff: isConfirmedAdmin,
         error: null,
       }));
     } catch (err: any) {
       setState((prev) => ({
         ...prev,
         loading: false,
+        isAdmin: false,
+        isStaff: false,
         error: err?.message ?? 'Unable to verify admin access.',
       }));
     }
@@ -59,21 +72,31 @@ export function useAdminAuth() {
 
   const resolve = useCallback(async () => {
     try {
-      if (localStorage.getItem('maison_demo_admin') === 'true') {
-        const demoUser = {
-          id: 'demo-admin-id',
-          email: 'admin@maisonlumiere.beauty',
-          app_metadata: {},
-          user_metadata: { role: 'admin' },
+      // Remove legacy insecure localStorage flag if present
+      localStorage.removeItem('maison_demo_admin');
+
+      const staffSess = getVerifiedStaffSession();
+      if (staffSess) {
+        const staffUser = {
+          id: staffSess.staffId,
+          email: staffSess.email,
+          app_metadata: { role: staffSess.role },
+          user_metadata: { name: staffSess.name, role: staffSess.role },
           aud: 'authenticated',
-          created_at: new Date().toISOString(),
+          created_at: staffSess.authenticatedAt,
         } as unknown as User;
+
+        const isAdminRole = staffSess.role === 'admin' || staffSess.role === 'manager';
+        const isStaffRole =
+          isAdminRole || staffSess.role === 'receptionist' || staffSess.role === 'specialist';
 
         setState({
           loading: false,
-          session: { user: demoUser } as unknown as Session,
-          user: demoUser,
-          isAdmin: true,
+          session: { user: staffUser } as unknown as Session,
+          user: staffUser,
+          role: staffSess.role,
+          isAdmin: isAdminRole,
+          isStaff: isStaffRole,
           error: null,
         });
         return;
@@ -88,7 +111,9 @@ export function useAdminAuth() {
           loading: false,
           session: null,
           user: null,
+          role: null,
           isAdmin: null,
+          isStaff: null,
           error: null,
         });
         return;
@@ -102,7 +127,9 @@ export function useAdminAuth() {
           loading: false,
           session,
           user: null,
+          role: null,
           isAdmin: null,
+          isStaff: null,
           error: null,
         });
         return;
@@ -117,9 +144,6 @@ export function useAdminAuth() {
       lastCheckedUserId.current = user.id;
       await checkAdmin(user);
     } catch (err: any) {
-      if (localStorage.getItem('maison_demo_admin') === 'true') {
-        return;
-      }
       setState((prev) => ({
         ...prev,
         loading: false,
@@ -132,14 +156,16 @@ export function useAdminAuth() {
     resolve();
 
     const { data: sub } = supabase.auth.onAuthStateChange((event, session) => {
-      // Always reflect the latest session, but never sign the admin out due to a query error.
       if (event === 'SIGNED_OUT') {
+        if (getVerifiedStaffSession()) return;
         lastCheckedUserId.current = null;
         setState({
           loading: false,
           session: null,
           user: null,
+          role: null,
           isAdmin: null,
+          isStaff: null,
           error: null,
         });
         return;
@@ -167,43 +193,23 @@ export function useAdminAuth() {
     async (email: string, password: string) => {
       setState((prev) => ({ ...prev, loading: true, error: null }));
 
-      const cleanEmail = email.trim().toLowerCase();
-      const cleanPass = password.trim();
-
-      // Support demo admin credentials & staff accounts seamlessly in both demo and dev
-      const staffList = getLocalStaffUsers();
-      const matchedStaff = staffList.find(
-        (s) => s.email.toLowerCase() === cleanEmail || s.phone === cleanEmail
-      );
-      const customPass = matchedStaff ? localStorage.getItem(`maison_pass_${matchedStaff.id}`) : null;
-
-      if (
-        (cleanEmail === 'admin@maisonlumiere.beauty' || cleanEmail === 'admin') &&
-        (cleanPass === 'admin123' || cleanPass === 'admin' || (customPass && cleanPass === customPass))
-      ) {
-        localStorage.setItem('maison_demo_admin', 'true');
+      // 1. Check verified staff credentials
+      const staffAuth = authenticateStaffCredentials(email, password);
+      if (staffAuth.ok) {
         await resolve();
         return { ok: true as const };
       }
 
-      if (
-        matchedStaff &&
-        (cleanPass === 'admin123' || cleanPass === '123456' || (customPass && cleanPass === customPass))
-      ) {
-        localStorage.setItem('maison_demo_admin', 'true');
-        await resolve();
-        return { ok: true as const };
-      }
-
+      // 2. Otherwise verify against Supabase Auth + admin_users table
       try {
         const { error } = await supabase.auth.signInWithPassword({ email, password });
         if (error) {
           setState((prev) => ({
             ...prev,
             loading: false,
-            error: error.message,
+            error: staffAuth.error || error.message,
           }));
-          return { ok: false as const, error: error.message };
+          return { ok: false as const, error: staffAuth.error || error.message };
         }
         await resolve();
         return { ok: true as const };
@@ -220,7 +226,7 @@ export function useAdminAuth() {
   );
 
   const signOut = useCallback(async () => {
-    localStorage.removeItem('maison_demo_admin');
+    clearVerifiedStaffSession();
     try {
       await supabase.auth.signOut();
     } catch {
@@ -230,7 +236,9 @@ export function useAdminAuth() {
       loading: false,
       session: null,
       user: null,
+      role: null,
       isAdmin: null,
+      isStaff: null,
       error: null,
     });
   }, []);

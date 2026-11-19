@@ -1,81 +1,30 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import Navbar from '../components/public/Navbar';
 import Hero from '../components/public/Hero';
+import GuzelPreloader from '../components/public/GuzelPreloader';
+import GuzelHowItWorks from '../components/public/GuzelHowItWorks';
+import GuzelShowcasePanel from '../components/public/GuzelShowcasePanel';
+import GuzelStepSlides from '../components/public/GuzelStepSlides';
 import Services from '../components/public/Services';
-import ReshootShowcase from '../components/public/ReshootShowcase';
-import About from '../components/public/About';
 import Booking from '../components/public/Booking';
 import Footer from '../components/public/Footer';
-import { supabase } from '../lib/supabase';
-import {
-  defaultServices,
-  defaultBusinessHours,
-  defaultBlockedDates,
-  defaultSettings,
-} from '../lib/mockData';
-import type {
-  BlockedDate,
-  BusinessHour,
-  BusinessSettings,
-  Service,
-} from '../lib/types';
+import DataConsentBanner from '../components/public/DataConsentBanner';
+import { useRealtimeCatalog } from '../hooks/useRealtimeCatalog';
+import type { Service } from '../lib/types';
 
 export default function HomePage() {
-  const [services, setServices] = useState<Service[]>([]);
-  const [businessHours, setBusinessHours] = useState<BusinessHour[]>([]);
-  const [blockedDates, setBlockedDates] = useState<BlockedDate[]>([]);
-  const [settings, setSettings] = useState<BusinessSettings | null>(null);
-  const [loadingServices, setLoadingServices] = useState(true);
+  const {
+    services,
+    packages,
+    products,
+    settings,
+    businessHours,
+    blockedDates,
+    loading,
+  } = useRealtimeCatalog();
 
   const [initialService, setInitialService] = useState<Service | null>(null);
   const bookingRef = useRef<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function load() {
-      try {
-        const [svcRes, hoursRes, blockedRes, settingsRes] = await Promise.all([
-          supabase
-            .from('services')
-            .select('*')
-            .eq('is_active', true)
-            .order('price', { ascending: true }),
-          supabase.from('business_hours').select('*').order('weekday'),
-          supabase.from('blocked_dates').select('*'),
-          supabase.from('business_settings').select('*').limit(1).maybeSingle(),
-        ]);
-
-        if (cancelled) return;
-
-        const loadedServices = (svcRes?.data as Service[]) ?? [];
-        const loadedHours = (hoursRes?.data as BusinessHour[]) ?? [];
-        const loadedBlocked = (blockedRes?.data as BlockedDate[]) ?? [];
-        const loadedSettings = (settingsRes?.data as BusinessSettings | null) ?? null;
-
-        setServices(loadedServices.length > 0 ? loadedServices : defaultServices);
-        setBusinessHours(loadedHours.length > 0 ? loadedHours : defaultBusinessHours);
-        setBlockedDates(loadedBlocked.length > 0 ? loadedBlocked : defaultBlockedDates);
-        setSettings(loadedSettings || defaultSettings);
-      } catch (err) {
-        if (!cancelled) {
-          setServices(defaultServices);
-          setBusinessHours(defaultBusinessHours);
-          setBlockedDates(defaultBlockedDates);
-          setSettings(defaultSettings);
-        }
-      } finally {
-        if (!cancelled) {
-          setLoadingServices(false);
-        }
-      }
-    }
-
-    load();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
 
   const scrollToBooking = useCallback(() => {
     const el = document.getElementById('booking');
@@ -85,27 +34,67 @@ export default function HomePage() {
   const handleSelectService = useCallback(
     (svc: Service) => {
       setInitialService(svc);
-      // Force re-init on subsequent selections by clearing then setting.
-      setTimeout(() => scrollToBooking(), 50);
+      window.setTimeout(() => scrollToBooking(), 60);
     },
     [scrollToBooking],
   );
 
+  const customPreloaderImages = [
+    ...services.map((s) => s.image_url),
+    ...products.map((p) => p.image_url),
+  ].filter(Boolean);
+
   return (
-    <div className="relative min-h-screen overflow-x-hidden bg-ivory">
+    <div
+      className="relative min-h-screen overflow-x-hidden"
+      style={{
+        backgroundColor: 'var(--mainbg, #f9f0f5)',
+        color: 'var(--fonts-100, #3a1d43)',
+      }}
+    >
+      {/* 1. Stepped Preloader with Hard-Cut Portraits */}
+      <GuzelPreloader customImages={customPreloaderImages} />
+
+      {/* 2. Fixed Header + Expanding Scrambling Menu Panel */}
       <Navbar settings={settings} onBook={scrollToBooking} />
-      <main>
-        <Hero settings={settings} onBook={scrollToBooking} />
-        <Services
+
+      <main className="page flex flex-col min-h-[100svh]">
+        {/* 3. Section 1: Hero with 8-Card Orbiting Ring & Three.js Canvas */}
+        <Hero
+          settings={settings}
           services={services}
-          loading={loadingServices}
-          onSelect={handleSelectService}
-        />
-        <ReshootShowcase
-          onSelectService={handleSelectService}
+          products={products}
           onBook={scrollToBooking}
         />
-        <About />
+
+        {/* 4. Section 2: How It Works (Crawling Column + Wordmark Marquee) */}
+        <GuzelHowItWorks />
+
+        {/* 5. Section 3: 70rem Interactive Services & Products Showcase Panel */}
+        <div className="px-2 sm:px-4">
+          <GuzelShowcasePanel
+            services={services}
+            products={products}
+            packages={packages}
+            onSelectService={handleSelectService}
+          />
+        </div>
+
+        {/* 6. Section 4: Four Pinned 3D-Stacking Step Slides */}
+        <GuzelStepSlides
+          services={services}
+          products={products}
+          onBook={scrollToBooking}
+        />
+
+        {/* 7. Full Interactive Services & Bridal Packages Menu */}
+        <Services
+          services={services}
+          loading={loading}
+          onSelect={handleSelectService}
+        />
+
+        {/* 8. Online Booking Engine with User Data Usage Agreement */}
         <div ref={bookingRef}>
           <Booking
             services={services}
@@ -117,7 +106,9 @@ export default function HomePage() {
           />
         </div>
       </main>
+
       <Footer settings={settings} />
+      <DataConsentBanner />
     </div>
   );
 }

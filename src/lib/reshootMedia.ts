@@ -1,4 +1,7 @@
+import type React from 'react';
+
 export interface SheetDef {
+  localPath: string;
   file: string;
   W: number;
   H: number;
@@ -15,6 +18,7 @@ export const INSET = 8;
 
 export const SHEETS: Record<string, SheetDef> = {
   pre: {
+    localPath: '/assets/sheets/pre.webp',
     file: 'hf_20261111_212221_aa358f68-9766-4be1-a25b-4c2a7d766643.png',
     W: 1360,
     H: 2048,
@@ -31,6 +35,7 @@ export const SHEETS: Record<string, SheetDef> = {
     ],
   },
   ringa: {
+    localPath: '/assets/sheets/ringa.webp',
     file: 'hf_20261111_212220_9be89454-e5c2-400f-a0c3-ed24fc218fbe.png',
     W: 2048,
     H: 2048,
@@ -47,6 +52,7 @@ export const SHEETS: Record<string, SheetDef> = {
     ],
   },
   ringb: {
+    localPath: '/assets/sheets/ringb.webp',
     file: 'hf_20261111_212220_40759068-fc82-4598-8924-5f2e465e2e2e.png',
     W: 2048,
     H: 2048,
@@ -63,6 +69,7 @@ export const SHEETS: Record<string, SheetDef> = {
     ],
   },
   studio: {
+    localPath: '/assets/sheets/studio.webp',
     file: 'hf_20261111_212220_cd01507d-7e12-4101-b742-bc86e8f02f6a.png',
     W: 1360,
     H: 2048,
@@ -79,6 +86,7 @@ export const SHEETS: Record<string, SheetDef> = {
     ],
   },
   life: {
+    localPath: '/assets/sheets/life.webp',
     file: 'hf_20261111_212221_aaa82e12-4ddb-46bd-9bd9-8e5189f0d06b.png',
     W: 1360,
     H: 2048,
@@ -86,15 +94,16 @@ export const SHEETS: Record<string, SheetDef> = {
     cols: 2,
     rows: 2,
     xs: [
-      { start: 0, end: 676 },
-      { start: 684, end: 1360 },
+      { start: 0, end: 672 },
+      { start: 688, end: 1360 },
     ],
     ys: [
-      { start: 0, end: 1019 },
-      { start: 1029, end: 2048 },
+      { start: 0, end: 1016 },
+      { start: 1032, end: 2048 },
     ],
   },
   base: {
+    localPath: '/assets/sheets/base.webp',
     file: 'hf_20261111_212221_5918bfdd-271e-420d-87ac-6646f8992931.png',
     W: 2048,
     H: 1360,
@@ -102,16 +111,17 @@ export const SHEETS: Record<string, SheetDef> = {
     cols: 3,
     rows: 2,
     xs: [
-      { start: 0, end: 676 },
-      { start: 686, end: 1362 },
-      { start: 1372, end: 2048 },
+      { start: 0, end: 674 },
+      { start: 687, end: 1361 },
+      { start: 1374, end: 2048 },
     ],
     ys: [
-      { start: 0, end: 675 },
-      { start: 685, end: 1360 },
+      { start: 0, end: 673 },
+      { start: 684, end: 1360 },
     ],
   },
   styled: {
+    localPath: '/assets/sheets/styled.webp',
     file: 'hf_20261111_212221_99aed2e6-df64-4910-9867-29f8a8ae31c2.png',
     W: 2048,
     H: 1360,
@@ -119,16 +129,17 @@ export const SHEETS: Record<string, SheetDef> = {
     cols: 3,
     rows: 2,
     xs: [
-      { start: 0, end: 676 },
-      { start: 686, end: 1362 },
-      { start: 1372, end: 2048 },
+      { start: 0, end: 677 },
+      { start: 685, end: 1365 },
+      { start: 1373, end: 2048 },
     ],
     ys: [
-      { start: 0, end: 675 },
-      { start: 685, end: 1360 },
+      { start: 0, end: 676 },
+      { start: 684, end: 1360 },
     ],
   },
   styled2: {
+    localPath: '/assets/sheets/styled2.webp',
     file: 'hf_20261111_212328_615deead-364f-4afb-82e6-ee7589e09dfb.png',
     W: 2048,
     H: 2048,
@@ -136,15 +147,16 @@ export const SHEETS: Record<string, SheetDef> = {
     cols: 2,
     rows: 2,
     xs: [
-      { start: 0, end: 1016 },
-      { start: 1032, end: 2048 },
+      { start: 0, end: 1017 },
+      { start: 1031, end: 2048 },
     ],
     ys: [
-      { start: 0, end: 1016 },
-      { start: 1032, end: 2048 },
+      { start: 0, end: 1017 },
+      { start: 1031, end: 2048 },
     ],
   },
   prod: {
+    localPath: '/assets/sheets/prod.webp',
     file: 'hf_20261111_212131_dac765cc-9d5d-4b23-b99c-9c838e37b5dc.png',
     W: 2048,
     H: 1360,
@@ -155,6 +167,7 @@ export const SHEETS: Record<string, SheetDef> = {
     ys: [{ start: 0, end: 1360 }],
   },
   faces: {
+    localPath: '/assets/sheets/faces.webp',
     file: 'hf_20261111_212222_0554bb8d-aacd-4479-9b61-d1c200034665.png',
     W: 2048,
     H: 1360,
@@ -162,16 +175,21 @@ export const SHEETS: Record<string, SheetDef> = {
     cols: 3,
     rows: 2,
     xs: [
-      { start: 0, end: 676 },
-      { start: 686, end: 1362 },
-      { start: 1372, end: 2048 },
+      { start: 0, end: 675 },
+      { start: 687, end: 1361 },
+      { start: 1373, end: 2048 },
     ],
     ys: [
-      { start: 0, end: 675 },
-      { start: 685, end: 1360 },
+      { start: 0, end: 674 },
+      { start: 686, end: 1360 },
     ],
   },
 };
+
+export function getSheetUrl(sheet: SheetDef): string {
+  // Primary: local asset downloaded in public/assets/sheets/
+  return sheet.localPath;
+}
 
 export function getProxyUrl(sheet: SheetDef): string {
   const full = BASE_CLOUDFRONT + sheet.file;
@@ -179,7 +197,7 @@ export function getProxyUrl(sheet: SheetDef): string {
 }
 
 export function parseImgKey(imgKey: string): { key: string; index: number } {
-  const [k, nStr] = imgKey.split(':');
+  const [k, nStr] = (imgKey || 'ringa:1').split(':');
   return { key: k, index: parseInt(nStr, 10) || 0 };
 }
 
@@ -189,7 +207,17 @@ export function computeCoverCropStyles(
   elementHeight: number,
   fx: number = 0.5,
   fy: number = 0.5,
+  customImageUrl?: string | null,
 ): React.CSSProperties | null {
+  if (customImageUrl && customImageUrl.trim().length > 4) {
+    return {
+      backgroundImage: `url("${customImageUrl}")`,
+      backgroundSize: 'cover',
+      backgroundPosition: `${Math.round(fx * 100)}% ${Math.round(fy * 100)}%`,
+      backgroundRepeat: 'no-repeat',
+    };
+  }
+
   const { key, index } = parseImgKey(imgKey);
   const sheet = SHEETS[key];
   if (!sheet) return null;
@@ -213,10 +241,9 @@ export function computeCoverCropStyles(
   const by = -(y0 * scale + (ch * scale - elementHeight) * fy);
 
   return {
-    backgroundImage: `url("${getProxyUrl(sheet)}")`,
+    backgroundImage: `url("${getSheetUrl(sheet)}"), url("${getProxyUrl(sheet)}")`,
     backgroundSize: `${bw}px ${bh}px`,
     backgroundPosition: `${bx}px ${by}px`,
     backgroundRepeat: 'no-repeat',
   };
 }
-

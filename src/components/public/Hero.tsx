@@ -1,172 +1,331 @@
-import { useEffect } from 'react';
-import { ArrowRight, ArrowLeft, Sparkles, Star, ShieldCheck, CreditCard, Smartphone } from 'lucide-react';
-import { heroImages } from '../../lib/images';
+import { useEffect, useState } from 'react';
 import { useLanguage } from '../../context/LanguageContext';
-import type { BusinessSettings } from '../../lib/types';
+import type { BusinessSettings, Product, Service } from '../../lib/types';
+import PhImage from './PhImage';
+import GuzelThreeCanvas from './GuzelThreeCanvas';
 
 interface HeroProps {
   settings: BusinessSettings | null;
+  services?: Service[];
+  products?: Product[];
   onBook: () => void;
 }
 
-export default function Hero({ settings, onBook }: HeroProps) {
-  const { t, isRTL, lang } = useLanguage();
-  const city = settings?.business_address?.split(',').slice(-2, -1)[0]?.trim();
+const RING_HOLDERS = [
+  { deg: 0, key: 'ringa:1' },
+  { deg: 45, key: 'ringa:0' },
+  { deg: 90, key: 'ringb:1' },
+  { deg: 135, key: 'ringa:2' },
+  { deg: 180, key: 'ringa:3' },
+  { deg: 225, key: 'ringb:0' },
+  { deg: 270, key: 'ringb:3' },
+  { deg: 315, key: 'ringb:2' },
+];
 
-  // Structured Data Schema for Local SEO
+export default function Hero({ settings, services = [], products = [], onBook }: HeroProps) {
+  const { lang } = useLanguage();
+  const [introStep, setIntroStep] = useState<number>(0);
+
+  // Word-flash intro sequence triggered when preloader finishes (Section 8.3)
   useEffect(() => {
-    const scriptId = 'salon-ld-json';
-    let script = document.getElementById(scriptId) as HTMLScriptElement | null;
-    if (!script) {
-      script = document.createElement('script');
-      script.id = scriptId;
-      script.type = 'application/ld+json';
-      document.head.appendChild(script);
-    }
-    const schema = {
-      '@context': 'https://schema.org',
-      '@type': 'BeautySalon',
-      'name': lang === 'ar' ? 'ميزون لوميير بيوتي سنتر وسبا' : (settings?.business_name || 'Maison Lumière Beauty Atelier'),
-      'description': 'مركز تجميل وسبا فاخر يقدم جلسات العناية بالبشرة، الحمام المغربي، تصفيف الشعر، وباقات العرائس في مصر.',
-      'telephone': settings?.business_phone || '+201001234567',
-      'address': {
-        '@type': 'PostalAddress',
-        'streetAddress': '15 شارع البرازيل، الزمالك',
-        'addressLocality': 'القاهرة',
-        'addressRegion': 'Cairo',
-        'addressCountry': 'EG',
-      },
-      'currenciesAccepted': 'EGP',
-      'paymentAccepted': 'Cash, InstaPay, Vodafone Cash',
-      'priceRange': '$$',
+    const startIntro = () => {
+      setIntroStep(1); // Violet flash (--flash-a)
+      const t2 = window.setTimeout(() => setIntroStep(2), 180); // Pink flash (--flash-b)
+      const t3 = window.setTimeout(() => setIntroStep(3), 380); // Settle to ink (--fonts-100)
+      return () => {
+        window.clearTimeout(t2);
+        window.clearTimeout(t3);
+      };
     };
-    script.text = JSON.stringify(schema);
-  }, [settings, lang]);
+
+    const tInitial = window.setTimeout(startIntro, 250);
+    document.addEventListener('preloader:done', startIntro);
+    return () => {
+      window.clearTimeout(tInitial);
+      document.removeEventListener('preloader:done', startIntro);
+    };
+  }, []);
+
+  // Collect custom images uploaded by Admin in Services or Products to feed into ring cards
+  const customUploads: (string | null)[] = [
+    ...services.map((s) => s.image_url || null),
+    ...products.map((p) => p.image_url || null),
+  ].filter((url): url is string => !!url && url.trim().length > 4);
+
+  const brandName =
+    lang === 'ar'
+      ? settings?.business_name?.trim() || 'غزل سبا'
+      : settings?.business_name_en?.trim() || 'Guzel';
+
+  const tagline =
+    lang === 'ar'
+      ? settings?.tagline_ar || 'غزل سبا للجمال والاسترخاء'
+      : settings?.tagline || 'Guzel spa for beauty and relaxation';
+
+  const chips =
+    lang === 'ar'
+      ? [
+          'سيروم غزل باللافندر',
+          'هيدرا فيشل ملكي',
+          'حمام مغربي بالأعشاب',
+          'مساج استرخائي عطري',
+          'باقات العروسة VIP',
+          'ترميم الشعر بالكافيار',
+        ]
+      : [
+          'Guzel Lavender Serum',
+          'Royal HydraFacial',
+          'Moroccan Hammam',
+          'Aromatherapy Massage',
+          'Bridal VIP Suites',
+          'Caviar Hair Revival',
+        ];
+
+  const getFlashColor = (wordOffset: number) => {
+    if (introStep === 1) return 'var(--flash-a, #b14bd9)';
+    if (introStep === 2) return wordOffset % 2 === 0 ? 'var(--flash-b, #f28db5)' : 'var(--flash-a, #b14bd9)';
+    return 'var(--fonts-100, #3a1d43)';
+  };
 
   return (
-    <section id="top" className="relative overflow-hidden pt-28 pb-16 lg:pt-32 lg:pb-24">
-      {/* Editorial subtle backdrop */}
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-ivory" />
-      <div className="pointer-events-none absolute inset-0 -z-10 bg-grain opacity-30" />
+    <section
+      id="hero"
+      className="relative w-full h-[100svh] min-h-[44rem] sm:min-h-[54rem] px-4 pt-24 pb-10 sm:px-8 sm:pb-14 flex items-end justify-center overflow-hidden select-none"
+      style={
+        {
+          '--R': 'min(22vw, 34svh)',
+          backgroundColor: 'var(--mainbg, #f9f0f5)',
+          color: 'var(--fonts-100, #3a1d43)',
+        } as React.CSSProperties
+      }
+    >
+      {/* Responsive radius override for tablet & mobile */}
+      <style>{`
+        @media screen and (max-width: 991px) {
+          #hero { --R: min(29vw, 29svh) !important; }
+        }
+        @media screen and (max-width: 767px) {
+          #hero { --R: min(34vw, 25svh) !important; }
+        }
+      `}</style>
 
-      <div className="container-page grid grid-cols-1 items-center gap-12 lg:grid-cols-12 lg:gap-14">
-        {/* Editorial Copy */}
-        <div className="lg:col-span-6 animate-fade-up">
-          <div className="inline-flex items-center gap-2 rounded-full border border-pearl/90 bg-white/70 px-3.5 py-1.5 text-xs text-mocha-600 shadow-clean">
-            <span className="h-1.5 w-1.5 rounded-full bg-rosegold-400" />
-            <span>{t('heroEyebrow')} {city ? `· ${city}` : ''}</span>
-          </div>
+      {/* Three.js Subtle Ambient Botanical Dew Canvas */}
+      <GuzelThreeCanvas />
 
-          <h1 className="heading-display mt-6 text-4xl sm:text-5xl lg:text-6xl font-semibold leading-[1.14] text-espresso">
-            {t('heroTitle1')}
-            <br />
-            <span className="italic font-normal text-rosegold-500">{t('heroTitle2')}</span>
-          </h1>
+      {/* 8-Card Orbiting Ring (Section 6.4 & 8.4) */}
+      <div
+        className="absolute inset-0 z-[3] flex items-center justify-center pointer-events-none pt-6 sm:pt-10 pb-12 sm:pb-0"
+        aria-hidden="true"
+      >
+        <div
+          className="relative flex items-center justify-center animate-ring-orbit"
+          style={{
+            width: 'calc(var(--R) * 2.9)',
+            height: 'calc(var(--R) * 2.9)',
+          }}
+        >
+          {RING_HOLDERS.map((holder, idx) => {
+            const customImg = customUploads[idx] || null;
+            return (
+              <div
+                key={holder.deg}
+                data-deg={holder.deg}
+                className="absolute flex items-center justify-center"
+                style={{
+                  transform: `rotate(${holder.deg}deg)`,
+                }}
+              >
+                <div
+                  className="relative flex items-center justify-center overflow-hidden shadow-clean transition-transform duration-700"
+                  style={{
+                    top: 'calc(var(--R) * -1)',
+                    width: 'calc(var(--R) * 0.37)',
+                    height: 'calc(var(--R) * 0.44)',
+                    borderRadius: 'calc(var(--R) * 0.12)',
+                    backgroundColor: 'var(--lines, #e8d7e4)',
+                  }}
+                >
+                  {/* Counter-rotating upright photo (.52R × .52R) */}
+                  <div
+                    className="shrink-0 animate-ring-counter"
+                    style={
+                      {
+                        width: 'calc(var(--R) * 0.54)',
+                        height: 'calc(var(--R) * 0.54)',
+                        '--init-rot': `-${holder.deg}deg`,
+                      } as React.CSSProperties
+                    }
+                  >
+                    <PhImage
+                      imgKey={holder.key}
+                      customImageUrl={customImg}
+                      className="w-full h-full"
+                    />
+                  </div>
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      </div>
 
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-mocha-600">
-            {t('heroSubtitle')}
-          </p>
+      {/* Centre Headline Layer Inside the Ring (hero__center) */}
+      <div className="absolute inset-0 z-[4] flex flex-col items-center justify-center pointer-events-none pt-6 sm:pt-10 pb-12 sm:pb-0 px-6 text-center">
+        <span
+          className="pointer-events-auto mb-2 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-[11px] font-medium tracking-wide border"
+          style={{
+            backgroundColor: 'var(--secondbg, #f3e6f0)',
+            borderColor: 'var(--lines, #e8d7e4)',
+            color: 'var(--fonts-64, #3a1d43a3)',
+          }}
+        >
+          <span className="h-1.5 w-1.5 rounded-full bg-[#e58fb6]" />
+          {tagline}
+        </span>
 
-          {/* Clean Trust Pillars */}
-          <div className="mt-6 flex flex-wrap items-center gap-2.5 text-xs text-mocha-600">
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-pearl/80 bg-white/70 px-3.5 py-1.5 shadow-clean">
-              <ShieldCheck className="h-3.5 w-3.5 text-rosegold-500" />
-              <span>{lang === 'ar' ? 'تأكيد الحجز بعربون 50%' : '50% Verified Deposit'}</span>
+        <h1
+          data-hero-text
+          className="pointer-events-auto font-normal text-center transition-colors duration-300"
+          style={{
+            fontSize: 'calc(var(--R) * 0.168)',
+            lineHeight: lang === 'ar' ? 1.18 : 0.98,
+            letterSpacing: lang === 'ar' ? '0em' : '-0.04em',
+          }}
+        >
+          {lang === 'ar' ? (
+            <>
+              <span style={{ color: getFlashColor(0) }}>جمالكِ،</span>
+              <br />
+              <span
+                className="it inline-block mx-1"
+                style={{
+                  fontSize: '1.1em',
+                  color: getFlashColor(1),
+                }}
+              >
+                بإشراقة
+              </span>{' '}
+              <span style={{ color: getFlashColor(2) }}>متجددة.</span>
+            </>
+          ) : (
+            <>
+              <span style={{ color: getFlashColor(0) }}>Your</span>{' '}
+              <span style={{ color: getFlashColor(1) }}>beauty,</span>
+              <br />
+              <span
+                className="it"
+                style={{
+                  fontSize: '1.08em',
+                  letterSpacing: '-0.02em',
+                  color: getFlashColor(2),
+                }}
+              >
+                radiantly
+              </span>{' '}
+              <span style={{ color: getFlashColor(3) }}>re-shot.</span>
+            </>
+          )}
+        </h1>
+
+        <div className="pointer-events-auto mt-4 flex items-center gap-2">
+          <button
+            type="button"
+            onClick={onBook}
+            className="rounded-full px-5 py-2 text-xs sm:text-sm font-semibold transition-all duration-200 hover:scale-105 cursor-pointer border-0 shadow-clean"
+            style={{
+              backgroundColor: 'var(--btn-bg, #cbb6ea)',
+              color: 'var(--btn-ink, #2c1433)',
+            }}
+          >
+            {lang === 'ar' ? 'احجزي جلستك الآن' : 'Reserve Your Ritual'}
+          </button>
+        </div>
+      </div>
+
+      {/* Looping Chip List (hero__slider, Section 6.4 & 8.5) */}
+      <div
+        className="
+          pointer-events-none z-[3]
+          absolute
+          lg:top-[10rem] lg:bottom-[10rem] lg:end-8 lg:left-auto lg:h-auto lg:w-auto lg:flex lg:items-center lg:justify-end
+          max-lg:bottom-[4.5rem] max-lg:inset-x-0 max-lg:h-10 max-lg:flex max-lg:items-center max-lg:justify-center
+        "
+        aria-hidden="true"
+      >
+        <div className="relative overflow-hidden lg:h-[17rem] lg:w-52 max-lg:w-full max-lg:max-w-[34rem] max-lg:h-10 flex lg:flex-col lg:items-end max-lg:flex-row max-lg:items-center">
+          {/* Two identical rows for seamless infinite loop */}
+          {[0, 1].map((dup) => (
+            <div
+              key={dup}
+              className="animate-hero-chips flex lg:flex-col lg:items-end lg:gap-2 lg:pb-2 max-lg:flex-row max-lg:items-center max-lg:gap-2 max-lg:pe-2 shrink-0"
+            >
+              {chips.map((chip) => (
+                <div
+                  key={`${dup}-${chip}`}
+                  className="px-4 py-1.5 rounded-lg border text-xs sm:text-sm font-medium whitespace-nowrap"
+                  style={{
+                    borderColor: 'var(--fonts-20, #3a1d4333)',
+                    backgroundColor: 'var(--mainbg, #f9f0f5)',
+                    color: 'var(--fonts-100, #3a1d43)',
+                  }}
+                >
+                  {chip}
+                </div>
+              ))}
             </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-pearl/80 bg-white/70 px-3.5 py-1.5 shadow-clean">
-              <Smartphone className="h-3.5 w-3.5 text-rosegold-500" />
-              <span>{lang === 'ar' ? 'إنستاباي & فودافون كاش' : 'InstaPay & Vodafone Cash'}</span>
-            </div>
-            <div className="inline-flex items-center gap-1.5 rounded-full border border-pearl/80 bg-white/70 px-3.5 py-1.5 shadow-clean">
-              <CreditCard className="h-3.5 w-3.5 text-rosegold-500" />
-              <span>{lang === 'ar' ? 'فاتورة QR ذكية بالفرع' : 'In-Branch QR Settlement'}</span>
-            </div>
-          </div>
+          ))}
 
-          {/* Primary & Secondary CTAs */}
-          <div className="mt-8 flex flex-wrap items-center gap-4">
-            <button onClick={onBook} className="btn-primary group">
-              {t('reserveBtn')}
-              {isRTL ? (
-                <ArrowLeft className="h-4 w-4 transition-transform group-hover:-translate-x-1" />
-              ) : (
-                <ArrowRight className="h-4 w-4 transition-transform group-hover:translate-x-1" />
-              )}
-            </button>
-            <a href="#services" className="btn-secondary">
-              {t('exploreBtn')}
-            </a>
-          </div>
+          {/* Top & Bottom Fades (Desktop) */}
+          <div
+            className="hidden lg:block absolute inset-x-0 top-0 h-16 pointer-events-none"
+            style={{
+              background: 'linear-gradient(180deg, var(--mainbg), var(--mainbg-gradient))',
+            }}
+          />
+          <div
+            className="hidden lg:block absolute inset-x-0 bottom-0 h-16 pointer-events-none"
+            style={{
+              background: 'linear-gradient(180deg, var(--mainbg-gradient), var(--mainbg))',
+            }}
+          />
 
-          {/* Quantitative Stats - Clean, no awkward plus wrap */}
-          <div className="mt-12 grid grid-cols-3 max-w-md gap-6 border-t border-pearl/80 pt-6">
-            <Stat label={t('stat1Label')} value={t('stat1Value')} />
-            <Stat label={t('stat2Label')} value={t('stat2Value')} icon />
-            <Stat label={t('stat3Label')} value={t('stat3Value')} />
-          </div>
+          {/* Left & Right Fades (Tablet/Mobile) */}
+          <div
+            className="lg:hidden absolute inset-y-0 left-0 w-16 pointer-events-none"
+            style={{
+              background: 'linear-gradient(90deg, var(--mainbg), var(--mainbg-gradient))',
+            }}
+          />
+          <div
+            className="lg:hidden absolute inset-y-0 right-0 w-16 pointer-events-none"
+            style={{
+              background: 'linear-gradient(-90deg, var(--mainbg), var(--mainbg-gradient))',
+            }}
+          />
+        </div>
+      </div>
+
+      {/* Bottom Bar (hero__wrap) */}
+      <div className="relative z-[2] w-full flex items-end justify-between">
+        <div className="flex-1 text-xs opacity-60 hidden sm:block">
+          {brandName} · {lang === 'ar' ? 'القاهرة، مصر' : 'Cairo, Egypt'}
         </div>
 
-        {/* Editorial Visual Layout - Flawless, zero clipping, zero overlapping cutoff */}
-        <div className="relative lg:col-span-6 animate-fade-up">
-          <div className="space-y-4">
-            {/* Main Visual Frame */}
-            <div className="relative h-[380px] sm:h-[420px] w-full overflow-hidden rounded-3xl border border-pearl/80 shadow-soft">
-              <img
-                src={heroImages.primary}
-                alt="صالون وسبا ميزون لوميير الفاخر"
-                className="h-full w-full object-cover"
-                loading="eager"
-              />
-              <div className="absolute inset-0 bg-gradient-to-t from-espresso/60 via-transparent to-transparent" />
+        <div data-hero-text className="u-small-text-2 text-center">
+          ©<span data-current-year>{new Date().getFullYear()}</span> {brandName}
+        </div>
 
-              {/* Discreet luxury badge */}
-              <div className="absolute start-5 top-5 inline-flex items-center gap-2 rounded-full border border-white/20 bg-espresso/50 px-3.5 py-1.5 text-xs text-white backdrop-blur-md">
-                <Sparkles className="h-3.5 w-3.5 text-champagne-300" />
-                <span>{t('signatureAtelier')}</span>
-              </div>
-            </div>
-
-            {/* Testimonial Quote Card - Clean & spacious, no clipping */}
-            <div className="rounded-2xl border border-pearl/80 bg-white p-5 shadow-clean">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-1 text-rosegold-500">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <Star key={i} className="h-3.5 w-3.5 fill-current" />
-                  ))}
-                </div>
-                <span className="text-[11px] font-medium text-mocha-400">
-                  {t('quoteAuthor')}
-                </span>
-              </div>
-              <p className="mt-2.5 font-display text-base italic leading-relaxed text-espresso">
-                {t('quoteText')}
-              </p>
-            </div>
-          </div>
+        <div className="flex-1 flex justify-end">
+          <a
+            href="#how"
+            data-hero-text
+            className="u-small-text-2 no-underline transition-opacity hover:opacity-65"
+            style={{ color: 'var(--fonts-100, #3a1d43)' }}
+          >
+            {lang === 'ar' ? 'اكتشفي المزيد ↓' : 'scroll down'}
+          </a>
         </div>
       </div>
     </section>
-  );
-}
-
-function Stat({
-  label,
-  value,
-  icon,
-}: {
-  label: string;
-  value: string;
-  icon?: boolean;
-}) {
-  return (
-    <div>
-      <div className="flex items-center gap-1.5 font-display text-2xl font-semibold text-espresso">
-        <span>{value}</span>
-        {icon && <Star className="h-4 w-4 fill-rosegold-400 text-rosegold-400" />}
-      </div>
-      <div className="mt-1 text-xs text-mocha-500 leading-snug">
-        {label}
-      </div>
-    </div>
   );
 }
