@@ -4,7 +4,6 @@ import { useLanguage } from '../../context/LanguageContext';
 import type { Package, Product, Service } from '../../lib/types';
 import { formatDuration, formatPrice } from '../../lib/format';
 import PhImage from './PhImage';
-import { GuzelSparkIcon } from './GuzelSvgIcons';
 
 interface GuzelShowcasePanelProps {
   services: Service[];
@@ -411,27 +410,6 @@ export default function GuzelShowcasePanel({
               })}
             </div>
           </div>
-        </div>
-
-        {/* Bottom Editorial Footer Row */}
-        <div className="relative z-[2] mt-8 pt-6 border-t border-[#3a1d43]/10 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-          <p className="text-xs sm:text-sm text-[#3a1d43]/70 max-w-2xl leading-relaxed">
-            {lang === 'ar'
-              ? 'جميع الصور والأسعار والمنتجات متزامنة لحظياً مع لوحة إدارة جوزال ميديكال سبا. اختاري الجلسة المناسبة واحجزي موعدك في أقل من دقيقة.'
-              : 'Every ritual, photo, and Guzel skincare formula syncs in real time with our studio catalog. Select any item and reserve your slot in under a minute.'}
-          </p>
-
-          <button
-            type="button"
-            onClick={handleBookActive}
-            aria-label={lang === 'ar' ? 'احجزي جلستك الآن' : 'Book your ritual now'}
-            className="inline-flex items-center gap-3 rounded-full bg-white hover:bg-[#cbb6ea] px-5 py-2.5 text-xs sm:text-sm font-bold text-[#3a1d43] border border-[#3a1d43]/10 shadow-softer transition-all duration-200 cursor-pointer shrink-0 active:scale-95"
-          >
-            <span>{lang === 'ar' ? 'بدء الحجز الفوري' : 'Start Instant Booking'}</span>
-            <span className="grid h-7 w-7 place-items-center rounded-full bg-[#3a1d43] text-[#cbb6ea]">
-              <GuzelSparkIcon className="w-4 h-4" />
-            </span>
-          </button>
         </div>
       </div>
     </section>

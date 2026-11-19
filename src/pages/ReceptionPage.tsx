@@ -45,6 +45,7 @@ import {
   clockInStaff,
   clockOutStaff,
   getActiveStaffAttendance,
+  normalizePinDigits,
 } from '../lib/mockData';
 import type { Booking, Service, Product, TabAddon, Payment, AttendanceRecord, ShiftType } from '../lib/types';
 import { playNotificationChime } from '../lib/soundEffects';
@@ -103,14 +104,29 @@ export default function ReceptionPage() {
   // Staff Attendance System in POS
   const [attendanceModalOpen, setAttendanceModalOpen] = useState(false);
   const [activeStaffAttendance, setActiveStaffAttendance] = useState<AttendanceRecord[]>(getActiveStaffAttendance());
+  const [staffUsers, setStaffUsers] = useState(() => getLocalStaffUsers());
   const [attStaffId, setAttStaffId] = useState('');
   const [attPin, setAttPin] = useState('');
   const [attShift, setAttShift] = useState<ShiftType>('morning');
   const [attError, setAttError] = useState<string | null>(null);
+  const [clockOutTargetId, setClockOutTargetId] = useState<string | null>(null);
+  const [clockOutPin, setClockOutPin] = useState('');
 
-  const staffUsers = getLocalStaffUsers();
+  useEffect(() => {
+    const refreshStaff = () => {
+      setStaffUsers(getLocalStaffUsers());
+      setActiveStaffAttendance(getActiveStaffAttendance());
+    };
+    window.addEventListener('storage', refreshStaff);
+    window.addEventListener('guzel:data-updated', refreshStaff);
+    return () => {
+      window.removeEventListener('storage', refreshStaff);
+      window.removeEventListener('guzel:data-updated', refreshStaff);
+    };
+  }, []);
 
   const reloadAttendance = () => {
+    setStaffUsers(getLocalStaffUsers());
     setActiveStaffAttendance(getActiveStaffAttendance());
   };
 
@@ -133,15 +149,29 @@ export default function ReceptionPage() {
     triggerToast(lang === 'ar' ? 'تم تسجيل حضور الموظفة بنجاح ✨' : 'Staff clocked in successfully!');
   };
 
-  const handleClockOutQuick = (staffId: string) => {
-    const res = clockOutStaff(staffId);
+  const handleClockOutQuick = (staffId: string, verifyPin = false, pinVal = '') => {
+    setAttError(null);
+    const res = clockOutStaff(
+      staffId,
+      verifyPin
+        ? lang === 'ar'
+          ? 'انصراف مؤكد برمز PIN الشخصي'
+          : 'Verified PIN clock-out'
+        : lang === 'ar'
+        ? 'تسجيل انصراف بإشراف الإدارة/الاستقبال'
+        : 'Supervisor override clock-out',
+      pinVal,
+      verifyPin,
+    );
     if (!res.success) {
-      alert(res.error);
+      setAttError(res.error || 'حدث خطأ أثناء تسجيل الانصراف');
       return;
     }
+    setClockOutTargetId(null);
+    setClockOutPin('');
     reloadAttendance();
     if (soundEnabled) playNotificationChime();
-    triggerToast(lang === 'ar' ? 'تم تسجيل انصراف الموظفة وإنهاء الوردية' : 'Staff clocked out successfully!');
+    triggerToast(lang === 'ar' ? 'تم تسجيل انصراف الموظفة وإنهاء الوردية ✨' : 'Staff clocked out successfully!');
   };
 
   const triggerToast = (msg: string) => {
@@ -1224,11 +1254,13 @@ export default function ReceptionPage() {
                     className="w-full rounded-xl border border-pearl bg-white px-3 py-2 text-xs text-espresso outline-none"
                   >
                     <option value="">{lang === 'ar' ? '-- اختاري الموظفة --' : '-- Select --'}</option>
-                    {staffUsers.map((s) => (
-                      <option key={s.id} value={s.id}>
-                        {s.name} ({s.role})
-                      </option>
-                    ))}
+                    {staffUsers
+                      .filter((s) => s.is_active)
+                      .map((s) => (
+                        <option key={s.id} value={s.id}>
+                          {s.name} ({s.role})
+                        </option>
+                      ))}
                   </select>
                 </div>
 
@@ -1249,15 +1281,17 @@ export default function ReceptionPage() {
 
                 <div>
                   <label className="text-[11px] font-medium text-mocha-500 block mb-1">
-                    {lang === 'ar' ? 'رمز الـ PIN' : 'Staff PIN'}
+                    {lang === 'ar' ? 'رمز الـ PIN الشخصي' : 'Personal PIN'}
                   </label>
                   <input
                     type="password"
-                    maxLength={4}
-                    placeholder="1234"
+                    inputMode="numeric"
+                    maxLength={6}
+                    dir="ltr"
+                    placeholder="••••"
                     value={attPin}
-                    onChange={(e) => setAttPin(e.target.value)}
-                    className="w-full rounded-xl border border-pearl bg-white px-3 py-2 text-xs text-espresso outline-none tracking-widest text-center"
+                    onChange={(e) => setAttPin(normalizePinDigits(e.target.value))}
+                    className="w-full rounded-xl border border-pearl bg-white px-3 py-2 text-xs font-mono font-bold text-espresso outline-none tracking-widest text-center"
                   />
                 </div>
               </div>
@@ -1307,13 +1341,49 @@ export default function ReceptionPage() {
                           </div>
                         </div>
 
-                        <button
-                          type="button"
-                          onClick={() => handleClockOutQuick(rec.staff_id)}
-                          className="px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold transition"
-                        >
-                          {lang === 'ar' ? 'تسجيل انصراف' : 'Clock Out'}
-                        </button>
+                        {clockOutTargetId === rec.staff_id ? (
+                          <div className="flex items-center gap-1.5">
+                            <input
+                              type="password"
+                              inputMode="numeric"
+                              maxLength={6}
+                              dir="ltr"
+                              value={clockOutPin}
+                              onChange={(e) => setClockOutPin(normalizePinDigits(e.target.value))}
+                              placeholder="PIN"
+                              className="w-20 rounded-xl border border-[#cbb6ea] bg-[#f9f0f5] px-2 py-1 text-center font-mono text-xs font-bold text-[#3a1d43] outline-none"
+                            />
+                            <button
+                              type="button"
+                              onClick={() => handleClockOutQuick(rec.staff_id, true, clockOutPin)}
+                              className="px-2.5 py-1.5 rounded-xl bg-[#3a1d43] text-white text-[11px] font-bold cursor-pointer border-0"
+                            >
+                              {lang === 'ar' ? 'تأكيد' : 'OK'}
+                            </button>
+                            {canViewAdmin && (
+                              <button
+                                type="button"
+                                onClick={() => handleClockOutQuick(rec.staff_id, false)}
+                                className="px-2 py-1.5 rounded-xl bg-rose-50 text-rose-700 border border-rose-200 text-[10px] font-bold cursor-pointer"
+                                title={lang === 'ar' ? 'تجاوز إداري فوري' : 'Admin override'}
+                              >
+                                {lang === 'ar' ? 'تجاوز' : 'Override'}
+                              </button>
+                            )}
+                          </div>
+                        ) : (
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setClockOutTargetId(rec.staff_id);
+                              setClockOutPin('');
+                              setAttError(null);
+                            }}
+                            className="px-3 py-1.5 rounded-xl border border-rose-200 bg-rose-50 text-rose-700 hover:bg-rose-100 text-xs font-semibold transition cursor-pointer"
+                          >
+                            {lang === 'ar' ? 'تسجيل انصراف' : 'Clock Out'}
+                          </button>
+                        )}
                       </div>
                     );
                   })}

@@ -886,6 +886,36 @@ export function saveLocalStaffUser(staff: StaffUser) {
     users.push(staff);
   }
   localStorage.setItem('maison_v2_staff_users', JSON.stringify(users));
+  notifyDataUpdated('staff_users');
+}
+
+export function normalizePinDigits(raw: string): string {
+  return raw
+    .trim()
+    .replace(/[٠-٩]/g, (d) => '٠١٢٣٤٥٦٧٨٩'.indexOf(d).toString())
+    .replace(/\D/g, '');
+}
+
+export function updateLocalStaffPin(
+  userId: string,
+  newPin: string,
+): { ok: boolean; error?: string } {
+  const cleanPin = normalizePinDigits(newPin);
+  if (cleanPin.length < 4 || cleanPin.length > 6) {
+    return {
+      ok: false,
+      error: 'رمز الـ PIN يجب أن يتكون من ٤ إلى ٦ أرقام فقط',
+    };
+  }
+  const users = getLocalStaffUsers();
+  const idx = users.findIndex((u) => u.id === userId);
+  if (idx < 0) {
+    return { ok: false, error: 'الحساب غير موجود بالنظام' };
+  }
+  users[idx] = { ...users[idx], pin: cleanPin };
+  localStorage.setItem('maison_v2_staff_users', JSON.stringify(users));
+  notifyDataUpdated('staff_users');
+  return { ok: true };
 }
 
 export function resetLocalStaffPassword(userId: string, newPass: string) {
@@ -1370,6 +1400,46 @@ export function deleteLocalAttendanceRecord(id: string): void {
   localStorage.setItem('maison_staff_attendance', JSON.stringify(records));
 }
 
+const pinAttemptTracker = new Map<string, { count: number; lockedUntil: number }>();
+
+function verifyStaffPinStrict(
+  staff: StaffUser,
+  rawPin: string,
+): { ok: true } | { ok: false; error: string } {
+  const now = Date.now();
+  const state = pinAttemptTracker.get(staff.id);
+  if (state && state.lockedUntil > now) {
+    const secs = Math.ceil((state.lockedUntil - now) / 1000);
+    return {
+      ok: false,
+      error: `تم قفل المحاولات مؤقتاً لحماية الحساب. يرجى الانتظار ${secs} ثانية`,
+    };
+  }
+
+  const cleanPin = normalizePinDigits(rawPin);
+  const authoritativePin = normalizePinDigits(staff.pin || '1234');
+
+  // Strict per-staff PIN validation (hardcoded '1234' master bypass removed)
+  if (!cleanPin || cleanPin !== authoritativePin) {
+    const nextCount = (state?.count || 0) + 1;
+    const lockedUntil = nextCount >= 5 ? now + 60_000 : 0;
+    pinAttemptTracker.set(staff.id, {
+      count: lockedUntil ? 0 : nextCount,
+      lockedUntil,
+    });
+    return {
+      ok: false,
+      error:
+        lockedUntil > 0
+          ? 'تم تجاوز ٥ محاولات خاطئة. تم إيقاف التحقق لمدة ٦٠ ثانية'
+          : 'رمز الـ PIN غير صحيح. يرجى مراجعة رمز الحضور المخصص لهذا الحساب',
+    };
+  }
+
+  pinAttemptTracker.delete(staff.id);
+  return { ok: true };
+}
+
 export function clockInStaff(
   staffId: string,
   pin: string,
@@ -1381,11 +1451,13 @@ export function clockInStaff(
   if (!staff) {
     return { success: false, error: 'الموظفة غير مسجلة بالنظام' };
   }
+  if (!staff.is_active) {
+    return { success: false, error: 'حساب الموظفة معلق حالياً ولا يمكن تسجيل حضورها' };
+  }
 
-  // Validate PIN (default is '1234' or s.pin)
-  const validPin = staff.pin || '1234';
-  if (pin.trim() !== validPin && pin.trim() !== '1234') {
-    return { success: false, error: 'رمز الـ PIN غير صحيح' };
+  const pinCheck = verifyStaffPinStrict(staff, pin);
+  if (!pinCheck.ok) {
+    return { success: false, error: pinCheck.error };
   }
 
   const today = new Date().toISOString().split('T')[0];
@@ -1425,8 +1497,21 @@ export function clockInStaff(
 
 export function clockOutStaff(
   staffId: string,
-  notes?: string
+  notes?: string,
+  pin?: string,
+  requirePin = false,
 ): { success: boolean; record?: AttendanceRecord; error?: string } {
+  if (requirePin) {
+    const staff = getLocalStaffUsers().find((s) => s.id === staffId);
+    if (!staff) {
+      return { success: false, error: 'الموظفة غير مسجلة بالنظام' };
+    }
+    const pinCheck = verifyStaffPinStrict(staff, pin || '');
+    if (!pinCheck.ok) {
+      return { success: false, error: pinCheck.error };
+    }
+  }
+
   const today = new Date().toISOString().split('T')[0];
   const records = getLocalAttendanceRecords();
   const activeRecord = records.find(
