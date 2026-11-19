@@ -920,8 +920,9 @@ export function updateLocalStaffPin(
 }
 
 export function resetLocalStaffPassword(userId: string, newPass: string) {
-  // Store locally for demo mode password simulation
-  localStorage.setItem(`maison_pass_${userId}`, newPass);
+  // Store salted hash rather than cleartext password in localStorage
+  const hashed = hashLocalPassword(userId, newPass.trim());
+  localStorage.setItem(`maison_pass_${userId}`, `h2:${hashed}`);
 }
 
 function notifyDataUpdated(scope: string) {

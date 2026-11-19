@@ -2,6 +2,7 @@ import { Suspense, lazy, useEffect } from 'react';
 import { Route, Routes, useLocation } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import ReceptionGuard from './components/admin/ReceptionGuard';
+import FloatingWhatsAppButton from './components/public/FloatingWhatsAppButton';
 
 // Route-level code splitting: Admin, Reception POS, Checkout, Auth, and sub-screens
 // are loaded on demand so the public landing page stays ultra-fast.
@@ -89,6 +90,7 @@ export default function App() {
           <Route path="/admin/*" element={<AdminPage />} />
         </Routes>
       </Suspense>
+      <FloatingWhatsAppButton />
     </>
   );
 }

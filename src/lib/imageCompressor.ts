@@ -10,13 +10,37 @@ export interface CompressionResult {
   sizeKb: number;
 }
 
+const ALLOWED_RASTER_MIMES = new Set([
+  'image/jpeg',
+  'image/jpg',
+  'image/png',
+  'image/webp',
+  'image/heic',
+  'image/heif',
+]);
+const MAX_UPLOAD_BYTES = 12 * 1024 * 1024; // 12 MB hard input cap
+
 export async function compressReceiptImage(
   file: File,
   maxSizeKb: number = 95,
   maxDimension: number = 1200,
 ): Promise<CompressionResult> {
   return new Promise((resolve, reject) => {
-    // If it's already an image and tiny, still sanitize via canvas to strip EXIF and normalize to JPEG
+    if (!file || typeof file.size !== 'number') {
+      reject(new Error('No valid image file provided'));
+      return;
+    }
+    if (file.size <= 0 || file.size > MAX_UPLOAD_BYTES) {
+      reject(new Error('Image file size exceeds the 12 MB safety limit'));
+      return;
+    }
+    const mime = (file.type || '').toLowerCase();
+    if (!ALLOWED_RASTER_MIMES.has(mime)) {
+      reject(new Error('Unsupported file format. Only JPEG, PNG, and WebP images are permitted.'));
+      return;
+    }
+
+    // Re-encode via canvas to strip EXIF metadata and normalize to safe JPEG
     const reader = new FileReader();
     reader.onerror = () => reject(new Error('Failed to read image file'));
     reader.onload = () => {

@@ -1,4 +1,5 @@
 import { getLocalStaffUsers } from './mockData';
+import { hashLocalPassword } from './security';
 import type { StaffRole, StaffUser } from './types';
 
 export interface VerifiedStaffSession {
@@ -99,6 +100,8 @@ export function clearVerifiedStaffSession(): void {
   window.dispatchEvent(new CustomEvent('guzel:auth-updated'));
 }
 
+const staffLoginAttempts = new Map<string, { count: number; lockedUntil: number }>();
+
 export function authenticateStaffCredentials(
   emailInput: string,
   passwordInput: string,
@@ -110,6 +113,32 @@ export function authenticateStaffCredentials(
     return { ok: false, error: 'Please enter valid staff credentials.' };
   }
 
+  const now = Date.now();
+  const attemptState = staffLoginAttempts.get(cleanEmail);
+  if (attemptState && attemptState.lockedUntil > now) {
+    const waitSec = Math.ceil((attemptState.lockedUntil - now) / 1000);
+    return {
+      ok: false,
+      error: `Too many failed login attempts. Account locked for ${waitSec}s.`,
+    };
+  }
+
+  const recordFailure = (msg: string): { ok: false; error: string } => {
+    const nextCount = (attemptState?.count || 0) + 1;
+    const lockedUntil = nextCount >= 5 ? now + 60_000 : 0;
+    staffLoginAttempts.set(cleanEmail, {
+      count: lockedUntil ? 0 : nextCount,
+      lockedUntil,
+    });
+    return {
+      ok: false,
+      error:
+        lockedUntil > 0
+          ? '5 failed attempts reached. Login temporarily locked for 60 seconds.'
+          : msg,
+    };
+  };
+
   const staffList = getLocalStaffUsers();
   const matched = staffList.find(
     (s) =>
@@ -119,16 +148,33 @@ export function authenticateStaffCredentials(
   );
 
   if (!matched) {
-    return { ok: false, error: 'Unauthorized: Account is not registered as active staff.' };
+    return recordFailure('Unauthorized: Account is not registered as active staff.');
   }
 
-  const customPass = localStorage.getItem(`maison_pass_${matched.id}`);
-  const expectedPass = customPass || 'admin123';
+  const storedPass = localStorage.getItem(`maison_pass_${matched.id}`);
+  let isPasswordValid = false;
 
-  if (cleanPass !== expectedPass) {
-    return { ok: false, error: 'Invalid staff password.' };
+  if (!storedPass) {
+    isPasswordValid = cleanPass === 'admin123';
+  } else if (storedPass.startsWith('h2:')) {
+    const candidateHash = `h2:${hashLocalPassword(matched.id, cleanPass)}`;
+    isPasswordValid = candidateHash === storedPass;
+  } else {
+    // Legacy migration: compare and immediately upgrade to salted hash
+    isPasswordValid = cleanPass === storedPass;
+    if (isPasswordValid) {
+      localStorage.setItem(
+        `maison_pass_${matched.id}`,
+        `h2:${hashLocalPassword(matched.id, cleanPass)}`,
+      );
+    }
   }
 
+  if (!isPasswordValid) {
+    return recordFailure('Invalid staff password.');
+  }
+
+  staffLoginAttempts.delete(cleanEmail);
   const session = setVerifiedStaffSession(matched);
   return { ok: true, session };
 }

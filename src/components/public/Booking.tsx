@@ -303,6 +303,15 @@ export default function Booking({
   // Final Booking Submission
   const handleFinalSubmit = async () => {
     if (!selectedDate || !selectedSlot) return;
+    if (!dataConsentAgreed) {
+      setConsentError(
+        lang === 'ar'
+          ? 'يرجى الموافقة على سياسة الخصوصية واتفاقية استخدام البيانات قبل إتمام الحجز.'
+          : 'Please agree to the Privacy Policy and Data Usage Agreement before booking.',
+      );
+      setStep(3);
+      return;
+    }
     const phoneVal = validateEgyptianPhone(phone);
     if (!phoneVal.isValid) {
       setPhoneError(phoneVal.error || 'رقم موبايل غير صحيح');
@@ -311,15 +320,34 @@ export default function Booking({
     }
 
     setSubmitting(true);
-    const bookingNum = `BK-${new Date().getFullYear()}-${Math.floor(1000 + Math.random() * 9000)}`;
-    const secretTok = crypto.randomUUID ? crypto.randomUUID() : `tok-${Date.now()}`;
+    const randBuf = new Uint32Array(2);
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
+      crypto.getRandomValues(randBuf);
+    } else {
+      randBuf[0] = Math.floor(Math.random() * 1_000_000);
+      randBuf[1] = Date.now();
+    }
+    const codeSuffix = 1000 + (randBuf[0] % 9000);
+    const bookingNum = `BK-${new Date().getFullYear()}-${codeSuffix}`;
+    const secretTok =
+      typeof crypto !== 'undefined' && crypto.randomUUID
+        ? crypto.randomUUID()
+        : `tok-${randBuf[0].toString(16)}-${randBuf[1].toString(16)}`;
     const holdExpiration = new Date(Date.now() + (settings.deposit_hold_minutes || 30) * 60 * 1000).toISOString();
 
+    const safeName = fullName.trim().slice(0, 80);
+    const safeNotes = notes.trim().slice(0, 500) || null;
+
+    // Immediately wipe transient card PAN & CVV from memory (PCI-DSS best practice)
+    setCardNumber('');
+    setCardCvv('');
+    setCardExpiry('');
+
     const bookingPayload: Booking = {
-      id: crypto.randomUUID ? crypto.randomUUID() : `bkg-${Date.now()}`,
+      id: typeof crypto !== 'undefined' && crypto.randomUUID ? crypto.randomUUID() : `bkg-${Date.now()}`,
       booking_number: bookingNum,
       secret_token: secretTok,
-      customer_name: fullName.trim(),
+      customer_name: safeName,
       customer_phone: phoneVal.normalized,
       appointment_date: toDateString(selectedDate),
       start_time: toTimeString(selectedSlot.start),
@@ -332,7 +360,7 @@ export default function Booking({
       deposit_required: cartSummary.depositRequired,
       deposit_paid: 0,
       status: 'pending_verification',
-      notes: notes.trim() || null,
+      notes: safeNotes,
       hold_expires_at: holdExpiration,
       created_at: new Date().toISOString(),
       items: [
