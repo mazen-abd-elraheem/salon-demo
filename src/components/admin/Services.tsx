@@ -559,19 +559,21 @@ export function Switch({
   return (
     <button
       type="button"
+      dir="ltr"
       onClick={() => onChange(!checked)}
       role="switch"
       aria-checked={checked}
       className={[
-        'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors cursor-pointer border-0',
-        checked ? 'bg-[#b14bd9]' : 'bg-gray-300',
+        'relative inline-flex h-6 w-11 shrink-0 items-center rounded-full p-0.5 transition-colors duration-200 cursor-pointer border-0 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#b14bd9]/50',
+        checked ? 'bg-[#b14bd9]' : 'bg-[#3a1d43]/20',
       ].join(' ')}
     >
       <span
         className={[
-          'inline-block h-5 w-5 transform rounded-full bg-white shadow transition-transform',
-          checked ? 'translate-x-5' : 'translate-x-0.5',
+          'pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow-sm transition-transform duration-200',
+          checked ? 'translate-x-5' : 'translate-x-0',
         ].join(' ')}
+        style={{ transitionTimingFunction: 'cubic-bezier(0.22, 1, 0.36, 1)' }}
       />
     </button>
   );
