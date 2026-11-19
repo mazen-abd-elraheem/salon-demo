@@ -131,16 +131,16 @@ export default function Hero({ settings, services = [], products = [], onBook }:
 
         // Words flash Violet (#b14bd9) -> Pink (#f28db5) -> Deep Plum Ink (#3a1d43)
         if (words.length > 0) {
-          gsap.set(words, { opacity: 0, y: 18, color: '#b14bd9' });
           words.forEach((wordEl, idx) => {
             const startAt = 0.15 + idx * 0.14;
-            introTl.to(
+            introTl.fromTo(
               wordEl,
+              { opacity: 0.2, y: 14, color: '#b14bd9' },
               {
                 opacity: 1,
                 y: 0,
                 color: '#b14bd9',
-                duration: 0.14,
+                duration: 0.2,
                 ease: 'power2.out',
               },
               startAt,
@@ -149,19 +149,19 @@ export default function Hero({ settings, services = [], products = [], onBook }:
               wordEl,
               {
                 color: '#f28db5',
-                duration: 0.12,
+                duration: 0.15,
                 ease: 'none',
               },
-              startAt + 0.14,
+              startAt + 0.18,
             );
             introTl.to(
               wordEl,
               {
                 color: 'var(--fonts-100, #3a1d43)',
-                duration: 0.2,
+                duration: 0.25,
                 ease: 'power2.out',
               },
-              startAt + 0.26,
+              startAt + 0.32,
             );
           });
         }

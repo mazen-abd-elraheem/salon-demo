@@ -99,11 +99,11 @@
       }
     </script>
 
-    <!-- Local Animation & 3D Libraries -->
-    <script src="/assets/js/gsap.min.js"></script>
-    <script src="/assets/js/ScrollTrigger.min.js"></script>
-    <script src="/assets/js/split-type.min.js"></script>
-    <script src="/assets/js/three.min.js"></script>
+    <!-- Local Animation & 3D Libraries (deferred so they never block initial paint) -->
+    <script defer src="/assets/js/gsap.min.js"></script>
+    <script defer src="/assets/js/ScrollTrigger.min.js"></script>
+    <script defer src="/assets/js/split-type.min.js"></script>
+    <script defer src="/assets/js/three.min.js"></script>
   </head>
   <body class="body light">
     <div id="root"></div>
