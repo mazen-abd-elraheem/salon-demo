@@ -1,4 +1,4 @@
-import { ReactNode, useState } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link, NavLink, useLocation } from 'react-router-dom';
 import {
   Calendar,
@@ -23,6 +23,7 @@ import {
 import type { User } from '@supabase/supabase-js';
 import { useLanguage } from '../../context/LanguageContext';
 import { getLocalSettings } from '../../lib/mockData';
+import { supabase } from '../../lib/supabase';
 import { GuzelLogoIcon } from '../public/GuzelSvgIcons';
 import type { StaffRole } from '../../lib/types';
 
@@ -42,12 +43,38 @@ export default function AdminLayout({
   brand,
 }: AdminLayoutProps) {
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [salonLogo, setSalonLogo] = useState<string | null>(() => getLocalSettings()?.logo_url || null);
   const location = useLocation();
   const { lang, toggleLang, isRTL } = useLanguage();
   const display = lang === 'ar' ? 'جوزال ميديكال سبا' : brand?.trim() || 'Guzel Medical Spa';
 
-  const localSettings = getLocalSettings();
-  const salonLogo = localSettings?.logo_url || null;
+  // Keep salon logo synced live across all admin tabs
+  useEffect(() => {
+    const syncLogo = () => {
+      const local = getLocalSettings();
+      if (local?.logo_url) setSalonLogo(local.logo_url);
+    };
+    syncLogo();
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('business_settings')
+          .select('logo_url')
+          .limit(1)
+          .maybeSingle();
+        if (data?.logo_url) setSalonLogo(data.logo_url);
+      } catch {
+        // fallback to local logo
+      }
+    })();
+    window.addEventListener('storage', syncLogo);
+    window.addEventListener('guzel:data-updated', syncLogo);
+    return () => {
+      window.removeEventListener('storage', syncLogo);
+      window.removeEventListener('guzel:data-updated', syncLogo);
+    };
+  }, []);
+
   const isSuperAdmin = role === 'admin' || !role;
 
   const navGroups = [
@@ -85,7 +112,7 @@ export default function AdminLayout({
                 Icon: CreditCard,
               },
               {
-                label: lang === 'ar' ? 'المستخدمين والصلاحيات' : 'Staff & Roles (RBAC)',
+                label: lang === 'ar' ? 'الحسابات والـ PIN والصلاحيات' : 'Staff, PINs & Roles',
                 to: '/admin/roles',
                 Icon: ShieldCheck,
               },
@@ -116,11 +143,11 @@ export default function AdminLayout({
     <div
       className="flex min-h-screen font-sans"
       style={{
-        backgroundColor: 'var(--mainbg, #f9f0f5)',
-        color: 'var(--fonts-100, #3a1d43)',
+        backgroundColor: '#f9f0f5',
+        color: '#3a1d43',
       }}
     >
-      {/* Floating / Docked Editorial Glass Sidebar */}
+      {/* Docked Editorial Glass Sidebar */}
       <aside
         className={[
           'fixed inset-y-0 start-0 z-40 w-72 flex flex-col transform border-e transition-transform duration-300 ease-out lg:sticky lg:top-0 lg:h-screen lg:translate-x-0',
@@ -131,18 +158,18 @@ export default function AdminLayout({
             : '-translate-x-full',
         ].join(' ')}
         style={{
-          backgroundColor: 'rgba(243, 230, 240, 0.92)',
+          backgroundColor: 'rgba(243, 230, 240, 0.94)',
           backdropFilter: 'blur(22px)',
           WebkitBackdropFilter: 'blur(22px)',
-          borderColor: 'rgba(58, 29, 67, 0.09)',
+          borderColor: 'rgba(58, 29, 67, 0.08)',
         }}
       >
-        {/* Top Brand Header */}
+        {/* Sidebar Brand Mark */}
         <div
-          className="shrink-0 flex h-20 items-center justify-between px-5 border-b"
+          className="shrink-0 flex h-[4.5rem] items-center justify-between px-5 border-b"
           style={{ borderColor: 'rgba(58, 29, 67, 0.07)' }}
         >
-          <Link to="/" className="flex items-center gap-3 no-underline">
+          <Link to="/admin" className="flex items-center gap-3 no-underline">
             {salonLogo ? (
               <img
                 src={salonLogo}
@@ -156,14 +183,14 @@ export default function AdminLayout({
             )}
             <div className="leading-tight">
               <div className="font-display font-bold text-base text-[#3a1d43]">{display}</div>
-              <div className="text-[10px] font-semibold uppercase tracking-wider text-[#73358c]">
-                {lang === 'ar' ? 'لوحة الإدارة المؤمّنة' : 'Executive Suite'}
+              <div className="text-[10px] font-bold uppercase tracking-wider text-[#73358c]">
+                {lang === 'ar' ? 'لوحة الإدارة التنفيذية' : 'Executive Suite'}
               </div>
             </div>
           </Link>
           <button
             onClick={() => setMobileOpen(false)}
-            className="grid h-9 w-9 place-items-center rounded-full border border-[#3a1d43]/15 bg-white/70 text-[#3a1d43] lg:hidden cursor-pointer"
+            className="grid h-9 w-9 place-items-center rounded-full border border-[#3a1d43]/15 bg-white/80 text-[#3a1d43] lg:hidden cursor-pointer"
             aria-label="Close menu"
           >
             <X className="h-4 w-4" />
@@ -188,7 +215,7 @@ export default function AdminLayout({
                       'group flex items-center justify-between gap-2.5 rounded-2xl px-3.5 py-2.5 text-xs sm:text-[13px] transition-all duration-200 no-underline',
                       isActive
                         ? 'bg-[#3a1d43] text-white font-bold shadow-[0_10px_24px_-8px_rgba(58,29,67,0.4)]'
-                        : 'text-[#3a1d43]/80 font-semibold hover:bg-white/70 hover:text-[#3a1d43]',
+                        : 'text-[#3a1d43]/80 font-semibold hover:bg-white/75 hover:text-[#3a1d43]',
                     ].join(' ')
                   }
                 >
@@ -215,7 +242,7 @@ export default function AdminLayout({
           <div
             className="rounded-2xl border p-3.5"
             style={{
-              backgroundColor: 'rgba(255, 255, 255, 0.82)',
+              backgroundColor: 'rgba(255, 255, 255, 0.85)',
               borderColor: 'rgba(58, 29, 67, 0.09)',
             }}
           >
@@ -235,7 +262,7 @@ export default function AdminLayout({
             </div>
             <button
               onClick={onSignOut}
-              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#3a1d43]/15 bg-[#f9f0f5] px-3 py-2 text-xs font-bold text-[#3a1d43] transition hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 cursor-pointer"
+              className="mt-3 inline-flex w-full items-center justify-center gap-2 rounded-full border border-[#3a1d43]/12 bg-[#f9f0f5] px-3 py-2 text-xs font-bold text-[#3a1d43] transition hover:bg-rose-50 hover:text-rose-700 hover:border-rose-200 cursor-pointer"
             >
               <LogOut className="h-3.5 w-3.5" />
               {lang === 'ar' ? 'تسجيل الخروج الآمن' : 'Secure Sign Out'}
@@ -252,61 +279,91 @@ export default function AdminLayout({
         />
       )}
 
-      {/* Main Content Workspace */}
+      {/* Main Workspace */}
       <div className="flex min-w-0 flex-1 flex-col">
-        {/* Top Floating Glass Bar */}
+        {/* Ultra-Clean Unified Admin Header Showing Salon Logo */}
         <header
-          className="sticky top-0 z-20 flex h-16 items-center justify-between border-b px-4 backdrop-blur-xl md:px-8"
+          className="sticky top-0 z-20 px-4 sm:px-6 lg:px-8 pt-3 pb-2"
           style={{
-            backgroundColor: 'rgba(249, 240, 245, 0.86)',
-            borderColor: 'rgba(58, 29, 67, 0.08)',
+            background: 'linear-gradient(180deg, rgba(249,240,245,0.96) 65%, rgba(249,240,245,0) 100%)',
           }}
         >
-          <div className="flex items-center gap-3">
-            <button
-              onClick={() => setMobileOpen(true)}
-              className="grid h-9 w-9 place-items-center rounded-full border border-[#3a1d43]/15 bg-white/80 text-[#3a1d43] lg:hidden cursor-pointer"
-              aria-label="Open menu"
-            >
-              <Menu className="h-4 w-4" />
-            </button>
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#3a1d43]/60">
-              <span>{lang === 'ar' ? 'جوزال ميديكال سبا' : 'Guzel Suite'}</span>
-              <span className="opacity-40">/</span>
-              <span className="font-bold text-[#3a1d43]">
-                {titleFromPath(location.pathname, lang)}
+          <div
+            className="mx-auto max-w-7xl flex h-[3.85rem] items-center justify-between gap-3 rounded-full border px-3 sm:px-4 backdrop-blur-xl transition-all"
+            style={{
+              backgroundColor: 'rgba(255, 255, 255, 0.86)',
+              borderColor: 'rgba(58, 29, 67, 0.09)',
+              boxShadow: '0 10px 30px -12px rgba(58, 29, 67, 0.12)',
+            }}
+          >
+            {/* Start: Mobile Menu Button + Salon Logo + Brand & Active Screen Pill */}
+            <div className="flex items-center gap-2.5 sm:gap-3 min-w-0">
+              <button
+                onClick={() => setMobileOpen(true)}
+                className="grid h-9 w-9 shrink-0 place-items-center rounded-full border border-[#3a1d43]/12 bg-[#f9f0f5] text-[#3a1d43] lg:hidden cursor-pointer"
+                aria-label="Open menu"
+              >
+                <Menu className="h-4 w-4" />
+              </button>
+
+              <Link
+                to="/admin"
+                className="flex items-center gap-2.5 no-underline shrink-0"
+              >
+                {salonLogo ? (
+                  <img
+                    src={salonLogo}
+                    alt={display}
+                    className="h-9 w-9 rounded-full object-cover border border-[#3a1d43]/12 bg-white shadow-xs"
+                  />
+                ) : (
+                  <span className="grid h-9 w-9 place-items-center rounded-full bg-[#cbb6ea] text-[#3a1d43]">
+                    <GuzelLogoIcon className="h-4.5 w-4.5" />
+                  </span>
+                )}
+                <span className="hidden sm:inline-block font-display font-bold text-sm text-[#3a1d43]">
+                  {display}
+                </span>
+              </Link>
+
+              <span className="hidden sm:inline-block h-4 w-px bg-[#3a1d43]/12" />
+
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-[#f3e6f0] border border-[#e8d7e4] px-3 py-1 text-xs font-bold text-[#73358c] truncate">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#b14bd9] shrink-0" />
+                <span className="truncate">{titleFromPath(location.pathname, lang)}</span>
               </span>
             </div>
-          </div>
 
-          <div className="flex items-center gap-2.5">
-            <Link
-              to="/reception"
-              className="hidden sm:inline-flex items-center gap-1.5 rounded-full bg-[#cbb6ea]/50 hover:bg-[#cbb6ea] px-3.5 py-1.5 text-xs font-bold text-[#3a1d43] transition no-underline"
-            >
-              <Store className="h-3.5 w-3.5 text-[#73358c]" />
-              <span>{lang === 'ar' ? 'شاشة الاستقبال والدفع' : 'Reception POS'}</span>
-            </Link>
+            {/* End: Clean Compact Action Pills */}
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                to="/reception"
+                className="hidden md:inline-flex items-center gap-1.5 rounded-full bg-[#3a1d43] hover:opacity-90 px-4 py-2 text-xs font-bold text-white transition no-underline shadow-xs"
+              >
+                <Store className="h-3.5 w-3.5 text-[#cbb6ea]" />
+                <span>{lang === 'ar' ? 'شاشة الاستقبال' : 'Reception POS'}</span>
+              </Link>
 
-            <button
-              onClick={toggleLang}
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#3a1d43]/15 bg-white/80 hover:bg-white px-3 py-1.5 text-xs font-bold text-[#3a1d43] shadow-xs transition cursor-pointer"
-            >
-              <Globe className="h-3.5 w-3.5 text-[#b14bd9]" />
-              <span>{lang === 'ar' ? 'English' : 'العربية'}</span>
-            </button>
+              <button
+                onClick={toggleLang}
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#3a1d43]/12 bg-[#f9f0f5] hover:bg-[#f3e6f0] px-3 py-1.5 text-xs font-bold text-[#3a1d43] transition cursor-pointer"
+              >
+                <Globe className="h-3.5 w-3.5 text-[#b14bd9]" />
+                <span>{lang === 'ar' ? 'EN' : 'عربي'}</span>
+              </button>
 
-            <Link
-              to="/"
-              className="inline-flex items-center gap-1.5 rounded-full border border-[#3a1d43]/15 bg-white/80 hover:bg-white px-3.5 py-1.5 text-xs font-bold text-[#3a1d43] transition no-underline"
-            >
-              <span>{lang === 'ar' ? 'عرض الموقع' : 'Public Site'}</span>
-              <ExternalLink className="h-3 w-3 opacity-65" />
-            </Link>
+              <Link
+                to="/"
+                className="inline-flex items-center gap-1.5 rounded-full border border-[#3a1d43]/12 bg-white hover:bg-[#f9f0f5] px-3.5 py-1.5 text-xs font-bold text-[#3a1d43] transition no-underline"
+              >
+                <span className="hidden sm:inline">{lang === 'ar' ? 'الموقع' : 'Site'}</span>
+                <ExternalLink className="h-3.5 w-3.5 text-[#73358c]" />
+              </Link>
+            </div>
           </div>
         </header>
 
-        <main className="admin-scroll flex-1 overflow-x-hidden px-4 py-8 md:px-8 md:py-10 max-w-7xl w-full mx-auto">
+        <main className="admin-scroll flex-1 overflow-x-hidden px-4 py-6 md:px-8 md:py-8 max-w-7xl w-full mx-auto">
           {children}
         </main>
       </div>
@@ -320,7 +377,7 @@ function titleFromPath(path: string, lang: 'en' | 'ar'): string {
   if (path.startsWith('/admin/packages')) return lang === 'ar' ? 'الباقات والعروض' : 'Packages & Bundles';
   if (path.startsWith('/admin/inventory')) return lang === 'ar' ? 'المخزون ومنتجات جوزال' : 'Retail & Inventory';
   if (path.startsWith('/admin/payment-gateways')) return lang === 'ar' ? 'بوابات الدفع الإلكتروني' : 'Payment Gateways';
-  if (path.startsWith('/admin/roles')) return lang === 'ar' ? 'المستخدمين والصلاحيات' : 'Staff & Roles';
+  if (path.startsWith('/admin/roles')) return lang === 'ar' ? 'الحسابات والـ PIN والصلاحيات' : 'Staff, PINs & Roles';
   if (path.startsWith('/admin/attendance')) return lang === 'ar' ? 'سجل الحضور والانصراف' : 'Staff Attendance';
   if (path.startsWith('/admin/reconciliation')) return lang === 'ar' ? 'التقفيل المالي والورديات' : 'Financial Reconciliation';
   if (path.startsWith('/admin/services')) return lang === 'ar' ? 'الخدمات والجلسات' : 'Services & Rituals';
