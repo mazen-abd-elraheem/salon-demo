@@ -16,8 +16,8 @@ export default function Footer({ settings }: FooterProps) {
   const logo = active?.logo_url || localSettings?.logo_url || null;
   const brand =
     lang === 'ar'
-      ? active?.business_name?.trim() || 'غزل سبا للجمال والاسترخاء'
-      : active?.business_name_en?.trim() || 'Guzel Spa';
+      ? active?.business_name?.trim() || 'جوزال ميديكال سبا'
+      : active?.business_name_en?.trim() || 'Guzel Medical Spa';
   const email = active?.business_email?.trim() || 'concierge@guzelspa.beauty';
   const phone = active?.business_phone?.trim() || '01012345678';
   const address =

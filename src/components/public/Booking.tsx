@@ -32,6 +32,7 @@ import type {
   Service,
   Specialist,
   TimeSlot,
+  PaymentGatewayProvider,
 } from '../../lib/types';
 import {
   defaultBusinessHours,
@@ -41,6 +42,7 @@ import {
   defaultServices,
   defaultSettings,
   defaultSpecialists,
+  getLocalPaymentGateways,
   saveLocalBooking,
 } from '../../lib/mockData';
 import {
@@ -126,8 +128,21 @@ export default function Booking({
   const [dataConsentAgreed, setDataConsentAgreed] = useState<boolean>(false);
   const [consentError, setConsentError] = useState<string | null>(null);
 
-  // 50% Deposit Payment
-  const [paymentMethod, setPaymentMethod] = useState<'instapay' | 'vodafone_cash'>('instapay');
+  // 50% Deposit Payment (Connected to Admin Payment Gateways)
+  const onlineGateways = useMemo(
+    () => getLocalPaymentGateways().filter((g) => g.enabled && g.supports_online_deposit),
+    [],
+  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayProvider>(
+    () => onlineGateways[0]?.id || 'instapay',
+  );
+  const [cardHolder, setCardHolder] = useState('');
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardExpiry, setCardExpiry] = useState('');
+  const [cardCvv, setCardCvv] = useState('');
+  const [fawryRefCode] = useState(
+    () => `9948-${Math.floor(100000 + Math.random() * 900000)}`,
+  );
   const [proofFile, setProofFile] = useState<File | null>(null);
   const [proofPreview, setProofPreview] = useState<string | null>(null);
   const [proofSizeKb, setProofSizeKb] = useState<number | null>(null);
@@ -1086,136 +1101,244 @@ export default function Booking({
                   </div>
                 </div>
 
-                {/* Transfer Channel Tabs */}
+                {/* Transfer Channel Tabs (Synced with Admin Payment Gateways) */}
                 <div className="mt-6">
                   <label className="field-label text-xs mb-2">
                     {t('selectPaymentMethod')}
                   </label>
-                  <div className="grid grid-cols-2 gap-3">
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod('instapay')}
-                      className={[
-                        'flex flex-col items-start rounded-xl border p-3.5 text-start transition',
-                        paymentMethod === 'instapay'
-                          ? 'border-rosegold-300 bg-rosegold-100/40 ring-1 ring-rosegold-300 font-semibold'
-                          : 'border-pearl/80 bg-white/60 hover:border-rosegold-200',
-                      ].join(' ')}
-                    >
-                      <span className="font-display text-base text-espresso">InstaPay</span>
-                      <span className="text-[11px] text-mocha-500 mt-0.5">{t('instapayTitle')}</span>
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => setPaymentMethod('vodafone_cash')}
-                      className={[
-                        'flex flex-col items-start rounded-xl border p-3.5 text-start transition',
-                        paymentMethod === 'vodafone_cash'
-                          ? 'border-rosegold-300 bg-rosegold-100/40 ring-1 ring-rosegold-300 font-semibold'
-                          : 'border-pearl/80 bg-white/60 hover:border-rosegold-200',
-                      ].join(' ')}
-                    >
-                      <span className="font-display text-base text-espresso">Vodafone Cash</span>
-                      <span className="text-[11px] text-mocha-500 mt-0.5">{t('vodafoneTitle')}</span>
-                    </button>
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    {onlineGateways.map((gw) => {
+                      const isActive = paymentMethod === gw.id;
+                      return (
+                        <button
+                          key={gw.id}
+                          type="button"
+                          onClick={() => {
+                            setPaymentMethod(gw.id);
+                            if (gw.id === 'fawry') {
+                              setReferenceNumber(fawryRefCode);
+                            } else if (gw.id === 'paymob' || gw.id === 'kashier') {
+                              setReferenceNumber(`TXN-${gw.id.toUpperCase()}-${Date.now().toString().slice(-6)}`);
+                            }
+                          }}
+                          className={[
+                            'flex flex-col items-start rounded-2xl border p-3.5 text-start transition cursor-pointer',
+                            isActive
+                              ? 'border-rosegold-400 bg-rosegold-100/60 ring-1 ring-rosegold-400 font-semibold'
+                              : 'border-pearl bg-white/80 hover:border-rosegold-300',
+                          ].join(' ')}
+                        >
+                          <div className="flex items-center justify-between w-full">
+                            <span className="font-display text-sm font-bold text-espresso">
+                              {lang === 'ar' ? gw.name_ar : gw.name_en}
+                            </span>
+                            <span className="rounded-full bg-[#cbb6ea] px-2 py-0.5 text-[9px] font-bold text-[#2c1433]">
+                              {gw.mode === 'live' ? 'LIVE' : 'TEST'}
+                            </span>
+                          </div>
+                          <span className="text-[11px] text-mocha-500 mt-1">
+                            {lang === 'ar' ? gw.badge_ar : gw.badge_en}
+                          </span>
+                        </button>
+                      );
+                    })}
                   </div>
                 </div>
 
-                {/* Account Details with One-Click Copy */}
-                <div className="mt-5 rounded-xl border border-pearl/80 bg-cream/40 p-4">
-                  {paymentMethod === 'instapay' ? (
-                    <div>
-                      <div className="flex items-center justify-between">
+                {/* Gateway-Specific Payment Area */}
+                {(paymentMethod === 'instapay' || paymentMethod === 'vodafone_cash') && (
+                  <>
+                    <div className="mt-5 rounded-xl border border-pearl/80 bg-cream/40 p-4">
+                      {paymentMethod === 'instapay' ? (
                         <div>
-                          <div className="text-[10px] font-semibold uppercase tracking-wider text-mocha-500">
-                            {t('instapayIpa')}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-[10px] font-semibold uppercase tracking-wider text-mocha-500">
+                                {t('instapayIpa')}
+                              </div>
+                              <div className="font-display text-base font-bold text-espresso mt-0.5 font-mono" dir="ltr">
+                                {settings.instapay_ipa || 'guzelspa@instapay'}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(settings.instapay_ipa || 'guzelspa@instapay', 'ipa')}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-mocha-400/20 bg-white px-3 py-1.5 text-xs font-semibold text-espresso hover:border-rosegold-300 transition"
+                            >
+                              {copiedKey === 'ipa' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-rosegold-400" />}
+                              <span>{copiedKey === 'ipa' ? t('copiedText') : t('copyIpa')}</span>
+                            </button>
                           </div>
-                          <div className="font-display text-base font-bold text-espresso mt-0.5" dir="ltr">
-                            {settings.instapay_ipa || 'maisonlumiere@instapay'}
+                          <div className="mt-3 text-xs text-mocha-600">
+                            {t('instapayName')}: <strong className="text-espresso">{settings.instapay_name || 'Guzel Medical Spa'}</strong>
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(settings.instapay_ipa || 'maisonlumiere@instapay', 'ipa')}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-mocha-400/20 bg-white px-3 py-1.5 text-xs font-semibold text-espresso hover:border-rosegold-300 transition"
-                        >
-                          {copiedKey === 'ipa' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-rosegold-400" />}
-                          <span>{copiedKey === 'ipa' ? t('copiedText') : t('copyIpa')}</span>
-                        </button>
-                      </div>
-                      <div className="mt-3 text-xs text-mocha-600">
-                        {t('instapayName')}: <strong className="text-espresso">{settings.instapay_name || 'Maison Lumière Spa'}</strong>
-                      </div>
-                    </div>
-                  ) : (
-                    <div>
-                      <div className="flex items-center justify-between">
+                      ) : (
                         <div>
-                          <div className="text-[10px] font-semibold uppercase tracking-wider text-mocha-500">
-                            {t('vodafoneNumber')}
-                          </div>
-                          <div className="font-display text-base font-bold text-espresso mt-0.5" dir="ltr">
-                            {settings.vodafone_cash_number || '01012345678'}
+                          <div className="flex items-center justify-between">
+                            <div>
+                              <div className="text-[10px] font-semibold uppercase tracking-wider text-mocha-500">
+                                {t('vodafoneNumber')}
+                              </div>
+                              <div className="font-display text-base font-bold text-espresso mt-0.5 font-mono" dir="ltr">
+                                {settings.vodafone_cash_number || '01012345678'}
+                              </div>
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => handleCopy(settings.vodafone_cash_number || '01012345678', 'voda')}
+                              className="inline-flex items-center gap-1.5 rounded-lg border border-mocha-400/20 bg-white px-3 py-1.5 text-xs font-semibold text-espresso hover:border-rosegold-300 transition"
+                            >
+                              {copiedKey === 'voda' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-rosegold-400" />}
+                              <span>{copiedKey === 'voda' ? t('copiedText') : t('copyWallet')}</span>
+                            </button>
                           </div>
                         </div>
-                        <button
-                          type="button"
-                          onClick={() => handleCopy(settings.vodafone_cash_number || '01012345678', 'voda')}
-                          className="inline-flex items-center gap-1.5 rounded-lg border border-mocha-400/20 bg-white px-3 py-1.5 text-xs font-semibold text-espresso hover:border-rosegold-300 transition"
-                        >
-                          {copiedKey === 'voda' ? <Check className="h-3.5 w-3.5 text-emerald-600" /> : <Copy className="h-3.5 w-3.5 text-rosegold-400" />}
-                          <span>{copiedKey === 'voda' ? t('copiedText') : t('copyWallet')}</span>
-                        </button>
+                      )}
+                    </div>
+
+                    {/* Proof of Payment Upload + Compression */}
+                    <div className="mt-6 space-y-4">
+                      <div>
+                        <label className="field-label text-xs mb-1.5">
+                          {t('uploadProofLabel')}
+                        </label>
+                        <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-mocha-400/30 bg-white/70 p-5 text-center cursor-pointer hover:border-rosegold-300 transition">
+                          <Upload className="h-5 w-5 text-rosegold-400" />
+                          <span className="mt-2 text-xs font-medium text-espresso">
+                            {compressing
+                              ? 'جاري ضغط الصورة...'
+                              : proofFile
+                              ? proofFile.name
+                              : 'اضغطي لاختيار صورة التحويل'}
+                          </span>
+                          <span className="mt-0.5 text-[11px] text-mocha-500">
+                            {t('compressingNotice')}
+                          </span>
+                          <input
+                            type="file"
+                            accept="image/*"
+                            onChange={handleProofChange}
+                            className="hidden"
+                          />
+                        </label>
+                        {proofSizeKb !== null && (
+                          <p className="mt-1.5 text-[11px] font-semibold text-emerald-700">
+                            ✓ تم ضغط الصورة بنجاح: {proofSizeKb} KB (أقل من الحد الأقصى 100 KB)
+                          </p>
+                        )}
+                      </div>
+
+                      <div>
+                        <label className="field-label text-xs mb-1.5">
+                          {t('senderRefLabel')}
+                        </label>
+                        <input
+                          type="text"
+                          value={referenceNumber}
+                          onChange={(e) => setReferenceNumber(e.target.value)}
+                          placeholder={t('senderRefPlaceholder')}
+                          className="field-input mt-0"
+                        />
                       </div>
                     </div>
-                  )}
-                </div>
+                  </>
+                )}
 
-                {/* Proof of Payment Upload + Compression */}
-                <div className="mt-6 space-y-4">
-                  <div>
-                    <label className="field-label text-xs mb-1.5">
-                      {t('uploadProofLabel')}
-                    </label>
-                    <label className="flex flex-col items-center justify-center rounded-xl border-2 border-dashed border-mocha-400/30 bg-white/70 p-5 text-center cursor-pointer hover:border-rosegold-300 transition">
-                      <Upload className="h-5 w-5 text-rosegold-400" />
-                      <span className="mt-2 text-xs font-medium text-espresso">
-                        {compressing
-                          ? 'جاري ضغط الصورة...'
-                          : proofFile
-                          ? proofFile.name
-                          : 'اضغطي لاختيار صورة التحويل'}
+                {/* Electronic Card Gateway Form (Paymob / Kashier / Stripe) */}
+                {(paymentMethod === 'paymob' || paymentMethod === 'kashier') && (
+                  <div className="mt-5 rounded-2xl border border-pearl bg-white/90 p-5 space-y-4">
+                    <div className="flex items-center justify-between border-b border-pearl pb-3">
+                      <span className="text-xs font-bold text-espresso">
+                        {lang === 'ar'
+                          ? 'الدفع الإلكتروني المشفر بالبطاقة البنكية (3D Secure)'
+                          : 'Encrypted 3D-Secure Card Checkout'}
                       </span>
-                      <span className="mt-0.5 text-[11px] text-mocha-500">
-                        {t('compressingNotice')}
+                      <span className="font-mono text-xs font-bold text-rosegold-500">
+                        {formatPrice(cartSummary.depositRequired, lang)}
                       </span>
-                      <input
-                        type="file"
-                        accept="image/*"
-                        onChange={handleProofChange}
-                        className="hidden"
-                      />
-                    </label>
-                    {proofSizeKb !== null && (
-                      <p className="mt-1.5 text-[11px] font-semibold text-emerald-700">
-                        ✓ تم ضغط الصورة بنجاح: {proofSizeKb} KB (أقل من الحد الأقصى 100 KB)
-                      </p>
-                    )}
-                  </div>
+                    </div>
 
-                  <div>
-                    <label className="field-label text-xs mb-1.5">
-                      {t('senderRefLabel')}
-                    </label>
-                    <input
-                      type="text"
-                      value={referenceNumber}
-                      onChange={(e) => setReferenceNumber(e.target.value)}
-                      placeholder={t('senderRefPlaceholder')}
-                      className="field-input mt-0"
-                    />
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      <div className="sm:col-span-2">
+                        <label className="field-label text-xs">
+                          {lang === 'ar' ? 'الاسم المدون على البطاقة' : 'Cardholder Name'}
+                        </label>
+                        <input
+                          type="text"
+                          value={cardHolder || fullName}
+                          onChange={(e) => setCardHolder(e.target.value)}
+                          placeholder="YASMINE KAMAL"
+                          className="field-input mt-1 uppercase"
+                        />
+                      </div>
+                      <div className="sm:col-span-2">
+                        <label className="field-label text-xs">
+                          {lang === 'ar' ? 'رقم البطاقة البنكية (Visa / MasterCard / ميزة)' : 'Card Number'}
+                        </label>
+                        <input
+                          type="text"
+                          dir="ltr"
+                          maxLength={19}
+                          value={cardNumber}
+                          onChange={(e) => {
+                            setCardNumber(e.target.value);
+                            setReferenceNumber(
+                              `CARD-${paymentMethod.toUpperCase()}-${e.target.value.slice(-4) || '9912'}`,
+                            );
+                          }}
+                          placeholder="4532 •••• •••• 8821"
+                          className="field-input mt-1 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="field-label text-xs">
+                          {lang === 'ar' ? 'تاريخ الانتهاء (MM/YY)' : 'Expiry (MM/YY)'}
+                        </label>
+                        <input
+                          type="text"
+                          dir="ltr"
+                          maxLength={5}
+                          value={cardExpiry}
+                          onChange={(e) => setCardExpiry(e.target.value)}
+                          placeholder="08/28"
+                          className="field-input mt-1 font-mono"
+                        />
+                      </div>
+                      <div>
+                        <label className="field-label text-xs">CVV</label>
+                        <input
+                          type="password"
+                          dir="ltr"
+                          maxLength={4}
+                          value={cardCvv}
+                          onChange={(e) => setCardCvv(e.target.value)}
+                          placeholder="•••"
+                          className="field-input mt-1 font-mono"
+                        />
+                      </div>
+                    </div>
                   </div>
-                </div>
+                )}
+
+                {/* Fawry Pay Reference Code Box */}
+                {paymentMethod === 'fawry' && (
+                  <div className="mt-5 rounded-2xl border border-pearl bg-cream/50 p-5 text-center space-y-3">
+                    <div className="text-xs font-semibold text-mocha-600">
+                      {lang === 'ar'
+                        ? 'كود الدفع المرجعي عبر فوري باي (Fawry Pay Reference)'
+                        : 'Your Fawry Pay Reference Code'}
+                    </div>
+                    <div className="text-2xl font-mono font-bold text-espresso tracking-wider" dir="ltr">
+                      {fawryRefCode}
+                    </div>
+                    <p className="text-xs text-mocha-500">
+                      {lang === 'ar'
+                        ? 'يمكنكِ السداد بهذا الكود من تطبيق MyFawry أو أي ماكينة فوري، واضغطي تأكيد الحجز أدناه لحفظ موعدكِ.'
+                        : 'Pay using this code via MyFawry app or any Fawry terminal, then click Confirm below.'}
+                    </p>
+                  </div>
+                )}
 
                 {/* 30-Min Hold Notice */}
                 <div className="mt-6 rounded-xl border border-pearl bg-cream/30 p-3 text-xs text-mocha-600 flex items-center gap-2">

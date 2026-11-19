@@ -15,6 +15,7 @@ import Packages from '../components/admin/Packages';
 import Inventory from '../components/admin/Inventory';
 import RoleManagement from '../components/admin/RoleManagement';
 import Attendance from '../components/admin/Attendance';
+import PaymentGatewaysPage from '../components/admin/PaymentGatewaysPage';
 import { supabase } from '../lib/supabase';
 import type { BusinessSettings } from '../lib/types';
 import { useLanguage } from '../context/LanguageContext';
@@ -83,6 +84,7 @@ export default function AdminPage() {
         <Route path="/inventory" element={<Inventory />} />
         <Route path="/roles" element={<RoleManagement />} />
         <Route path="/attendance" element={<Attendance />} />
+        <Route path="/payment-gateways" element={<PaymentGatewaysPage />} />
         <Route
           path="/settings"
           element={
@@ -103,7 +105,7 @@ function LoadingScreen({ subtitle }: { subtitle?: string }) {
           <Sparkles className="h-5 w-5" />
         </div>
         <p className="mt-5 font-display text-2xl text-espresso">
-          {lang === 'ar' ? 'ميزون لوميير • إدارة الصالون' : 'Studio Suite'}
+          {lang === 'ar' ? 'جوزال ميديكال سبا • إدارة الصالون' : 'Guzel Medical Spa Suite'}
         </p>
         <p className="mt-2 inline-flex items-center gap-2 text-sm text-mocha-500">
           <Loader2 className="h-4 w-4 animate-spin" />

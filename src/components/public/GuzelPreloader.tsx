@@ -21,15 +21,6 @@ export default function GuzelPreloader({ onDone, customImages }: GuzelPreloaderP
   useEffect(() => {
     if (typeof window === 'undefined') return;
 
-    const prefersReduced =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) {
-      setVisible(false);
-      onDone?.();
-      document.dispatchEvent(new CustomEvent('preloader:done'));
-      return;
-    }
-
     let isReturning = false;
     try {
       isReturning = localStorage.getItem('reshoot_preloader_v1') === '1';
@@ -158,3 +149,4 @@ export default function GuzelPreloader({ onDone, customImages }: GuzelPreloaderP
     </section>
   );
 }
+

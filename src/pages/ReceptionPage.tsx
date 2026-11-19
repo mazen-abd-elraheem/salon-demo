@@ -387,7 +387,7 @@ export default function ReceptionPage() {
             <div>
               <div className="flex items-center gap-2">
                 <h1 className="text-base sm:text-lg font-bold text-espresso font-display">
-                  {lang === 'ar' ? 'ميزون لوميير • شاشة الاستقبال والكاشير' : 'Maison Lumière • Reception & POS'}
+                  {lang === 'ar' ? 'جوزال ميديكال سبا • شاشة الاستقبال والكاشير' : 'Guzel Medical Spa • Reception & POS'}
                 </h1>
                 <span className="hidden sm:inline-block text-[11px] px-2 py-0.5 rounded-full bg-rosegold-100/60 text-rosegold-700 font-medium">
                   {currentShift.name_ar} (16:00 - 23:00)

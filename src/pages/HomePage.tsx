@@ -9,6 +9,7 @@ import Services from '../components/public/Services';
 import Booking from '../components/public/Booking';
 import Footer from '../components/public/Footer';
 import DataConsentBanner from '../components/public/DataConsentBanner';
+import SEOHead from '../components/public/SEOHead';
 import { useRealtimeCatalog } from '../hooks/useRealtimeCatalog';
 import type { Service } from '../lib/types';
 
@@ -52,6 +53,7 @@ export default function HomePage() {
         color: 'var(--fonts-100, #3a1d43)',
       }}
     >
+      <SEOHead />
       {/* 1. Stepped Preloader with Hard-Cut Portraits */}
       <GuzelPreloader customImages={customPreloaderImages} />
 

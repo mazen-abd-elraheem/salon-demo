@@ -56,9 +56,6 @@ export default function GuzelStepSlides({
   // Smooth 3D tip-back (rotationX 40deg, scale 0.7, rotationZ tilt, fade out) driven by scroll
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    const prefersReduced =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
 
     let rafId = 0;
     const onScroll = () => {

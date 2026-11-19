@@ -247,3 +247,4 @@ export function computeCoverCropStyles(
     backgroundRepeat: 'no-repeat',
   };
 }
+

@@ -18,6 +18,7 @@ import {
   ShoppingBag,
   ShieldCheck,
   UserCheck,
+  CreditCard,
 } from 'lucide-react';
 import type { User } from '@supabase/supabase-js';
 import { useLanguage } from '../../context/LanguageContext';
@@ -39,7 +40,7 @@ export default function AdminLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const location = useLocation();
   const { lang, toggleLang, isRTL } = useLanguage();
-  const display = lang === 'ar' ? 'ميزون لوميير' : (brand?.trim() || 'Maison Lumière');
+  const display = lang === 'ar' ? 'جوزال ميديكال سبا' : (brand?.trim() || 'Guzel Medical Spa');
 
   const localSettings = getLocalSettings();
   const salonLogo = localSettings?.logo_url || null;
@@ -47,13 +48,14 @@ export default function AdminLayout({
   const links = [
     { label: lang === 'ar' ? 'نظرة عامة' : 'Overview', to: '/admin', end: true, Icon: Gauge },
     { label: lang === 'ar' ? 'الحجوزات' : 'Appointments', to: '/admin/appointments', Icon: Calendar },
+    { label: lang === 'ar' ? 'الخدمات' : 'Services', to: '/admin/services', Icon: Scissors },
     { label: lang === 'ar' ? 'الباقات والعروض' : 'Packages & Bundles', to: '/admin/packages', Icon: Layers },
     { label: lang === 'ar' ? 'المخزون والمنتجات' : 'Retail & Inventory', to: '/admin/inventory', Icon: ShoppingBag },
+    { label: lang === 'ar' ? 'بوابات الدفع الإلكتروني' : 'Payment Gateways', to: '/admin/payment-gateways', Icon: CreditCard },
     { label: lang === 'ar' ? 'التقفيل المالي والورديات' : 'Reconciliation', to: '/admin/reconciliation', Icon: DollarSign },
     { label: lang === 'ar' ? 'الحضور والانصراف' : 'Staff Attendance', to: '/admin/attendance', Icon: UserCheck },
     { label: lang === 'ar' ? 'شاشة الاستقبال والكاشير' : 'Reception POS', to: '/reception', Icon: Store },
     { label: lang === 'ar' ? 'المستخدمين والصلاحيات' : 'Staff & Roles', to: '/admin/roles', Icon: ShieldCheck },
-    { label: lang === 'ar' ? 'الخدمات' : 'Services', to: '/admin/services', Icon: Scissors },
     { label: lang === 'ar' ? 'مواعيد العمل' : 'Business Hours', to: '/admin/hours', Icon: Clock },
     { label: lang === 'ar' ? 'الأيام المغلقة' : 'Blocked Dates', to: '/admin/blocked', Icon: CalendarOff },
     { label: lang === 'ar' ? 'إعدادات الصالون' : 'Business Settings', to: '/admin/settings', Icon: Settings2 },

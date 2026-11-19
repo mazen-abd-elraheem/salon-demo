@@ -19,6 +19,7 @@ import {
 import Navbar from '../components/public/Navbar';
 import Footer from '../components/public/Footer';
 import DataConsentBanner from '../components/public/DataConsentBanner';
+import SEOHead from '../components/public/SEOHead';
 import GuzelShowcasePanel from '../components/public/GuzelShowcasePanel';
 import GuzelHowItWorks from '../components/public/GuzelHowItWorks';
 import GuzelStepSlides from '../components/public/GuzelStepSlides';
@@ -479,8 +480,8 @@ export function AboutScreen() {
 
   const brand =
     lang === 'ar'
-      ? settings?.business_name || 'غزل سبا للجمال والاسترخاء'
-      : settings?.business_name_en || 'Guzel Spa';
+      ? settings?.business_name || 'جوزال ميديكال سبا'
+      : settings?.business_name_en || 'Guzel Medical Spa';
   const facebookUrl =
     settings?.facebook_url || 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr';
   const phone = settings?.business_phone || '01012345678';
@@ -537,18 +538,18 @@ export function AboutScreen() {
             <h1 className="u-h1 mt-4">
               {lang === 'ar' ? (
                 <>
-                  أهلاً بكِ في عالم <span className="it text-[#b14bd9]">غزل سبا.</span>
+                  أهلاً بكِ في عالم <span className="it text-[#b14bd9]">جوزال ميديكال سبا.</span>
                 </>
               ) : (
                 <>
-                  Welcome to <span className="it text-[#b14bd9]">Guzel Spa.</span>
+                  Welcome to <span className="it text-[#b14bd9]">Guzel Medical Spa.</span>
                 </>
               )}
             </h1>
             <p className="mt-5 text-sm sm:text-base leading-relaxed" style={{ color: 'var(--fonts-64, #3a1d43a3)' }}>
               {lang === 'ar'
-                ? 'تأسس غزل سبا (Guzel Spa) في مصر ليكون ملاذاً نسائياً هادئاً يجمع بين أرقى تقنيات العناية بالبشرة والشعر وبين طقوس الاسترخاء الشرقية والمغربية الأصيلة.'
-                : 'Founded in Egypt, Guzel Spa is an all-female luxury sanctuary blending clinical skincare innovation with timeless Moroccan hammam and aromatherapy traditions.'}
+                ? 'تأسس جوزال ميديكال سبا (Guzel Medical Spa) في مصر ليكون ملاذاً نسائياً هادئاً يجمع بين أرقى تقنيات العناية الطبية بالبشرة والشعر وبين طقوس الاسترخاء الشرقية والمغربية الأصيلة.'
+                : 'Founded in Egypt, Guzel Medical Spa is an all-female luxury sanctuary blending clinical skincare innovation with timeless Moroccan hammam and aromatherapy traditions.'}
             </p>
 
             <div className="mt-8 grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -738,3 +739,4 @@ export function BookScreen() {
     </div>
   );
 }
+

@@ -115,12 +115,21 @@ html {
 
 body {
   margin: 0;
-  font-family: 'Inter', 'Cairo', 'Tajawal', ui-sans-serif, system-ui, -apple-system, sans-serif;
+  font-family: 'Tajawal', 'Noto Sans Arabic', 'Cairo', 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif;
   background-color: var(--mainbg, #f9f0f5);
   color: var(--fonts-100, #3a1d43);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   overflow-x: hidden;
+}
+
+h1,
+h2,
+h3,
+h4,
+.font-display,
+.heading-display {
+  font-family: 'Cairo', 'Noto Kufi Arabic', 'Tajawal', 'Inter', sans-serif;
 }
 
 [dir="rtl"],
@@ -129,21 +138,29 @@ body {
 [dir="rtl"] input,
 [dir="rtl"] textarea,
 [dir="rtl"] select {
-  font-family: 'Cairo', 'Tajawal', 'Noto Sans Arabic', 'Inter', system-ui, -apple-system, sans-serif;
+  font-family: 'Tajawal', 'Noto Sans Arabic', 'Cairo', 'Inter', system-ui, -apple-system, sans-serif;
+  letter-spacing: 0;
+}
+
+[dir="rtl"] h1,
+[dir="rtl"] h2,
+[dir="rtl"] h3,
+[dir="rtl"] h4 {
+  font-family: 'Cairo', 'Noto Kufi Arabic', 'Tajawal', sans-serif;
   letter-spacing: 0;
 }
 
 .it {
-  font-family: 'Instrument Serif', 'Amiri', Georgia, serif;
+  font-family: 'Instrument Serif', 'Amiri', 'Noto Naskh Arabic', Georgia, serif;
   font-style: italic;
   font-weight: 400;
   letter-spacing: -0.01em;
 }
 
 [dir="rtl"] .it {
-  font-family: 'Amiri', 'Instrument Serif', Georgia, serif;
+  font-family: 'Amiri', 'Noto Naskh Arabic', 'Instrument Serif', Georgia, serif;
   font-style: italic;
-  font-weight: 400;
+  font-weight: 700;
   letter-spacing: 0;
 }
 
@@ -380,17 +397,6 @@ body {
 .how-crawl-mask {
   mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 12%, #000 88%, transparent 100%);
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .animate-spin-step,
-  .animate-hero-chips,
-  .animate-column-crawl,
-  .animate-guzel-marquee,
-  .animate-ring-orbit,
-  .animate-ring-counter {
-    animation: none !important;
-  }
 }
 
 /* Existing component utilities preserved for Booking, Admin, and Reception POS */

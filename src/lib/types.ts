@@ -185,11 +185,20 @@ export interface TabAddon {
   created_at?: string;
 }
 
+export type PaymentGatewayProvider =
+  | 'paymob'
+  | 'fawry'
+  | 'kashier'
+  | 'stripe'
+  | 'instapay'
+  | 'vodafone_cash'
+  | 'cash';
+
 export interface Payment {
   id: string;
   booking_id: string;
   payment_type: 'deposit' | 'settlement' | 'refund';
-  method: 'instapay' | 'vodafone_cash' | 'cash';
+  method: PaymentGatewayProvider;
   amount: number;
   cash_tendered?: number | null;
   reference_number?: string | null;
@@ -201,6 +210,31 @@ export interface Payment {
   shift_name?: string | null;
   shift_id?: string | null;
   created_at: string;
+}
+
+export interface PaymentGatewayConfig {
+  id: PaymentGatewayProvider;
+  name_ar: string;
+  name_en: string;
+  badge_ar: string;
+  badge_en: string;
+  description_ar: string;
+  description_en: string;
+  enabled: boolean;
+  mode: 'sandbox' | 'live';
+  public_key?: string;
+  secret_key?: string;
+  merchant_id?: string;
+  integration_id_card?: string;
+  integration_id_wallet?: string;
+  iframe_id?: string;
+  hmac_secret?: string;
+  webhook_url?: string;
+  account_identifier?: string;
+  account_holder_name?: string;
+  supports_online_deposit: boolean;
+  supports_in_branch_qr: boolean;
+  updated_at?: string;
 }
 
 export type StaffRole = 'admin' | 'manager' | 'receptionist' | 'specialist';

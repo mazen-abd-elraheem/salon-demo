@@ -62,8 +62,8 @@ export default function Navbar({ settings, onBook }: NavbarProps) {
 
   const brandName =
     lang === 'ar'
-      ? activeSettings?.business_name?.trim() || 'غزل سبا'
-      : activeSettings?.business_name_en?.trim() || 'Guzel';
+      ? activeSettings?.business_name?.trim() || 'جوزال ميديكال سبا'
+      : activeSettings?.business_name_en?.trim() || 'Guzel Medical Spa';
 
   const facebookUrl =
     activeSettings?.facebook_url || 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr';

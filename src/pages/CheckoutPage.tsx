@@ -23,10 +23,11 @@ import {
   getLocalBookingByToken,
   getLocalBookingByPhone,
   getLocalBookings,
+  getLocalPaymentGateways,
   saveLocalBooking,
   defaultSettings,
 } from '../lib/mockData';
-import type { Booking, Payment } from '../lib/types';
+import type { Booking, Payment, PaymentGatewayProvider } from '../lib/types';
 import { compressReceiptImage } from '../lib/imageCompressor';
 import { playNotificationChime } from '../lib/soundEffects';
 
@@ -42,8 +43,12 @@ export default function CheckoutPage() {
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Payment form state
-  const [paymentMethod, setPaymentMethod] = useState<'instapay' | 'vodafone_cash' | 'cash'>('instapay');
+  // Payment form state (Connected to Admin Payment Gateways)
+  const qrGateways = useMemo(
+    () => getLocalPaymentGateways().filter((g) => g.enabled && g.supports_in_branch_qr),
+    [],
+  );
+  const [paymentMethod, setPaymentMethod] = useState<PaymentGatewayProvider>('instapay');
   const [senderInfo, setSenderInfo] = useState('');
   const [cashTendered, setCashTendered] = useState<string>('');
   const [proofImage, setProofImage] = useState<string | null>(null);
@@ -198,7 +203,7 @@ export default function CheckoutPage() {
               <Sparkles className="w-4 h-4" />
             </span>
             <span className="font-display font-bold text-base text-espresso">
-              {lang === 'ar' ? 'ميزون لوميير بيوتي سنتر' : 'Maison Lumière'}
+              {lang === 'ar' ? 'جوزال ميديكال سبا' : 'Guzel Medical Spa'}
             </span>
           </Link>
 
@@ -357,7 +362,7 @@ export default function CheckoutPage() {
                           : item.service?.name_en || 'Salon Service'}
                       </div>
                       <div className="text-[11px] text-mocha-400">
-                        {item.specialist?.name_ar || 'صالون ميزون لوميير'}
+                        {item.specialist?.name_ar || 'جوزال ميديكال سبا'}
                       </div>
                     </div>
                     <div className="font-mono font-semibold text-espresso">
@@ -441,7 +446,7 @@ export default function CheckoutPage() {
                 </h3>
                 <p className="text-xs text-mocha-500 max-w-md mx-auto mb-6">
                   {lang === 'ar'
-                    ? 'شكراً لزيارتك لميزون لوميير بيوتي سنتر وسبا. سعدنا بخدمتك ونتمنى لكِ يوماً مشرقاً وجميلاً!'
+                    ? 'شكراً لزيارتك لجوزال ميديكال سبا. سعدنا بخدمتك ونتمنى لكِ يوماً مشرقاً وجميلاً!'
                     : 'Thank you for visiting Maison Lumière Beauty Center & Spa. We look forward to welcoming you again!'}
                 </p>
 
@@ -497,47 +502,47 @@ export default function CheckoutPage() {
                   {lang === 'ar' ? 'اختاري وسيلة سداد المبلغ المتبقي:' : 'Select Settlement Payment Method:'}
                 </h3>
 
-                {/* Method Selector Tabs */}
-                <div className="grid grid-cols-3 gap-2">
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('instapay')}
-                    className={`p-3 rounded-xl border text-center transition flex flex-col items-center justify-center gap-1.5 ${
-                      paymentMethod === 'instapay'
-                        ? 'border-rosegold-400 bg-rosegold-50/50 text-espresso ring-1 ring-rosegold-300 font-semibold'
-                        : 'border-pearl bg-white hover:bg-pearl/30 text-mocha-500'
-                    }`}
-                  >
-                    <Smartphone className="w-4 h-4 text-rosegold-500" />
-                    <span className="text-xs font-medium">InstaPay</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('vodafone_cash')}
-                    className={`p-3 rounded-xl border text-center transition flex flex-col items-center justify-center gap-1.5 ${
-                      paymentMethod === 'vodafone_cash'
-                        ? 'border-rosegold-400 bg-rosegold-50/50 text-espresso ring-1 ring-rosegold-300 font-semibold'
-                        : 'border-pearl bg-white hover:bg-pearl/30 text-mocha-500'
-                    }`}
-                  >
-                    <CreditCard className="w-4 h-4 text-rose-600" />
-                    <span className="text-xs font-medium">فودافون كاش</span>
-                  </button>
-
-                  <button
-                    type="button"
-                    onClick={() => setPaymentMethod('cash')}
-                    className={`p-3 rounded-xl border text-center transition flex flex-col items-center justify-center gap-1.5 ${
-                      paymentMethod === 'cash'
-                        ? 'border-rosegold-400 bg-rosegold-50/50 text-espresso ring-1 ring-rosegold-300 font-semibold'
-                        : 'border-pearl bg-white hover:bg-pearl/30 text-mocha-500'
-                    }`}
-                  >
-                    <Banknote className="w-4 h-4 text-emerald-600" />
-                    <span className="text-xs font-medium">كاش لموظفة الفرع</span>
-                  </button>
+                {/* Method Selector Tabs (Synced with Admin Payment Gateways) */}
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                  {qrGateways.map((gw) => (
+                    <button
+                      key={gw.id}
+                      type="button"
+                      onClick={() => {
+                        setPaymentMethod(gw.id);
+                        if (gw.id === 'paymob' || gw.id === 'fawry' || gw.id === 'kashier') {
+                          setSenderInfo(`${gw.id.toUpperCase()}-${Date.now().toString().slice(-6)}`);
+                        }
+                      }}
+                      className={`p-3 rounded-xl border text-center transition flex flex-col items-center justify-center gap-1 cursor-pointer ${
+                        paymentMethod === gw.id
+                          ? 'border-rosegold-400 bg-rosegold-100/60 text-espresso ring-1 ring-rosegold-300 font-semibold'
+                          : 'border-pearl bg-white hover:bg-pearl/30 text-mocha-500'
+                      }`}
+                    >
+                      <CreditCard className="w-4 h-4 text-rosegold-500" />
+                      <span className="text-xs font-bold">
+                        {lang === 'ar' ? gw.name_ar.split('(')[0].trim() : gw.name_en.split('(')[0].trim()}
+                      </span>
+                    </button>
+                  ))}
                 </div>
+
+                {(paymentMethod === 'paymob' || paymentMethod === 'fawry' || paymentMethod === 'kashier') && (
+                  <div className="p-4 rounded-xl bg-ivory border border-pearl space-y-2 text-xs">
+                    <div className="font-bold text-espresso">
+                      {lang === 'ar'
+                        ? `الدفع الإلكتروني الفوري عبر (${paymentMethod.toUpperCase()})`
+                        : `Instant Electronic Settlement (${paymentMethod.toUpperCase()})`}
+                    </div>
+                    <div className="text-mocha-600">
+                      {lang === 'ar'
+                        ? 'رقم المعاملة الإلكترونية المولد تلقائياً:'
+                        : 'Generated Electronic Transaction Reference:'}{' '}
+                      <strong className="font-mono text-espresso">{senderInfo}</strong>
+                    </div>
+                  </div>
+                )}
 
                 {/* Method Details */}
                 {paymentMethod === 'instapay' && (

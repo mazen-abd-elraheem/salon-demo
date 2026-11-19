@@ -9,7 +9,7 @@ export function buildDepositApprovalWhatsAppUrl(booking: Booking, spaPhone: stri
   const cleanPhone = booking.customer_phone.replace(/\D/g, '');
   const targetPhone = cleanPhone.startsWith('2') ? cleanPhone : '20' + cleanPhone.replace(/^0+/, '');
 
-  const msg = `أهلاً بيكي يا ${booking.customer_name} في ميزون لوميير بيوتي سنتر وسبا 💕
+  const msg = `أهلاً بيكي يا ${booking.customer_name} في جوزال ميديكال سبا (Guzel Medical Spa) 💕
 تم تأكيد حجزك بنجاح! 
 
 رقم الحجز: ${booking.booking_number}
@@ -31,7 +31,7 @@ export function buildInvoiceLinkWhatsAppUrl(booking: Booking, checkoutUrl: strin
   const remaining = Math.max(0, Number(booking.total_amount) - Number(booking.deposit_paid));
 
   const msg = `أهلاً بك يا ${booking.customer_name} 💕
-فاتورتك جاهزة في ميزون لوميير بيوتي سنتر:
+فاتورتك جاهزة في جوزال ميديكال سبا:
 
 المبلغ المتبقي: ${formatPrice(remaining, 'ar')}
 رابط الفاتورة وسداد الحساب عبر انستا باي أو فودافون كاش أو كاش:
@@ -47,7 +47,7 @@ export function buildCompletionWhatsAppUrl(booking: Booking, spaPhone: string = 
   const targetPhone = cleanPhone.startsWith('2') ? cleanPhone : '20' + cleanPhone.replace(/^0+/, '');
 
   const msg = `أهلاً بك يا ${booking.customer_name} 💕
-تم سداد حسابك بالكامل وإغلاق الفاتورة في ميزون لوميير بيوتي سنتر وسبا.
+تم سداد حسابك بالكامل وإغلاق الفاتورة في جوزال ميديكال سبا.
 رقم الحجز: ${booking.booking_number}
 إجمالي الخدمات: ${formatPrice(booking.total_amount, 'ar')}
 

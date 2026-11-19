@@ -13,10 +13,6 @@ export default function GuzelThreeCanvas() {
     const container = containerRef.current;
     if (!container || typeof window === 'undefined') return;
 
-    const prefersReduced =
-      window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-    if (prefersReduced) return;
-
     const THREE = window.THREE;
     if (!THREE) return;
 
@@ -164,3 +160,4 @@ export default function GuzelThreeCanvas() {
     />
   );
 }
+

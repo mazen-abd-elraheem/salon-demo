@@ -12,6 +12,7 @@ import type {
   Specialist,
   TabAddon,
   Payment,
+  PaymentGatewayConfig,
   StaffUser,
   CustomerUser,
   AttendanceRecord,
@@ -435,16 +436,16 @@ export const defaultBlockedDates: BlockedDate[] = [];
 
 export const defaultSettings: BusinessSettings = {
   id: 'bs-default',
-  business_name: 'غزل سبا للجمال والاسترخاء',
-  business_name_en: 'Guzel Spa',
-  tagline: 'Guzel spa for beauty and relaxation',
-  tagline_ar: 'غزل سبا للجمال والاسترخاء',
+  business_name: 'جوزال ميديكال سبا',
+  business_name_en: 'Guzel Medical Spa',
+  tagline: 'Guzel Medical Spa for beauty and relaxation',
+  tagline_ar: 'جوزال ميديكال سبا للجمال والاسترخاء',
   facebook_url: 'https://www.facebook.com/share/1AFAh6PqQ7/?mibextid=wwXIfr',
   business_email: 'concierge@guzelspa.beauty',
   business_phone: '01012345678',
   business_address: '١٥ شارع البرازيل، الزمالك، القاهرة',
   instapay_ipa: 'guzelspa@instapay',
-  instapay_name: 'Guzel Spa Egypt',
+  instapay_name: 'Guzel Medical Spa',
   vodafone_cash_number: '01012345678',
   deposit_percentage: 50,
   deposit_hold_minutes: 30,
@@ -1009,9 +1010,20 @@ export function deleteLocalPackage(pkgId: string) {
 
 export function getLocalSettings(): BusinessSettings {
   try {
-    const raw = localStorage.getItem('guzel_v3_settings');
-    if (raw) return JSON.parse(raw);
-    localStorage.setItem('guzel_v3_settings', JSON.stringify(defaultSettings));
+    const raw = localStorage.getItem('guzel_v4_settings');
+    if (raw) {
+      const parsed = JSON.parse(raw) as BusinessSettings;
+      if (
+        !parsed.business_name ||
+        parsed.business_name.includes('ميزون') ||
+        parsed.business_name === 'غزل سبا للجمال والاسترخاء'
+      ) {
+        parsed.business_name = 'جوزال ميديكال سبا';
+        parsed.business_name_en = 'Guzel Medical Spa';
+      }
+      return parsed;
+    }
+    localStorage.setItem('guzel_v4_settings', JSON.stringify(defaultSettings));
     return defaultSettings;
   } catch {
     return defaultSettings;
@@ -1019,8 +1031,140 @@ export function getLocalSettings(): BusinessSettings {
 }
 
 export function saveLocalSettings(settings: BusinessSettings) {
-  localStorage.setItem('guzel_v3_settings', JSON.stringify(settings));
+  localStorage.setItem('guzel_v4_settings', JSON.stringify(settings));
   notifyDataUpdated('settings');
+}
+
+// ============================================================================
+// Payment Gateways Integration Helpers (Paymob, Fawry, Kashier/Stripe, InstaPay, Vodafone Cash, Cash)
+// ============================================================================
+
+export const defaultPaymentGateways: PaymentGatewayConfig[] = [
+  {
+    id: 'instapay',
+    name_ar: 'إنستاباي (InstaPay Egypt)',
+    name_en: 'InstaPay Instant Transfer',
+    badge_ar: 'تحويل بنكي لحظي مجاني',
+    badge_en: 'Instant Bank Transfer',
+    description_ar: 'تحويل فوري مباشر لعنوان الدفع الخاص بجوزال ميديكال سبا مع رفع صورة الإيصال.',
+    description_en: 'Direct instant transfer to Guzel Medical Spa IPA address with receipt upload.',
+    enabled: true,
+    mode: 'live',
+    account_identifier: 'guzelspa@instapay',
+    account_holder_name: 'Guzel Medical Spa',
+    supports_online_deposit: true,
+    supports_in_branch_qr: true,
+  },
+  {
+    id: 'vodafone_cash',
+    name_ar: 'فودافون كاش والمحافظ الإلكترونية',
+    name_en: 'Vodafone Cash & Mobile Wallets',
+    badge_ar: 'جميع محافظ الموبايل في مصر',
+    badge_en: 'All Egyptian Mobile Wallets',
+    description_ar: 'تحويل سريع عبر محفظة فودافون كاش أو أورانج أو اتصالات كاش لرقم المحفظة المعتمد.',
+    description_en: 'Fast transfer via Vodafone Cash, Orange Cash, or Etisalat Cash wallet.',
+    enabled: true,
+    mode: 'live',
+    account_identifier: '01012345678',
+    account_holder_name: 'جوزال ميديكال سبا',
+    supports_online_deposit: true,
+    supports_in_branch_qr: true,
+  },
+  {
+    id: 'paymob',
+    name_ar: 'بوابة بايموب مصر (Paymob Cards & Wallets)',
+    name_en: 'Paymob Egypt (Visa / MasterCard / Meeza / ValU)',
+    badge_ar: 'بطاقات بنكية وميزة و ValU',
+    badge_en: 'Cards, Meeza & Installments',
+    description_ar: 'الدفع الإلكتروني المباشر بالبطاقات البنكية (Visa / MasterCard / ميزة) وتقسيط ValU عبر بوابة Paymob المعتمدة.',
+    description_en: 'Automated online card processing (Visa, MasterCard, Meeza) and ValU installments via Paymob Egypt.',
+    enabled: true,
+    mode: 'sandbox',
+    merchant_id: 'PMB-EG-88412',
+    public_key: 'egy_pk_test_guzel_medical_spa_99120',
+    secret_key: 'egy_sk_test_••••••••••••••••••••',
+    integration_id_card: '4419021',
+    integration_id_wallet: '4419022',
+    iframe_id: '812045',
+    hmac_secret: '9a8b7c6d5e4f3a2b1c0d',
+    webhook_url: 'https://guzelspa.beauty/api/webhooks/paymob',
+    supports_online_deposit: true,
+    supports_in_branch_qr: true,
+  },
+  {
+    id: 'fawry',
+    name_ar: 'فوري باي (Fawry Pay & Reference Code)',
+    name_en: 'Fawry Pay (Reference Code & Cards)',
+    badge_ar: 'كود مرجعي أو بطاقة بنكية',
+    badge_en: 'Fawry Reference & Cards',
+    description_ar: 'إصدار كود دفع فوري مرجعي للسداد من أي منفذ فوري أو تطبيق MyFawry.',
+    description_en: 'Generate a Fawry reference number payable at any Fawry POS or MyFawry app.',
+    enabled: true,
+    mode: 'sandbox',
+    merchant_id: '770000018942',
+    secret_key: 'fawry_sec_••••••••••••••••',
+    webhook_url: 'https://guzelspa.beauty/api/webhooks/fawry',
+    supports_online_deposit: true,
+    supports_in_branch_qr: true,
+  },
+  {
+    id: 'kashier',
+    name_ar: 'بوابة كاشير و سترايب (Kashier / Stripe Global)',
+    name_en: 'Kashier & Stripe International Cards',
+    badge_ar: 'Apple Pay & Google Pay & دولي',
+    badge_en: 'Apple Pay, Google Pay & Global Cards',
+    description_ar: 'قبول المدفوعات الدولية و Apple Pay و Google Pay للعميلات من داخل وخارج مصر.',
+    description_en: 'Accept international credit cards, Apple Pay, and Google Pay seamlessly.',
+    enabled: false,
+    mode: 'sandbox',
+    merchant_id: 'MID-24910-812',
+    public_key: 'pk_test_51GuzelMedicalSpaEgypt',
+    secret_key: 'sk_test_••••••••••••••••••••',
+    webhook_url: 'https://guzelspa.beauty/api/webhooks/kashier',
+    supports_online_deposit: true,
+    supports_in_branch_qr: true,
+  },
+  {
+    id: 'cash',
+    name_ar: 'الدفع النقدي وماكينة POS بالفرع',
+    name_en: 'In-Branch Cash & POS Terminal',
+    badge_ar: 'عند الكاشير بالفرع',
+    badge_en: 'At Reception Desk',
+    description_ar: 'سداد نقدي (كاش) أو عبر ماكينة الفيزا مباشرة في استقبال جوزال ميديكال سبا مع حساب الباقي تلقائياً.',
+    description_en: 'Pay in cash or via physical card terminal at Guzel Medical Spa reception.',
+    enabled: true,
+    mode: 'live',
+    supports_online_deposit: false,
+    supports_in_branch_qr: true,
+  },
+];
+
+export function getLocalPaymentGateways(): PaymentGatewayConfig[] {
+  try {
+    const raw = localStorage.getItem('guzel_v4_payment_gateways');
+    if (raw) return JSON.parse(raw);
+    localStorage.setItem('guzel_v4_payment_gateways', JSON.stringify(defaultPaymentGateways));
+    return defaultPaymentGateways;
+  } catch {
+    return defaultPaymentGateways;
+  }
+}
+
+export function saveLocalPaymentGateways(gateways: PaymentGatewayConfig[]) {
+  localStorage.setItem('guzel_v4_payment_gateways', JSON.stringify(gateways));
+  notifyDataUpdated('payment_gateways');
+}
+
+export function saveSinglePaymentGateway(gateway: PaymentGatewayConfig) {
+  const list = getLocalPaymentGateways();
+  const idx = list.findIndex((g) => g.id === gateway.id);
+  const updated = { ...gateway, updated_at: new Date().toISOString() };
+  if (idx >= 0) {
+    list[idx] = updated;
+  } else {
+    list.push(updated);
+  }
+  saveLocalPaymentGateways(list);
 }
 
 // ============================================================================
@@ -1052,7 +1196,7 @@ export function loginCustomer(phoneOrEmail: string, _pass: string): { ok: boolea
       if (clean.length === 11) {
         const demoUser: CustomerUser = {
           id: 'cust-' + Date.now(),
-          name: 'عميلة ميزون لوميير',
+          name: 'عميلة جوزال ميديكال سبا',
           phone: clean,
           created_at: new Date().toISOString(),
         };

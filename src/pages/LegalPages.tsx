@@ -256,3 +256,4 @@ export function LegalPage({ type }: { type: 'privacy' | 'terms' | 'cookies' }) {
     </div>
   );
 }
+

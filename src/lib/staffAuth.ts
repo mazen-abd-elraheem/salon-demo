@@ -78,3 +78,4 @@ export function authenticateStaffCredentials(
   const session = setVerifiedStaffSession(matched);
   return { ok: true, session };
 }
+
